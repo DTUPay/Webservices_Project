@@ -11,7 +11,7 @@ do
  pushd .
 
  # Go into the subdirectory, where build_and_test.sh resides
- cd $(dirname $build_and_test)
+ cd "$(dirname $build_and_test)"
 
  # Execute the build_and_test.sh command
  bash build_and_test.sh

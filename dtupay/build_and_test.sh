@@ -2,7 +2,7 @@
 set -e
 
 # Set service name based on the current directory name
-SERVICE_NAME=$(basename $(pwd))
+SERVICE_NAME=$(basename "$(pwd)")
 
 # Compile and build the application
 mvn package
