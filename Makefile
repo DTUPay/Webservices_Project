@@ -2,7 +2,7 @@ wsdl:
 	wsimport -s payment/src -keep -Xnocompile BankService.wsdl
 
 build_run:
-	sh build_and_test
+	sh build_and_test.sh
 
 run_tests:
-	cd system_tests; mvn test; cd ..
+	sh system_tests/build_and_test.sh
