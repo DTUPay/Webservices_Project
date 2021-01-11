@@ -1,0 +1,11 @@
+version: "3.8"
+services:
+  rabbitmq:
+    image: rabbitmq:3.8.9-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq-volume01:/var/lib/rabbitmq
+volumes:
+  rabbitmq-volume01: {}
