@@ -1,4 +1,11 @@
 #!/bin/bash
+set -e
 
-# Create payment service based on WSDL
-make wsdl
+# Set service name based on the current directory name
+SERVICE_NAME=$(basename $(pwd))
+
+# Compile and build the application
+mvn package
+
+# Build Docker image
+docker build -t $SERVICE_NAME:build-${BUILD_NUMBER} .

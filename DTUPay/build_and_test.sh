@@ -1,10 +1,11 @@
 #!/bin/bash
+set -e
+
+# Set service name based on the current directory name
+SERVICE_NAME=$(basename $(pwd))
 
 # Compile and build the application
-./mvnw package
-
-# Test application
-./mvnw test
+mvn package
 
 # Build Docker image
-docker build -t DTUPay:build-${BUILD_NUMBER} .
+docker build -t $SERVICE_NAME:build-${BUILD_NUMBER} .
