@@ -1,7 +1,5 @@
 # Webservices_Project
 
-<<<<<<< HEAD
-
 ## How to run
 Not yet
 
