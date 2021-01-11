@@ -1,4 +1,4 @@
-package helloservice;
+package dtuPay;
 
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

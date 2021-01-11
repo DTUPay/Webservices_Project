@@ -7,6 +7,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="paymentService" />
+        <module name="system_tests" />
       </profile>
     </annotationProcessing>
   </component>
