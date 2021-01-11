@@ -16,6 +16,6 @@ popd
 # Give the Web server a chance to finish start up
 sleep 2s 
 
-pushd client
+pushd system_tests
 mvn test
 popd

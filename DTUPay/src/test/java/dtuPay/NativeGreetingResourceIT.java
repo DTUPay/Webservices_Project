@@ -1,4 +1,4 @@
-package org.acme;
+package dtuPay;
 
 import io.quarkus.test.junit.NativeImageTest;
 
