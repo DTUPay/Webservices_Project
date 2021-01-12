@@ -17,7 +17,7 @@ local_cleanup:
 
 # Cleaning up in Docker, by removing images
 ci_cleanup:
-	BUILD=build-$BUILD_NUMBER docker-compose --project-name continous-integration -f docker-compose.ci.yaml down --rmi all
+	BUILD="build-${BUILD_NUMBER}" docker-compose --project-name continous-integration -f docker-compose.ci.yaml down --rmi all
 	
 # Deploying stable build to server
 run_deployment:
