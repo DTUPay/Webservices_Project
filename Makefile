@@ -9,11 +9,11 @@ run_integration_test:
 # Running the system locally
 local_run:
 	bash build_and_test.sh
-	docker-compose -f system_tests/docker-compose.yaml up
+	BUILD_NUMBER=local docker-compose -f system_tests/docker-compose.yaml up
 
 # Cleanup installation locally
 local_cleanup:
-	docker-compose -f system_tests/docker-compose.yaml down --rmi all
+	BUILD_NUMBER=local docker-compose -f system_tests/docker-compose.yaml down --rmi all
 
 # Cleaning up in Docker, by removing images
 ci_cleanup:
