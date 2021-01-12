@@ -1,3 +1,5 @@
+#Author: Björn Wilting s184214
+  # & Laura Sønderskov Hansen s...
 Feature: Actions that can be performed by a merchant
 
   Scenario: A merchant requests a payment
