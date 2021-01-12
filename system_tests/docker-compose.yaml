@@ -1,7 +1,7 @@
 version: "3.7"
 services:
-  integration-test:
-    image: integration-test:build-${BUILD_ID}
+  system_tests:
+    image: system_tests:build-${BUILD_ID}
     depends_on:
       - paymentservice
       - dtupay
