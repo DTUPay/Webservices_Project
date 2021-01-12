@@ -17,6 +17,16 @@ Start all services and run integration test
 bash system_tests/run_integration.sh
 ```
 
+
+
+
+## Server Ports
+![Ports](docs/ports.png)
+
+
+## UML
+![UML Diagram](docs/UML.png)
+
 ## Jenkins
 http://g-20.compute.dtu.dk:8282/
 
