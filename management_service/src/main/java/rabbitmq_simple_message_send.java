@@ -4,7 +4,7 @@ import com.rabbitmq.client.ConnectionFactory;
 
 import java.nio.charset.StandardCharsets;
 
-public class send {
+public class rabbitmq_simple_message_send {
 
     private final static String QUEUE_NAME = "hello";
 
@@ -15,10 +15,6 @@ public class send {
              Channel channel = connection.createChannel()) {
             channel.queueDeclare(QUEUE_NAME, false, false, false, null);
             String message = "Hello World!";
-            channel.basicPublish("", QUEUE_NAME, null, message.getBytes(StandardCharsets.UTF_8));
-            System.out.println(" [x] Sent '" + message + "'");
-
-            message = "Some other message";
             channel.basicPublish("", QUEUE_NAME, null, message.getBytes(StandardCharsets.UTF_8));
             System.out.println(" [x] Sent '" + message + "'");
         }

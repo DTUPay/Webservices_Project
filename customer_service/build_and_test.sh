@@ -12,4 +12,4 @@ SERVICE_NAME=$(basename $(pwd))
 mvn package
 
 # Build Docker image
-# docker build -t $SERVICE_NAME:${BUILD} .
+docker build -t $SERVICE_NAME:${BUILD} .

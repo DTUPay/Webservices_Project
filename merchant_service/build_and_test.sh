@@ -2,8 +2,8 @@
 #!/bin/bash
 set -e
 
-# Check if BUILD_NUMBER is set, if not lets assume its local
-if [ -z ${BUILD_NUMBER+x} ]; then export BUILD_NUMBER="local"; else echo "BUILD_NUMBER is set to '$BUILD_NUMBER'"; fi
+# Check if BUILD environment is set
+if [ -z ${BUILD+x} ]; then export BUILD="build-local"; else echo "BUILD is set to '$BUILD'"; fi
 
 # Set service name based on the current directory name
 SERVICE_NAME=$(basename $(pwd))
@@ -12,4 +12,4 @@ SERVICE_NAME=$(basename $(pwd))
 mvn package
 
 # Build Docker image
-# docker build -t $SERVICE_NAME:build-${BUILD_NUMBER} .
+docker build -t $SERVICE_NAME:${BUILD} .
