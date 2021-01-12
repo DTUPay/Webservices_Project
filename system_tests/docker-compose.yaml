@@ -1,14 +1,21 @@
 version: "3.7"
 services:
+  integration-test:
+    image: integration-test:build-${BUILD_ID}
+    depends_on:
+      - paymentservice
+      - dtupay
+      - rabbitmq
   paymentservice:
     image: payment:build-${BUILD_ID}
+    depends_on:
+      - rabbitmq
   dtupay:
     image: dtupay:build-${BUILD_ID}
+    depends_on:
+      - rabbitmq
   rabbitmq:
     image: rabbitmq:3.8.9-management
-    ports:
-      - "15672:5672"
-      - "25672:15672"
     volumes:
       - rabbitmq-volume01:/var/lib/rabbitmq
 volumes:
