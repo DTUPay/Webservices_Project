@@ -10,7 +10,7 @@ public class HelloService {
 
 	public HelloService() {
 		Client client = ClientBuilder.newClient();
-		baseUrl = client.target("http://localhost:8080/");
+		baseUrl = client.target("http://g-20.compute.dtu.dk:8080/");
 	}
 	
 	public String hello() {
