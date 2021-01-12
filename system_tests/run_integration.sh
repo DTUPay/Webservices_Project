@@ -3,6 +3,11 @@
 echo "Get into system_tests directory"
 cd "$(dirname "$0")"
 
-echo "Building and running integration tests!"
-cat docker-compose.yaml
-docker-compose up --abort-on-container-exit
+echo "Starting CI environment"
+docker-compose up -d 
+
+echo "Sleep 15 seconds before running tests on CI environment"
+sleep 15
+
+echo "Executing tests"
+mvn test
