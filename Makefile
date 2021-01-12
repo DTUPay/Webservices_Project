@@ -5,4 +5,4 @@ run_integration_test:
 	bash system_tests/run_integration.sh
 
 cleanup_ci:
-	docker-compose down --rmi all -f system_tests/docker-compose.yaml
+	docker-compose -f system_tests/docker-compose.yaml down --rmi all
