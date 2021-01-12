@@ -1,14 +1,14 @@
 # Building all microservices and test them individually 
 build_test:
-	bash bin/build_and_test_all.sh
+	bash scripts/build_and_test_all.sh
 
 # Testing the entire system with cucumber test
 test_integration:
-	bash bin/test_integration.sh
+	bash scripts/test_integration.sh
 
 # Build and run the system locally
 local_run:
-	bash bin/build_and_test_all.sh
+	bash scripts/build_and_test_all.sh
 	BUILD=build-local docker-compose -f docker-compose.yaml up
 
 # Cleanup installation locally
