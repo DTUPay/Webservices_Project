@@ -6,9 +6,23 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="paymentService" />
+        <module name="customer_service" />
         <module name="system_tests" />
+        <module name="management_service" />
+        <module name="merchant_service" />
+        <module name="payment_service" />
+        <module name="token_service" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="customer_service" target="11" />
+      <module name="management_service" target="1.5" />
+      <module name="ManagementService" target="1.5" />
+      <module name="merchant_service" target="1.5" />
+      <module name="payment_service" target="11" />
+      <module name="paymentService" target="11" />
+      <module name="system_tests" target="11" />
+      <module name="token_service" target="11" />
+    </bytecodeTargetLevel>
   </component>
 </project>
