@@ -1,11 +1,5 @@
 version: "3.7"
 services:
-  system_tests:
-    image: system_tests:build-${BUILD_ID}
-    depends_on:
-      - paymentservice
-      - dtupay
-      - rabbitmq
   paymentservice:
     image: payment:build-${BUILD_ID}
     depends_on:
