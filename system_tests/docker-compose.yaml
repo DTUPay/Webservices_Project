@@ -1,9 +1,5 @@
 version: "3.7"
 services:
-  paymentservice:
-    image: payment:build-${BUILD_ID}
-    depends_on:
-      - rabbitmq
   dtupay:
     image: dtupay:build-${BUILD_ID}
     ports:
