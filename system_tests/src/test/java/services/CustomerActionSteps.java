@@ -10,10 +10,6 @@ public class CustomerActionSteps {
     public void aCustomerWithAToken() {
     }
 
-    @When("the customer accepts a payment with id {string}")
-    public void theCustomerAcceptsAPaymentWithId(String arg0) {
-    }
-
     @Then("the token is consumed")
     public void theTokenIsConsumed() {
     }
@@ -48,5 +44,17 @@ public class CustomerActionSteps {
 
     @And("the customer has {int} tokens")
     public void theCustomerHasTokens(int arg0) {
+    }
+
+    @And("a pending payment with the payment id {string} exists")
+    public void aPendingPaymentWithThePaymentIdExists(String arg0) {
+    }
+
+    @When("the customer accepts the payment with id {string}")
+    public void theCustomerAcceptsThePaymentWithId(String arg0) {
+    }
+
+    @And("a pending payment with the payment id {string} does not exists")
+    public void aPendingPaymentWithThePaymentIdDoesNotExists(String arg0) {
     }
 }

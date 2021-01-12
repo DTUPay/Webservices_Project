@@ -3,14 +3,16 @@ Feature: Actions that can be performed by a customer
   Scenario: Accept a payment with token
     #Specify what a token is
     Given a customer with a token
+    And a pending payment with the payment id "somePaymentID" exists
     #Specify id
-    When the customer accepts a payment with id "somePaymentID"
+    When the customer accepts the payment with id "somePaymentID"
     Then the token is consumed
     And the payment succeeds
 
   Scenario: Attempt payment without token
     Given a customer without tokens
-    When the customer accepts a payment with id "somePaymentID"
+    And a pending payment with the payment id "somePaymentID" does not exists
+    When the customer accepts the payment with id "somePaymentID"
     #Specify
     Then the payment fails
 
