@@ -1,23 +1,23 @@
 # Building all microservices and test them individually 
 build_test:
-	bash build_and_test.sh
+	bash bin/build_and_test_all.sh
 
 # Testing the entire system with cucumber test
-run_integration_test:
-	bash system_tests/run_integration.sh
+test_integration:
+	bash bin/test_integration.sh
 
-# Running the system locally
+# Build and run the system locally
 local_run:
-	bash build_and_test.sh
-	BUILD_NUMBER=local docker-compose -f system_tests/docker-compose.yaml up
+	bash bin/build_and_test_all.sh
+	BUILD=build-local docker-compose -f docker-compose.yaml up
 
 # Cleanup installation locally
 local_cleanup:
-	BUILD_NUMBER=local docker-compose -f system_tests/docker-compose.yaml down --rmi all
+	BUILD=build-local docker-compose -f docker-compose.yaml down --rmi all
 
 # Cleaning up in Docker, by removing images
 ci_cleanup:
-	docker-compose -f system_tests/docker-compose.yaml down --rmi all
+	docker-compose -f docker-compose.ci.yaml down --rmi all
 	
 # Deploying stable build to server
 run_deployment:
