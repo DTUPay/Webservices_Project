@@ -12,6 +12,3 @@ sleep 6
 
 echo "Executing tests"
 mvn test
-
-echo "Cleanup CI environment"
-docker-compose down --rmi all
