@@ -8,4 +8,4 @@ Not yet
 http://g-20.compute.dtu.dk:8282/
 
 ## Pipelines
-[![Build Status](http://g-20.compute.dtu.dk:8282/buildStatus/icon?job=DTUPay+-+Continous+Integration&build=12&subject=Continuous%20Integration)](http://g-20.compute.dtu.dk:8282/job/DTUPay%20-%20Continous%20Integration/lastBuild/)
+[![Build Status](http://g-20.compute.dtu.dk:8282/buildStatus/icon?job=DTUPay-CI_CD&build=6&subject=CI/CD)](http://g-20.compute.dtu.dk:8282/job/DTUPay-CI_CD/lastBuild/)
