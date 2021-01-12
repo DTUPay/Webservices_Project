@@ -17,7 +17,7 @@ do
  bash build_and_test.sh
 
  # Go back to our main directory
- popd .
+ popd
 done
 
 # Final end-to-end test
