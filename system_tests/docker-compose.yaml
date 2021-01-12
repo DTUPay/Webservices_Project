@@ -1,10 +1,14 @@
 version: "3.8"
 services:
+  paymentservice:
+    image: payment:ci-version
+  dtupay:
+    image: dtupay:ci-version
   rabbitmq:
     image: rabbitmq:3.8.9-management
     ports:
-      - "5672:5672"
-      - "15672:15672"
+      - "15672:5672"
+      - "25672:15672"
     volumes:
       - rabbitmq-volume01:/var/lib/rabbitmq
 volumes:
