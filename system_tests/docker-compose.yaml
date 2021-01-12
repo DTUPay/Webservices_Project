@@ -1,9 +1,9 @@
 version: "3.8"
 services:
   paymentservice:
-    image: payment:ci-version
+    image: payment:build-${BUILD_VERSION}
   dtupay:
-    image: dtupay:ci-version
+    image: dtupay:build-${BUILD_VERSION}
   rabbitmq:
     image: rabbitmq:3.8.9-management
     ports:
