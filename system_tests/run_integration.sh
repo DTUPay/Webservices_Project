@@ -1,4 +1,5 @@
-#!/bin/Bash
+#!/bin/bash
+set -e
 
 echo "Get into system_tests directory"
 cd "$(dirname "$0")"
