@@ -6,8 +6,17 @@ build_test:
 run_integration_test:
 	bash system_tests/run_integration.sh
 
+# Running the system locally
+local_run:
+	bash build_and_test.sh
+	docker-compose -f system_tests/docker-compose.yaml up
+
+# Cleanup installation locally
+local_cleanup:
+	docker-compose -f system_tests/docker-compose.yaml down --rmi all
+
 # Cleaning up in Docker, by removing images
-cleanup_ci:
+ci_cleanup:
 	docker-compose -f system_tests/docker-compose.yaml down --rmi all
 	
 # Deploying stable build to server
