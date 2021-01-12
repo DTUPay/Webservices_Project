@@ -16,7 +16,7 @@
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="customer_service" target="11" />
-      <module name="management_service" target="1.5" />
+      <module name="management_service" target="7" />
       <module name="ManagementService" target="1.5" />
       <module name="merchant_service" target="1.5" />
       <module name="payment_service" target="11" />
