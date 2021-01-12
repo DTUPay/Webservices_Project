@@ -6,8 +6,8 @@ cd "$(dirname "$0")"
 echo "Starting CI environment"
 docker-compose up -d 
 
-echo "Sleep 15 seconds before running tests on CI environment"
-sleep 15
+echo "Sleep 6 seconds before running tests on CI environment"
+sleep 6
 
 echo "Executing tests"
 mvn test
