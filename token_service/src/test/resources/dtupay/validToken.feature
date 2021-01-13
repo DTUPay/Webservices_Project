@@ -1,3 +1,4 @@
+# @author: Benjamin Eriksen & Rubatharisan Thirumathyam
 Feature: Check token validity
 
   Scenario: A new token is created
