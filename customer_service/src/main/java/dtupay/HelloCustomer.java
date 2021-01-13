@@ -20,7 +20,12 @@ public class HelloCustomer {
     @Path("/Payment/{id}/")
     @Produces(MediaType.TEXT_PLAIN)
     public String acceptPayment(@PathParam("id") int paymentId) {
-
+        // Get payment with id
+        // Ensure payment is valid
+        // Ensure token is valid
+        // Ensure user has funds
+        // Transfer money from user to merchant
+        // Mark payment as paid
         return "Welcome to Customer Service!";
     }
 
@@ -28,6 +33,7 @@ public class HelloCustomer {
     @Path("/Payment/{id}")
     @Produces(MediaType.TEXT_PLAIN)
     public String requestRefund(@PathParam("id") int paymentId) {
+
         return "Welcome to Customer Service!";
     }
 
