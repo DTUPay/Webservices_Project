@@ -1,11 +1,8 @@
 package servants;
 
+import servants.RestCommunicator.Service;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import servants.RestCommunicator.Service;
-
-import javax.ws.rs.core.GenericType;
 
 /**
  * @author Björn Wilting s184214
@@ -20,6 +17,9 @@ public class CustomerServant {
     }
 
     public void acceptPayment(String paymentID, Token token) {
+        RestCommunicator communicator = new RestCommunicator(Service.CUSTOMER.port);
+        String path = Service.CUSTOMER.port + "/Tokens";
+        Object responseEntity = communicator.post(requestedTokens,path);
     }
 
     public void requestTokens(Integer requestedTokens) throws Exception {
