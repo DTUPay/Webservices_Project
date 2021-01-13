@@ -1,3 +1,7 @@
+/*
+@author Oliver O. Nielsen & Rubatharisan Thirumathyam & Benjamin Eriksen
+ */
+
 package dtupay;
 
 

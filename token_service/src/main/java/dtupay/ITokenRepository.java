@@ -1,3 +1,7 @@
+/*
+@author Oliver O. Nielsen & Rubatharisan Thirumathyam
+ */
+
 package dtupay;
 
 import exceptions.TokenException;

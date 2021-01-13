@@ -1,3 +1,6 @@
+/*
+@author Oliver O. Nielsen & Rubatharisan Thirumathyam
+ */
 package dtupay;
 
 import javax.json.JsonObject;
