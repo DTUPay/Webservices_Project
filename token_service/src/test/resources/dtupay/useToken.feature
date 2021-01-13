@@ -1,3 +1,4 @@
+# @author: Benjamin Eriksen & Rubatharisan Thirumathyam
 Feature: Use Token
 
   Scenario: A token is used
