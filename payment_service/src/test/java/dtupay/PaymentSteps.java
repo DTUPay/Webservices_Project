@@ -1,6 +1,5 @@
-package cucumber;
+package dtupay;
 
-import dtupay.PaymentRepository;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -10,7 +9,7 @@ import static org.junit.Assert.*;
 
 import java.util.UUID;
 
-public class PaymentStepTests {
+public class PaymentSteps {
     PaymentRepository repo = new PaymentRepository();
     int merchantID;
     int amount;

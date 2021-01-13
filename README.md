@@ -34,20 +34,20 @@ bash scripts/run_integration.sh
 ```
 message:
 {
-  "method": "addTokens",
+  "action": "addTokens",
   "payload": {
     "customerId": 1234,
     "amount": 5
   },
   "callback": {
     "topic": "customer_service",
-    "method": "addTokensResponse"
+    "action": "addTokensResponse"
   }
 }
 
 reply:
 {
-  "method": "addTokensResponse",
+  "action": "addTokensResponse",
   "payload": {
     "tokens": [1,2,3,4,5]
   }
