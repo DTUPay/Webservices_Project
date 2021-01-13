@@ -2,6 +2,7 @@ package models;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Customer {
     private int customerID;
@@ -12,6 +13,13 @@ public class Customer {
 
     public Customer(){
 
+    }
+    public Customer(String firstName, String lastName, String CPR){
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.CPRNumber = CPR;
+        this.tokens = new ArrayList<Token>();
+        this.customerID = new Random().nextInt(1000000)+1;
     }
 
     public Customer(int id, String firstName, String lastName, String CPRNumber){

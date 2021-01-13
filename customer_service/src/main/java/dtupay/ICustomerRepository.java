@@ -8,6 +8,6 @@ public interface ICustomerRepository {
 
     void deleteCustomer(String cpr) throws Exception;
 
-    Customer getCustomer(String cpr) throws Exception;
+    Customer getCustomer(String cpr);
 
 }

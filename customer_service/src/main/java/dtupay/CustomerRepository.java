@@ -18,7 +18,7 @@ public class CustomerRepository implements ICustomerRepository {
     }
 
     @Override
-    public Customer getCustomer(String cpr) throws Exception {
+    public Customer getCustomer(String cpr) {
         return customers.get(cpr);
     }
 }
