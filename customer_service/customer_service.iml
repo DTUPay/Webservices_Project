@@ -174,4 +174,7 @@
     <orderEntry type="library" name="Maven: com.rabbitmq:amqp-client:5.9.0" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.30" level="project" />
   </component>
+  <component name="Quarkus Tools">
+    <option name="hash" value="459057774" />
+  </component>
 </module>
