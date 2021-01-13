@@ -7,11 +7,11 @@ if [ -z ${BUILD+x} ]; then export BUILD="build-local"; else echo "BUILD is set t
 echo "Starting CI environment"
 docker-compose --project-name continous-integration -f docker-compose.ci.yaml up -d 
 
-echo "Sleep 6 seconds before running tests on CI environment"
-sleep 6
+echo "Sleep 8 seconds before running tests on CI environment"
+sleep 8
 
 echo "Get into system_tests directory"
 cd system_tests
 
 echo "Executing tests"
-mvn test
+# mvn test
