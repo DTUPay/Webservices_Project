@@ -12,6 +12,6 @@ public class HelloToken {
     @GET
     @Produces(MediaType.TEXT_PLAIN)
     public String hello() {
-        return "Welcome to Token Service!";
+        return "Welcome to Token Service! Made with Love!";
     }
 }
