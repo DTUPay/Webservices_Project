@@ -1,12 +1,16 @@
 package dtupay;
 
+import exceptions.TokenException;
+
+import java.util.ArrayList;
 import java.util.UUID;
 
 public interface ITokenRepository {
 
-    void addTokens(String customerID, int amount) throws Exception;
+    ArrayList<UUID> addTokens(int customerID, int amount);
 
-    void useToken(UUID tokenID) throws Exception;
+    void useToken(UUID tokenID) throws TokenException;
 
+    boolean isTokenValid(UUID tokenID, int customerID) throws TokenException;
 
 }
