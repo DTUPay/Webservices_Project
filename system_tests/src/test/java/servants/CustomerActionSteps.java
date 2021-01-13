@@ -1,16 +1,17 @@
 package servants;
 
-import io.cucumber.java.en.And;
-import io.cucumber.java.en.Given;
-import io.cucumber.java.en.Then;
-import io.cucumber.java.en.When;
+import io.cucumber.java.en.*;
+import org.junit.jupiter.api.Assertions;
+
+import static org.junit.jupiter.api.Assertions.fail;
+
 /**
  * @author Björn Wilting s184214
  */
 public class CustomerActionSteps {
 
     CustomerServant customer;
-
+    Exception exception;
 
     @And("the payment succeeds")
     public void thePaymentSucceeds() {
@@ -31,7 +32,11 @@ public class CustomerActionSteps {
     @Given("a customer with {int} token\\(s)")
     public void aCustomerWithTokens(int arg0) {
         customer = new CustomerServant("TestID");
-        customer.requestTokens(arg0);
+        try {
+            customer.requestTokens(arg0);
+        } catch (Exception e) {
+            fail();
+        }
     }
 
     @Then("the token is consumed")

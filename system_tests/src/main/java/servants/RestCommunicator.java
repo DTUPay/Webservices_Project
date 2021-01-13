@@ -4,8 +4,11 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.InputStream;
+import java.util.List;
 
 /**
  * @author Björn Wilting s184214
@@ -19,9 +22,12 @@ public class RestCommunicator {
         this.target = client.target("http://localhost:"+port+"/");
     }
 
-    public <T> String post(T item, String location) {
+    public <T> Object post(T item, String location) throws Exception {
         Response response = target.path(location).request().post(Entity.entity(item, MediaType.APPLICATION_JSON));
-        return response.getHeaderString("location");
+        if(response.getStatus() == 201)
+            return response.readEntity(Object.class);
+        else throw new Exception(response.getStatus() + " Error!");
+
     }
 
     public enum Service {
