@@ -18,6 +18,7 @@
         <option value="$PROJECT_DIR$/merchant_service/pom.xml" />
         <option value="$PROJECT_DIR$/management_service/pom.xml" />
         <option value="$PROJECT_DIR$/customer_service/pom.xml" />
+        <option value="$PROJECT_DIR$/token_service/pom.xml" />
       </list>
     </option>
   </component>
