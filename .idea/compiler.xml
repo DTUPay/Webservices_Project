@@ -9,9 +9,8 @@
         <module name="customer_service" />
         <module name="system_tests" />
         <module name="management_service" />
-        <module name="merchant_service" />
         <module name="payment_service" />
-        <module name="token_service" />
+        <module name="merchant_service" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
