@@ -2,7 +2,9 @@ package servants;
 
 import java.util.Date;
 
-//Björn Wilting s184214
+/**
+ * @author Björn Wilting s184214
+ */
 public class Token {
     private String tokenID;
     private Date expiryDate;

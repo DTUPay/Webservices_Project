@@ -23,10 +23,11 @@ public class CustomerServant {
     //Consider return type boolean?
     public void requestTokens(Integer requestedTokens) {
         RestCommunicator communicator = new RestCommunicator(Service.CUSTOMER.port);
-        communicator.post(requestedTokens,/*Insert location*/);
+        String path = Service.CUSTOMER.port + "/Tokens";
+        communicator.post(requestedTokens,path);
     }
 
-    //Consider returntype boolean?
+    //Consider return type boolean?
     public void requestRefund(String paymentID) {
 
     }

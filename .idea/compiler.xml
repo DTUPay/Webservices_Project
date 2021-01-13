@@ -10,5 +10,9 @@
         <module name="system_tests" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="paymentService" target="11" />
+      <module name="system_tests" target="11" />
+    </bytecodeTargetLevel>
   </component>
 </project>

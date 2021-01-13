@@ -25,13 +25,15 @@ public class RestCommunicator {
     }
 
     public enum Service {
-        CUSTOMER ("8080"),
-        MANAGEMENT ("8081"),
-        MERCHANT ("8082");
+        CUSTOMER ("8080", "customer_service"),
+        MANAGEMENT ("8081", "management_service"),
+        MERCHANT ("8082", "merchant_service");
 
         protected final String port;
-        Service(String port) {
+        protected final String location;
+        Service(String port, String location) {
             this.port = port;
+            this.location = location;
         }
     }
 }
