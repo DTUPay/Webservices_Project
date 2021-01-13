@@ -20,5 +20,5 @@ ci_cleanup:
 	BUILD="build-${BUILD_NUMBER}" docker-compose --project-name continous-integration -f docker-compose.ci.yaml down --rmi all
 	
 # Deploying stable build to server
-run_deployment:
+production_deployment:
 	bash scripts/production_deploy.sh
