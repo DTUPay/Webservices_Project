@@ -1,3 +1,5 @@
+# @author: Rubatharisan Thirumathyam & Mikkel Rosenfeldt Anderson & Benjamin Eriksen
+
 # Building all microservices and test them individually 
 build_test:
 	bash scripts/build_and_test_all.sh
