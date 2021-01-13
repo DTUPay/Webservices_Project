@@ -2,7 +2,7 @@
 set -e
 
 # Check if BUILD_NUMBER is set, if not lets assume its local
-if [ -z ${BUILD_NUMBER+x} ]; then export BUILD="build-local"; else echo "BUILD is set to '$BUILD'"; fi
+if [ -z ${BUILD_NUMBER+x} ]; then export BUILD="build-local"; else export BUILD="build-${BUILD_NUMBER}"; fi
 
 echo "Starting CI environment"
 docker-compose --project-name continous-integration -f docker-compose.ci.yaml up -d
