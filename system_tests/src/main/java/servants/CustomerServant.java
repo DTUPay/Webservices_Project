@@ -24,7 +24,8 @@ public class CustomerServant {
     public void requestTokens(Integer requestedTokens) {
         RestCommunicator communicator = new RestCommunicator(Service.CUSTOMER.port);
         String path = Service.CUSTOMER.port + "/Tokens";
-        communicator.post(requestedTokens,path);
+        String url = communicator.post(requestedTokens,path);
+
     }
 
     //Consider return type boolean?
