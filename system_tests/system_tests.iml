@@ -23,7 +23,6 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="Maven: com.rabbitmq:amqp-client:5.9.0" level="project" />
-    <orderEntry type="library" name="Maven: com.rabbitmq:amqp-client:5.9.0" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.30" level="project" />
     <orderEntry type="library" name="Maven: io.cucumber:cucumber-java:6.9.1" level="project" />
     <orderEntry type="library" name="Maven: io.cucumber:cucumber-core:6.9.1" level="project" />

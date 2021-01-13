@@ -3,12 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/Webservices_Project.iml" filepath="$PROJECT_DIR$/.idea/Webservices_Project.iml" />
-      <module fileurl="file://$PROJECT_DIR$/customer_service/customer_service.iml" filepath="$PROJECT_DIR$/customer_service/customer_service.iml" />
-      <module fileurl="file://$PROJECT_DIR$/management_service/management_service.iml" filepath="$PROJECT_DIR$/management_service/management_service.iml" />
-      <module fileurl="file://$PROJECT_DIR$/merchant_service/merchant_service.iml" filepath="$PROJECT_DIR$/merchant_service/merchant_service.iml" />
       <module fileurl="file://$PROJECT_DIR$/payment_service/payment_service.iml" filepath="$PROJECT_DIR$/payment_service/payment_service.iml" />
       <module fileurl="file://$PROJECT_DIR$/system_tests/system_tests.iml" filepath="$PROJECT_DIR$/system_tests/system_tests.iml" />
-      <module fileurl="file://$PROJECT_DIR$/token_service/token_service.iml" filepath="$PROJECT_DIR$/token_service/token_service.iml" />
     </modules>
   </component>
 </project>

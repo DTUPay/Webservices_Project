@@ -6,12 +6,8 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="customer_service" />
         <module name="system_tests" />
-        <module name="management_service" />
-        <module name="merchant_service" />
         <module name="payment_service" />
-        <module name="token_service" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
