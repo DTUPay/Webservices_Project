@@ -1,22 +1,26 @@
+/*
+@author Oliver O. Nielsen & Bjørn Wilting
+ */
+
 package models;
 
 public class PaymentRequest {
-    private int MerchantId;
-    private int Amount;
+    private int merchantId;
+    private int amount;
 
     public int getMerchantId() {
-        return MerchantId;
+        return merchantId;
     }
 
     public void setMerchantId(int merchantId) {
-        MerchantId = merchantId;
+        this.merchantId = merchantId;
     }
 
     public int getAmount() {
-        return Amount;
+        return amount;
     }
 
     public void setAmount(int amount) {
-        Amount = amount;
+        this.amount = amount;
     }
 }

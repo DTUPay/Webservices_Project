@@ -1,4 +1,8 @@
-package cucumber_glue;
+/*
+@author Oliver O. Nielsen & Bjørn Wilting
+ */
+
+package dtupay;
 
 import dtupay.CustomerRepository;
 import io.cucumber.java.Before;
@@ -9,7 +13,7 @@ import io.quarkus.test.junit.QuarkusTest;
 import models.Customer;
 import org.junit.Assert;
 
-@QuarkusTest
+
 public class resources {
     private CustomerRepository repository;
     private Customer customer;

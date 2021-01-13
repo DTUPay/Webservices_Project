@@ -1,8 +1,12 @@
+/*
+@author Oliver O. Nielsen & Bjørn Wilting
+ */
+
 package models;
 
 public class Merchant {
-    private int MerchantID;
-    private String Name;
+    private int merchantID;
+    private String name;
     private String CVR;
 
     public Merchant(){
@@ -10,19 +14,19 @@ public class Merchant {
     }
 
     public int getMerchantID() {
-        return MerchantID;
+        return merchantID;
     }
 
     public void setMerchantID(int merchantID) {
-        MerchantID = merchantID;
+        this.merchantID = merchantID;
     }
 
     public String getName() {
-        return Name;
+        return name;
     }
 
     public void setName(String name) {
-        Name = name;
+        this.name = name;
     }
 
     public String getCVR() {

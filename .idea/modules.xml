@@ -8,6 +8,7 @@
       <module fileurl="file://$PROJECT_DIR$/merchant_service/merchant_service.iml" filepath="$PROJECT_DIR$/merchant_service/merchant_service.iml" />
       <module fileurl="file://$PROJECT_DIR$/payment_service/payment_service.iml" filepath="$PROJECT_DIR$/payment_service/payment_service.iml" />
       <module fileurl="file://$PROJECT_DIR$/system_tests/system_tests.iml" filepath="$PROJECT_DIR$/system_tests/system_tests.iml" />
+      <module fileurl="file://$PROJECT_DIR$/token_service/token_service.iml" filepath="$PROJECT_DIR$/token_service/token_service.iml" />
     </modules>
   </component>
 </project>

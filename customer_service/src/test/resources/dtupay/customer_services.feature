@@ -1,4 +1,4 @@
-Feature:
+Feature: Edit customers
   Scenario: Add a new customer
     Given a new customer with name "Jens" "Jensen" and CPR "110996xxxx"
     When the new customer is added to the repository

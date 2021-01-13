@@ -3,6 +3,7 @@ package dtupay;
 import exceptions.TokenException;
 import models.Token;
 
+import javax.json.JsonObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
@@ -43,6 +44,11 @@ public class TokenRepository implements ITokenRepository {
             return this.tokens.get(tokenID).getCustomerID() == customerID && !this.tokens.get(tokenID).isUsed();
         }
         throw new TokenException("Token doesn't exist");
+    }
+
+    @Override
+    public void processMessage(JsonObject jsonObject) {
+
     }
 
 }

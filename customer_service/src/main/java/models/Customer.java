@@ -1,3 +1,7 @@
+/*
+@author Oliver O. Nielsen & Bjørn Wilting
+ */
+
 package models;
 
 import java.util.ArrayList;

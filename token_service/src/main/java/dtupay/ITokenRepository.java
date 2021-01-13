@@ -2,6 +2,7 @@ package dtupay;
 
 import exceptions.TokenException;
 
+import javax.json.JsonObject;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -12,5 +13,7 @@ public interface ITokenRepository {
     void useToken(UUID tokenID) throws TokenException;
 
     boolean isTokenValid(UUID tokenID, int customerID) throws TokenException;
+
+    void processMessage(JsonObject jsonObject);
 
 }

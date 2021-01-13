@@ -1,3 +1,7 @@
+/*
+@author Oliver O. Nielsen
+ */
+
 package dtupay;
 
 import models.Merchant;
