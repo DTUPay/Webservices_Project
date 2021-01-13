@@ -16,4 +16,9 @@ public class CustomerRepository implements ICustomerRepository {
     public void deleteCustomer(String cpr) throws Exception {
         customers.remove(cpr);
     }
+
+    @Override
+    public Customer getCustomer(String cpr) {
+        return customers.get(cpr);
+    }
 }
