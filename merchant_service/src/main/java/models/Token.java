@@ -1,18 +1,18 @@
 package models;
-
 import java.util.Date;
+import java.util.UUID;
 
 public class Token {
-    private int TokenID;
+    private UUID TokenID;
     private Date ExpiryDate;
     private int CustomerID;
 
-    public int getTokenID() {
+    public UUID getTokenID() {
         return TokenID;
     }
 
     public void setTokenID(int tokenID) {
-        TokenID = tokenID;
+        TokenID = UUID.randomUUID();
     }
 
     public Date getExpiryDate() {
