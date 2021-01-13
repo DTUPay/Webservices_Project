@@ -1,3 +1,5 @@
+// @author: Benjamin Eriksen & Rubatharisan Thirumathyam
+
 package dtupay;
 
 import exceptions.TokenException;
