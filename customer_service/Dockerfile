@@ -1,3 +1,4 @@
+# @author: Rubatharisan Thirumathyam & Mikkel Rosenfeldt Anderson
 FROM adoptopenjdk:11-jre-hotspot
 ARG SERVICE_NAME_ARG=application_service
 ENV SERVICE_NAME=$SERVICE_NAME_ARG
