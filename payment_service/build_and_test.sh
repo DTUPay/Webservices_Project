@@ -1,6 +1,6 @@
-# Author: Rubatharisan Thirumathyam
 #!/bin/bash
 set -e
+# @author: Rubatharisan Thirumathyam & Mikkel Rosenfeldt Anderson
 
 # Check if BUILD environment is set
 if [ -z ${BUILD+x} ]; then export BUILD="build-local"; else echo "BUILD is set to '$BUILD'"; fi
