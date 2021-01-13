@@ -64,6 +64,10 @@
     <orderEntry type="library" name="Maven: io.quarkus:quarkus-resteasy-server-common:1.10.5.Final" level="project" />
     <orderEntry type="library" name="Maven: io.quarkus:quarkus-resteasy-common:1.10.5.Final" level="project" />
     <orderEntry type="library" name="Maven: org.jboss.resteasy:resteasy-core:4.5.8.Final" level="project" />
+<<<<<<< HEAD
+=======
+    <orderEntry type="library" name="Maven: org.jboss.spec.javax.ws.rs:jboss-jaxrs-api_2.1_spec:2.0.1.Final" level="project" />
+>>>>>>> 54f3e1ea7e0094e9b362a3bfeddaa6c3c988b772
     <orderEntry type="library" name="Maven: org.jboss.resteasy:resteasy-core-spi:4.5.8.Final" level="project" />
     <orderEntry type="library" name="Maven: com.ibm.async:asyncutil:0.1.0" level="project" />
     <orderEntry type="library" name="Maven: org.eclipse.microprofile.config:microprofile-config-api:1.4" level="project" />

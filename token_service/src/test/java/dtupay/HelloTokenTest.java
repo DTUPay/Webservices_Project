@@ -15,7 +15,7 @@ public class HelloTokenTest {
           .when().get("/token_service")
           .then()
              .statusCode(200)
-             .body(is("Welcome to Token Service!"));
+             .body(is("Welcome to Token Service! Made with Love!"));
     }
 
 }
