@@ -1,3 +1,4 @@
+# @author: Benjamin Eriksen & Rubatharisan Thirumathyam
 Feature: Add Tokens
 
   Scenario: A new token is created
