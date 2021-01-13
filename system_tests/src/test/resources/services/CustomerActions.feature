@@ -24,7 +24,7 @@ Feature: Actions that can be performed by a customer
   Scenario: A customer with a few tokens requests new tokens
     Given a customer with 2 tokens
     When the customer requests new tokens
-    Then the customer is given 3 tokens
+    Then the token request is denied
 
   Scenario: A customer with all tokens requests new tokens
     Given a customer with 5 tokens
