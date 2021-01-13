@@ -1,11 +1,19 @@
 package dtupay;
 
+import models.Merchant;
+
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
 
 @Path("/management_service")
 public class HelloManagement {
+
+    @GET
+    @Produces(MediaType.TEXT_PLAIN)
+    public String hello() {
+            return "Welcome to Management Service!";
+        }
 
     @POST
     @Path("/Customer")

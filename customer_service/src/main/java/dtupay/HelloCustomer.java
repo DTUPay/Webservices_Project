@@ -8,10 +8,19 @@ import javax.ws.rs.core.MediaType;
 @Path("/customer_service")
 public class HelloCustomer {
 
+    // DEBUG METHOD
+    @GET
+    @Produces(MediaType.TEXT_PLAIN)
+    public String hello() {
+        return "Welcome to Customer Service!";
+    }
+
+    // ACTUAL METHODS
     @POST
     @Path("/Payment/{id}/")
     @Produces(MediaType.TEXT_PLAIN)
     public String acceptPayment(@PathParam("id") int paymentId) {
+
         return "Welcome to Customer Service!";
     }
 

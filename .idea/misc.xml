@@ -5,7 +5,9 @@
     <file type="Quarkus" url="file://$PROJECT_DIR$/management_service" />
     <file type="Quarkus" url="file://$PROJECT_DIR$/merchant_service" />
     <file type="Quarkus" url="file://$PROJECT_DIR$/payment" />
+    <file type="Quarkus" url="file://$PROJECT_DIR$/payment_service" />
     <file type="Quarkus" url="file://$PROJECT_DIR$/system_tests" />
+    <file type="Quarkus" url="file://$PROJECT_DIR$/token_service" />
   </component>
   <component name="MavenProjectsManager">
     <option name="originalFiles">
