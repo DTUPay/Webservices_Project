@@ -21,4 +21,4 @@ ci_cleanup:
 	
 # Deploying stable build to server
 run_deployment:
-	echo "implement me"
+	bash scripts/production_deploy.sh
