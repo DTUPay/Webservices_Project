@@ -1,3 +1,5 @@
+package RabbitMQ_test;
+
 import com.rabbitmq.client.*;
 
 public class RPCServer {
