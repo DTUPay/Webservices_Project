@@ -2,7 +2,7 @@
 set -e
 
 # Check if BUILD_NUMBER is set, if not lets assume its local
-if [ -z ${BUILD_NUMBER+x} ]; then export BUILD_NUMBER="local"; else echo "BUILD_NUMBER is set to '$BUILD_NUMBER'"; fi
+if [ -z ${BUILD_NUMBER+x} ]; then export BUILD="build-local"; else export BUILD="build-$BUILD_NUMBER"; fi
 
 # Find all build_and_test.sh files in subdirectories
 build_and_tests=$(find . -mindepth 2 -maxdepth 2 -name build_and_test.sh)
