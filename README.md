@@ -4,7 +4,7 @@
 ## How to run
 Build and test all services
 ```
-bash build_and_test.sh
+bash scripts/build_and_test_all.sh
 ```
 
 Build and test a specific service
@@ -14,7 +14,7 @@ bash <service_name>/build_and_test.sh
 
 Start all services and run integration test
 ```
-bash system_tests/run_integration.sh
+bash scripts/run_integration.sh
 ```
 
 
