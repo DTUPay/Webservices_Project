@@ -1,8 +1,10 @@
 package dtupay;
 
+import models.Customer;
+
 public interface ICustomerRepository {
 
-    void registerCustomer(dtupay.Customer customer) throws Exception;
+    void registerCustomer(Customer customer) throws Exception;
 
     void deleteCustomer(String cpr) throws Exception;
 
