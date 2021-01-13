@@ -12,6 +12,7 @@ public class HelloCustomer {
     @Path("/Payment/{id}/")
     @Produces(MediaType.TEXT_PLAIN)
     public String acceptPayment(@PathParam("id") int paymentId) {
+
         return "Welcome to Customer Service!";
     }
 

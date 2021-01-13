@@ -2,10 +2,9 @@
 <project version="4">
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/customer_service/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/customer_service/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/management_service/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/management_service/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/merchant_service/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/merchant_service/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/payment_service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/token_service/src/main/java" charset="UTF-8" />
   </component>
 </project>
