@@ -9,7 +9,7 @@ if [ -z ${BUILD+x} ]; then export BUILD="build-local"; else echo "BUILD is set t
 SERVICE_NAME=$(basename $(pwd))
 
 # Compile and build the application
-mvn -X package
+mvn package
 
 # Build Docker image
 docker build --build-arg SERVICE_NAME_ARG=$SERVICE_NAME -t $SERVICE_NAME:${BUILD} .
