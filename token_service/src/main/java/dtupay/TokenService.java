@@ -5,6 +5,7 @@
 package dtupay;
 
 
+import com.google.gson.Gson;
 import exceptions.TokenException;
 import models.Token;
 import io.quarkus.runtime.Quarkus;
@@ -77,23 +78,31 @@ public class TokenService {
 
 
     public void addTokens(JsonObject jsonObject){
-        JsonObject j = (JsonObject) jsonObject.get("payload");
+        JsonObject payload = (JsonObject) jsonObject.get("payload");
+        JsonObject callback = (JsonObject) jsonObject.get("callback");
+        String callbackService = callback.get("service").toString().replaceAll("\"", "");
+        String callbackEvent = callback.get("event").toString().replaceAll("\"", "");
 
         //Call actual function with data from
         List<UUID> tokenIds = addTokens(
-                j.get("customerId").toString(),
-                Integer.parseInt(j.get("amount").toString())
+                payload.get("customerId").toString().replaceAll("\"", ""),
+                Integer.parseInt(payload.get("amount").toString().replaceAll("\"", ""))
         );
 
+        //Create payload JSON
+        JsonObject responsePayload = Json.createObjectBuilder()
+                .add("tokenIds", new Gson().toJson(tokenIds)).build();
 
         String uuid = jsonObject.get("requestId").toString();
         JsonObject response = Json.createObjectBuilder()
-                .add("hello", "hello")
-                .add("uuid", uuid)
-                //.add("requestId", uuid.toString())
+                .add("requestId", uuid)
+                .add("messageId", UUID.randomUUID().toString())
+                .add("event", callbackEvent)
+                .add("payload", responsePayload)
                 .build();
+
         System.out.println("Response created");
-        rabbitMq.sendMessage("customer_service", response, null);
+        rabbitMq.sendMessage(callbackService, response, null);
 
     }
         //rabbitMqTest.sendMessage("customer_service", response);

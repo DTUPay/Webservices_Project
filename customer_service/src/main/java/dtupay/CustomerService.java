@@ -5,7 +5,6 @@
 package dtupay;
 
 import exceptions.CustomerException;
-import io.quarkus.runtime.Quarkus;
 import io.quarkus.runtime.annotations.QuarkusMain;
 import models.Customer;
 
@@ -17,46 +16,67 @@ import java.util.UUID;
 
 @QuarkusMain
 public class CustomerService {
-    RabbitMq rabbitMq;
     public HashMap<UUID, AsyncResponse> pendingRequests = new HashMap<>();
+    RabbitMq rabbitMq;
     ICustomerRepository customerRepository = new CustomerRepository();
 
-    public CustomerService(){
+    public CustomerService() {
         try {
             String serviceName = System.getenv("SERVICE_NAME"); //customer_service
             System.out.println(serviceName + " started");
             this.rabbitMq = new RabbitMq(serviceName, this);
-        } catch (Exception e) { e.printStackTrace(); }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    public static void main(String[] args) {
-        CustomerService service = new CustomerService();
-        Quarkus.run();
-    }
-
-    public UUID addPendingRequest(AsyncResponse asyncResponse){
+    public UUID addPendingRequest(AsyncResponse asyncResponse) {
         UUID uuid = UUID.randomUUID();
         pendingRequests.put(uuid, asyncResponse);
         return uuid;
     }
 
-    public void respondPendingRequest(UUID uuid){
-        pendingRequests.get(uuid).resume(Response.status(202).build());
+    public void respondPendingRequest(UUID uuid, String data) {
+        //TODO add data here
+        System.out.println("Reply request with uuid: " + uuid.toString());
+        System.out.println("Pending requests: " + pendingRequests.size());
+        pendingRequests.get(uuid).resume(
+                Response.status(200)
+                        .entity(data)
+                        .build()
+        );
         pendingRequests.remove(uuid);
     }
 
-    public void demo(JsonObject jsonObject){
+    public void demo(JsonObject jsonObject) {
         // UUID needs to be trimmed after convertion from JSON
         String uuidString = jsonObject.get("uuid").toString().replaceAll("\"", "").replaceAll("\\\\", "");
         UUID uuid = UUID.fromString(uuidString);
-        respondPendingRequest(uuid);
+        //respondPendingRequest(uuid, null);
+    }
+
+    public void requestTokens(JsonObject jsonObject) {
+        JsonObject payload = (JsonObject) jsonObject.get("payload");
+
+        //Get data from response
+        String tokenIds = payload.get("tokenIds").toString().replaceAll("\"", "");
+
+        System.out.println("Token ids gotten: " + tokenIds);
+        // UUID needs to be trimmed after convertion from JSON
+        String uuidString = jsonObject.get("requestId").toString()
+                .replaceAll("\"", "")
+                .replaceAll("\\\\", "");
+
+        UUID uuid = UUID.fromString(uuidString);
+        respondPendingRequest(uuid, tokenIds);
+
     }
 
     public void registerCustomer(Customer customer) throws CustomerException {
-            if (!customerRepository.hasCustomer(customer.getCPRNumber())) {
+        if (!customerRepository.hasCustomer(customer.getCPRNumber())) {
             customerRepository.addCustomer(customer);
-            }
-        throw new CustomerException("Customer with CPR: "+ customer.getCPRNumber() + " already exists");
+        }
+        throw new CustomerException("Customer with CPR: " + customer.getCPRNumber() + " already exists");
     }
 
     public void removeCustomer(String cpr) throws CustomerException {
@@ -64,14 +84,14 @@ public class CustomerService {
         if (customerRepository.hasCustomer(cpr)) {
             customerRepository.removeCustomer(cpr);
         }
-        throw new CustomerException("Customer with CPR: "+ cpr + " doesn't exist");
+        throw new CustomerException("Customer with CPR: " + cpr + " doesn't exist");
     }
 
     public Customer getCustomer(String cpr) throws CustomerException {
         if (customerRepository.hasCustomer(cpr)) {
             return customerRepository.getCustomer(cpr);
         }
-        throw new CustomerException("Customer with CPR: "+ cpr + " doesn't exist");
+        throw new CustomerException("Customer with CPR: " + cpr + " doesn't exist");
     }
 
     public boolean hasCustomer(String cprNumber) {
