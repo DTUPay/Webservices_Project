@@ -1,3 +1,5 @@
+#Author: Björn Wilting s184214
+  # & Laura Sønderskov Hansen s...
 Feature: Account Management
 
   Scenario: Adding a new Customer
