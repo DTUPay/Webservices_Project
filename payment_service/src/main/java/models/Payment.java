@@ -5,11 +5,11 @@ import java.util.Date;
 import java.util.UUID;
 
 public class Payment {
-    private UUID paymentID;
-    private int merchantID;
+    private final UUID paymentID;
+    private final int merchantID;
     private int tokenID;
-    private Date date;
-    private int amount;
+    private final Date date;
+    private final int amount;
     private PaymentStatus paymentStatus;
 
     /**
@@ -23,7 +23,6 @@ public class Payment {
         this.paymentStatus = PaymentStatus.PENDING;
         this.date = Calendar.getInstance().getTime();
         this.paymentID = UUID.randomUUID();
-
     }
 
     public UUID getPaymentID() {

@@ -10,6 +10,9 @@ import models.Token;
 import javax.json.JsonObject;
 import java.util.List;
 import java.util.UUID;
+/**
+ * @author Benjamin & ...
+ */
 
 @QuarkusMain
 public class PaymentService {
