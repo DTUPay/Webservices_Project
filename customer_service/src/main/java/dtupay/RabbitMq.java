@@ -65,6 +65,7 @@ public class RabbitMq implements IRabbitMq {
 
         //Define callback logic
         deliverCallback = (consumerTag, delivery) -> {
+            System.out.println("Pending requests during receive: " + service.pendingRequests.size());
             String message = new String(delivery.getBody(), "UTF-8");
             this.parseMessage(message);
         };
@@ -99,16 +100,27 @@ public class RabbitMq implements IRabbitMq {
         }catch (Exception e){
             System.out.println(e);
         }
+
+        System.out.println("Pending requests during send: " + service.pendingRequests.size());
     }
 
     @Override
     public void processMessage(JsonObject jsonObject){
+        System.out.println("Customer_service processing message: " + jsonObject);
         String event = jsonObject.get("event").toString().replaceAll("\"", "");
 
         switch (event){
+            //Outgoing events
             case "demo":
                 //Call service logic here
                 service.demo(jsonObject);
+                break;
+
+            //Callback events
+            case "requestTokens":
+                System.out.println("requestTokens reply received. Pending requests: "
+                        + service.pendingRequests.size());
+                service.requestTokens(jsonObject);
                 break;
         }
     }

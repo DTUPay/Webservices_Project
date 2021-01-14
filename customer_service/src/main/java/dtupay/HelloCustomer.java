@@ -12,13 +12,14 @@ import javax.ws.rs.container.AsyncResponse;
 import javax.ws.rs.container.Suspended;
 import javax.ws.rs.core.MediaType;
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeoutException;
 
 
 @Path("/customer_service")
 public class HelloCustomer {
-    CustomerService service = new CustomerService();
+    CustomerService service = Main.service;
 
 
     public HelloCustomer() throws IOException, TimeoutException {
@@ -69,7 +70,18 @@ public class HelloCustomer {
     @POST
     @Path("/Tokens")
     @Produces(MediaType.APPLICATION_JSON)
-    public String requestTokens(int tokenAmount) {
-        return "Welcome to Customer Service!";
+    public void requestTokens(int tokenAmount, @Suspended AsyncResponse response) {
+        UUID uuid = service.addPendingRequest(response);
+        JsonObject payload = Json.createObjectBuilder()
+                .add("customerId", 1234123)
+                .add("amount", 3)
+                .build();
+        JsonObject message = Json.createObjectBuilder()
+                .add("event", "addTokens")
+                .add("payload", payload)
+                .add("requestId", uuid.toString())
+                .build();
+
+        service.rabbitMq.sendMessage("token_service", message, "requestTokens");
     }
 }
