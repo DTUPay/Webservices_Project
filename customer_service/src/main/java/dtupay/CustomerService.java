@@ -1,11 +1,13 @@
 /*
-@author Oliver O. Nielsen & Rubatharisan Thirumathyam
+@author Oliver O. Nielsen & Rubatharisan Thirumathyam & Benjamin Eriksen
  */
 
 package dtupay;
 
+import exceptions.CustomerException;
 import io.quarkus.runtime.Quarkus;
 import io.quarkus.runtime.annotations.QuarkusMain;
+import models.Customer;
 
 import javax.json.JsonObject;
 import javax.ws.rs.container.AsyncResponse;
@@ -17,7 +19,7 @@ import java.util.UUID;
 public class CustomerService {
     RabbitMq rabbitMq;
     public HashMap<UUID, AsyncResponse> pendingRequests = new HashMap<>();
-
+    ICustomerRepository customerRepository = new CustomerRepository();
 
     public CustomerService(){
         try {
@@ -50,5 +52,17 @@ public class CustomerService {
         respondPendingRequest(uuid);
     }
 
+    public void registerCustomer(Customer customer) throws CustomerException {
+        customerRepository.addCustomer(customer);
+    }
+
+
+    public void removeCustomer(String cpr) throws CustomerException {
+        customerRepository.removeCustomer(cpr);
+    }
+
+    public Customer getCustomer(String cpr) throws CustomerException {
+        return customerRepository.getCustomer(cpr);
+    }
 
 }

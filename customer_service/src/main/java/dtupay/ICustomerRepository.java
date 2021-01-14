@@ -1,5 +1,5 @@
 /*
-@author Oliver O. Nielsen & Bjørn Wilting
+@author Oliver O. Nielsen & Bjørn Wilting & Benjamin Eriksen
  */
 
 package dtupay;
@@ -9,10 +9,11 @@ import models.Customer;
 
 public interface ICustomerRepository {
 
-    void registerCustomer(Customer customer) throws CustomerException;
-
-    void deleteCustomer(String cpr) throws CustomerException;
+    void addCustomer(Customer customer) throws CustomerException;
 
     Customer getCustomer(String cpr) throws CustomerException;
 
+    void removeCustomer(String cpr) throws CustomerException;
+
+    boolean hasCustomer(String cpr);
 }

@@ -1,3 +1,7 @@
+/*
+@author Benjamin Eriksen
+ */
+
 package exceptions;
 
 public class CustomerException extends Exception {

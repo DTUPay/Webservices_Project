@@ -1,5 +1,5 @@
 /*
-@author Benjamin Eriksen
+@author Benjamin Eriksen & Rubatharisan Thirumathyam
  */
 
 package dtupay;

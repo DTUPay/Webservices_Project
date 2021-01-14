@@ -1,3 +1,7 @@
+/*
+@author Benjamin Eriksen
+ */
+
 package dtupay;
 
 import exceptions.CustomerException;
@@ -9,21 +13,32 @@ public class CustomerRepository implements ICustomerRepository {
     HashMap<String, Customer> customers = new HashMap<>();
 
     @Override
-    public void registerCustomer(Customer customer) throws CustomerException {
-        // TODO: Handle customer already exists
+    public void addCustomer(Customer customer) throws CustomerException {
+        if (customers.containsKey(customer.getCPRNumber())) {
+            throw new CustomerException("Customer with CPR: "+ customer.getCPRNumber() + " already exists");
+        }
         customers.put(customer.getCPRNumber(), customer);
     }
 
     @Override
-    public void deleteCustomer(String cpr) throws CustomerException {
-        // TODO: Handle customer not found
+    public Customer getCustomer(String cpr) throws CustomerException {
+        if (customers.containsKey(cpr)) {
+            throw new CustomerException("Customer with CPR: "+ cpr + " doesn't exist");
+        }
+        return customers.get(cpr);
+    }
+
+    @Override
+    public void removeCustomer(String cpr) throws CustomerException {
+        if (customers.containsKey(cpr)) {
+            throw new CustomerException("Customer with CPR: "+ cpr + " doesn't exist");
+        }
         customers.remove(cpr);
     }
 
     @Override
-    public Customer getCustomer(String cpr) throws CustomerException {
-        // TODO: Handle customer not found
-        return customers.get(cpr);
+    public boolean hasCustomer(String cpr) {
+        return customers.containsKey(cpr);
     }
 
 }

@@ -16,39 +16,38 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 
 public class CustomerSteps {
-    private CustomerRepository repository;
+    private CustomerService service;
     private Customer customer;
     private CustomerException exception;
 
-    //TODO: Should act through the a service - not directly on the repository, as that would make changes in database system require changes to business logic.
     @Before
     public void initialize_repository(){
-        repository = new CustomerRepository();
+        service = new CustomerService();
     }
 
     @Given("a new customer with name {string} {string} and CPR {string}")
-    public void a_new_customer_with_name_and_cpr(String string, String string2, String string3) {
-        customer = new Customer(string, string2, string3);
+    public void a_new_customer_with_name_and_cpr(String firstname, String lastname, String cpr) {
+        customer = new Customer(firstname, lastname, cpr);
     }
 
     @When("the new customer is added to the repository")
     public void the_new_customer_is_added_to_the_repository() {
         try {
-            repository.registerCustomer(customer);
+            service.registerCustomer(customer);
         } catch (CustomerException e) {
             exception = e;
         }
     }
 
     @Then("a customer with name {string} {string} and CPR {string} exists in the repository")
-    public void a_customer_with_name_and_cpr_exists_in_the_repository(String string, String string2, String string3) throws CustomerException {
-        assertEquals(repository.getCustomer(string3), customer);
+    public void a_customer_with_name_and_cpr_exists_in_the_repository(String cpr, String string2, String string3) throws CustomerException {
+        assertEquals(service.getCustomer(cpr), customer);
     }
 
     @When("a customer with CPR {string} is removed from the repository")
-    public void a_customer_with_cpr_is_removed_from_the_repository(String string) {
+    public void a_customer_with_cpr_is_removed_from_the_repository(String cpr) {
         try {
-            repository.deleteCustomer(string);
+            service.removeCustomer(cpr);
         } catch (CustomerException e) {
             exception = e;
         }
@@ -56,6 +55,6 @@ public class CustomerSteps {
 
     @Then("a customer with CPR {string} does not exist in the repository")
     public void a_customer_with_cpr_does_not_exist_in_the_repository(String string) throws CustomerException {
-        assertNull(repository.getCustomer(string));
+        assertNull(service.getCustomer(string));
     }
 }
