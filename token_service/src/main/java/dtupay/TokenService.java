@@ -6,6 +6,7 @@ package dtupay;
 
 
 import exceptions.TokenException;
+import models.Token;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -25,11 +26,57 @@ public class TokenService {
         this.tokenRepository = new TokenRepository();
     }
 
-    public ArrayList<UUID> addTokens(int customerID, int amount)  {
-        return this.tokenRepository.addTokens(customerID, amount);
+    /*
+        TokenService Functionality
+     */
+
+    public ArrayList<UUID> addTokens(int customerID, int amount) {
+        //TODO: Verify amount of tokens! -> Do in CustomerService
+        ArrayList<UUID> tokenIDs = new ArrayList<>();
+        for (int i = 0; i< amount; i++) {
+            Token token = new Token(customerID);
+            tokenRepository.addToken(token);
+            tokenIDs.add(token.getTokenID());
+        }
+        return tokenIDs;
     }
 
-    public void addTokens(JsonObject jsonObject){
+
+    public void useToken(UUID tokenID) throws TokenException {
+        if (tokenRepository.containsToken(tokenID)) {
+            if (!tokenRepository.getToken(tokenID).isUsed()){
+                tokenRepository.getToken(tokenID).setUsed(true);
+            } else {
+                throw new TokenException("Token has already been used");
+            }
+        }
+        throw new TokenException("Token doesn't exist");
+    }
+
+    public boolean isTokenValid(UUID tokenID, int customerID) throws TokenException {
+        if (this.tokenRepository.containsToken(tokenID)) {
+            return this.tokenRepository.getToken(tokenID).getCustomerID() == customerID && !this.tokenRepository.getToken(tokenID).isUsed();
+        }
+        throw new TokenException("Token doesn't exist");
+    }
+
+    /*
+        RabbitMQ call and callback
+     */
+
+    public void processMessage(JsonObject jsonObject) {
+        String action = jsonObject.get("action").toString()
+                .replaceAll("\"", "");
+        System.out.println("Action of message gotten by token_Service: " + action);
+        switch (action) {
+            case "addTokens":
+                System.out.println("Action equals getTokens");
+                addTokens(jsonObject);
+                break;
+        }
+    }
+
+    private void addTokens(JsonObject jsonObject){
         JsonObject j = (JsonObject) jsonObject.get("payload");
         System.out.println("Next json parse success");
         List<UUID> tokenIds = addTokens(
@@ -48,28 +95,9 @@ public class TokenService {
 
     }
 
-    public void useToken(UUID tokenID) throws TokenException {
-        this.tokenRepository.useToken(tokenID);
-    }
-
-    public boolean isTokenValid(UUID tokenID, int customerID) throws TokenException  {
-        return this.tokenRepository.isTokenValid(tokenID, customerID);
-    }
-
-    public void processMessage(JsonObject jsonObject){
-        String action = jsonObject.get("action").toString()
-                .replaceAll("\"", "");
-        System.out.println("Action of message gotten by token_Service: " + action);
-        switch (action){
-            case "addTokens":
-                System.out.println("Action equals getTokens");
-                addTokens(jsonObject);
-                break;
-        }
-    }
 
 
-    //Calls from RabbitMQ
+
 
 
 }
