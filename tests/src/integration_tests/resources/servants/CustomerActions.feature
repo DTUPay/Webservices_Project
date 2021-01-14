@@ -2,12 +2,13 @@
   # & Laura Sønderskov Hansen s184234
 Feature: Actions that can be performed by a customer
 
-  Scenario: Accept a payment with token
+  Scenario: Customer accepts a payment with token
     #Specify what a token is
-    Given a customer with 1 token(s)
-    And a pending payment with the payment id "somePaymentID" exists
-    #Specify id
-    When the customer accepts the payment with id "somePaymentID"
+    Given a merchant with id "someMerchant"
+    And a customer with 1 token(s)
+    When the merchant requests a payment with an amount of {int} DKK
+    Then the merchant is given the paymentId of the payment
+    When the customer accepts that payment
     Then the token is consumed
     And the payment succeeds
 

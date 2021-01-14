@@ -1,4 +1,4 @@
-package dtupay;
+package dtuPay;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
