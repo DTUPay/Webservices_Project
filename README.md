@@ -34,27 +34,15 @@ bash scripts/run_integration.sh
 ```
 message:
 {
-  "action": "addTokens",
+  "event": "addTokens",
+  "requestId": <UUID>,
   "payload": {
     "customerId": 1234,
     "amount": 5
-  },
-  "callback": {
-    "topic": "customer_service",
-    "action": "addTokensResponse"
   }
 }
 
-reply:
-{
-  "action": "addTokensResponse",
-  "payload": {
-    "tokens": [1,2,3,4,5]
-  }
-}
-
-this.sendMessage("token_service", message); # Actor: customer_service
-this.sendMessage("customer_service", reply) # Actor: token_service
+RabbitMQ.sendMessage("token_service", message); # Actor: customer_service
 ```
 
 ## Server Ports
