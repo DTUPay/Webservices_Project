@@ -1,4 +1,4 @@
-# Author: Rubatharisan Thirumathyam
+# Author: Rubatharisan Thirumathyam & Mikkel Rosenfeldt
 version: "3.7"
 services:
   management_service:

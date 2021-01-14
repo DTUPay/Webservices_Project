@@ -1,6 +1,6 @@
 package dtupay;
 
-import io.quarkus.test.junit.QuarkusTest;
+/*import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
@@ -18,4 +18,4 @@ public class HelloManagementTest {
              .body(is("Welcome to Management Service!"));
     }
 
-}
+}*/

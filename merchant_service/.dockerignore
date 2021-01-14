@@ -1,0 +1,7 @@
+# @author: Rubatharisan Thirumathyam
+.idea
+Dockerfile
+target/
+*.iml
+.dockerignore
+build_and_test.sh

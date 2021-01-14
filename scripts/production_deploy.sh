@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+# @author: Rubatharisan Thirumathyam & Mikkel Rosenfeldt Anderson
 
 # Find all build_and_test.sh files in subdirectories, making it possible to extract services
 build_and_tests=$(find . -mindepth 2 -maxdepth 2 -name build_and_test.sh)

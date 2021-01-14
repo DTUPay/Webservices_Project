@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+# @author: Rubatharisan Thirumathyam & Mikkel Rosenfeldt Anderson
 
 # Check if BUILD_NUMBER is set, if not lets assume its local
 if [ -z ${BUILD_NUMBER+x} ]; then export BUILD="build-local"; else export BUILD="build-${BUILD_NUMBER}"; fi

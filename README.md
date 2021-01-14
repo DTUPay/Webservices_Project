@@ -30,6 +30,21 @@ Start all services and run integration test
 bash scripts/run_integration.sh
 ```
 
+## Message Queue logic
+```
+message:
+{
+  "event": "addTokens",
+  "requestId": <UUID>,
+  "payload": {
+    "customerId": 1234,
+    "amount": 5
+  }
+}
+
+RabbitMQ.sendMessage("token_service", message); # Actor: customer_service
+```
+
 ## Server Ports
 ![Ports](docs/ports.png)
 

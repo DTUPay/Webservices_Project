@@ -1,3 +1,6 @@
+# Ignore .idea folder
+**/.idea
+
 # Compiled class file
 *.class
 
@@ -123,14 +126,14 @@ local.properties
 # When using Gradle or Maven with auto-import, you should exclude module files,
 # since they will be recreated, and may cause churn.  Uncomment if using
 # auto-import.
-# .idea/artifacts
-# .idea/compiler.xml
-# .idea/jarRepositories.xml
-# .idea/modules.xml
-# .idea/*.iml
-# .idea/modules
-# *.iml
-# *.ipr
+.idea/artifacts
+.idea/compiler.xml
+.idea/jarRepositories.xml
+.idea/modules.xml
+.idea/*.iml
+.idea/modules
+*.iml
+*.ipr
 
 # CMake
 cmake-build-*/
@@ -222,6 +225,7 @@ hs_err_pid*
 
 ### Maven ###
 target/
+.idea/libraries/
 pom.xml.tag
 pom.xml.releaseBackup
 pom.xml.versionsBackup
