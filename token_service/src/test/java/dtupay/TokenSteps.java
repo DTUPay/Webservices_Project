@@ -18,12 +18,12 @@ public class TokenSteps {
     TokenService tokenService = new TokenService();
     ArrayList<UUID> tokenIDs;
     UUID tokenID;
-    int customerID;
+    String customerID;
     boolean isValid;
     private String errorMsg;
 
-    @Given("a request for {int} tokens for a customer with id {int}")
-    public void aRequestForTokensForACustomerWithId(int amount, int id) {
+    @Given("a request for {int} tokens for a customer with id {string}")
+    public void aRequestForTokensForACustomerWithId(int amount, String id) {
         this.customerID = id;
         this.tokenIDs = this.tokenService.addTokens(id, amount);
     }
@@ -36,8 +36,8 @@ public class TokenSteps {
     }
 
 
-    @Given("a tokenID and a customerID {int}")
-    public void aTokenIDAndACustomerID(int customerID) {
+    @Given("a tokenID and a customerID {string}")
+    public void aTokenIDAndACustomerID(String customerID) {
         this.customerID = customerID;
         this.tokenID = this.tokenService.addTokens(customerID, 1).get(0);
 
@@ -79,8 +79,8 @@ public class TokenSteps {
 
     }
 
-    @Given("a fake tokenID and a customerID {int}")
-    public void aFakeTokenIDAndACustomerID(int id) {
+    @Given("a fake tokenID and a customerID {string}")
+    public void aFakeTokenIDAndACustomerID(String id) {
         this.tokenID = UUID.randomUUID();
     }
 

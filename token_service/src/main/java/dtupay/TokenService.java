@@ -30,7 +30,7 @@ public class TokenService {
         TokenService Functionality
      */
 
-    public ArrayList<UUID> addTokens(int customerID, int amount) {
+    public ArrayList<UUID> addTokens(String customerID, int amount) {
         //TODO: Verify amount of tokens! -> Do in CustomerService
         ArrayList<UUID> tokenIDs = new ArrayList<>();
         for (int i = 0; i< amount; i++) {
@@ -53,9 +53,9 @@ public class TokenService {
         throw new TokenException("Token doesn't exist");
     }
 
-    public boolean isTokenValid(UUID tokenID, int customerID) throws TokenException {
+    public boolean isTokenValid(UUID tokenID, String customerID) throws TokenException {
         if (this.tokenRepository.containsToken(tokenID)) {
-            return this.tokenRepository.getToken(tokenID).getCustomerID() == customerID && !this.tokenRepository.getToken(tokenID).isUsed();
+            return this.tokenRepository.getToken(tokenID).getCustomerID().equals(customerID) && !this.tokenRepository.getToken(tokenID).isUsed();
         }
         throw new TokenException("Token doesn't exist");
     }
@@ -80,7 +80,7 @@ public class TokenService {
         JsonObject j = (JsonObject) jsonObject.get("payload");
         System.out.println("Next json parse success");
         List<UUID> tokenIds = addTokens(
-                Integer.parseInt(j.get("customerId").toString()),
+                j.get("customerId").toString(),
                 Integer.parseInt(j.get("amount").toString())
         );
         System.out.println("Amount and customerID parse success");
