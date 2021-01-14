@@ -9,13 +9,24 @@ public class MerchantRepository implements IMerchantRepository {
 
     HashMap<String, Merchant> merchants = new HashMap<>();
 
+
     @Override
-    public void registerMerchant(Merchant merchant) throws Exception {
+    public void addMerchant(Merchant merchant) {
         merchants.put(merchant.getCVR(), merchant);
     }
 
     @Override
-    public void deleteMerchant(String cpr) throws Exception {
-        merchants.remove(cpr);
+    public void removeMerchant(String cvr) {
+        merchants.remove(cvr);
+    }
+
+    @Override
+    public Merchant getMerchant(String cvr) {
+        return merchants.get(cvr);
+    }
+
+    @Override
+    public boolean hasMerchant(String cvr) {
+        return merchants.containsKey(cvr);
     }
 }

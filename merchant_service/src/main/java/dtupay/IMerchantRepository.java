@@ -4,8 +4,12 @@ import models.Merchant;
 
 public interface IMerchantRepository {
 
-    void registerMerchant(Merchant merchant) throws Exception;
+    void addMerchant(Merchant merchant) ;
 
-    void deleteMerchant(String cpr) throws Exception;
+    void removeMerchant(String cvr);
+
+    Merchant getMerchant(String cvr);
+
+    boolean hasMerchant(String cvr);
 
 }

@@ -13,6 +13,7 @@ import java.util.UUID;
 public class MerchantService {
     RabbitMq rabbitMq;
     public HashMap<UUID, AsyncResponse> pendingRequests = new HashMap<>();
+    IMerchantRepository customerRepository = new MerchantRepository();
 
     public MerchantService() {
         try {
