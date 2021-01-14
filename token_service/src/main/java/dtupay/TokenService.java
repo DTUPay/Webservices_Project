@@ -6,6 +6,7 @@ package dtupay;
 
 
 import exceptions.TokenException;
+import models.Token;
 import io.quarkus.runtime.Quarkus;
 import io.quarkus.runtime.annotations.QuarkusMain;
 
@@ -29,20 +30,67 @@ public class TokenService {
         this.tokenRepository = new TokenRepository();
     }
 
+    /*
+        TokenService Functionality
+     */
+
+    public ArrayList<UUID> addTokens(String customerID, int amount) {
+        //TODO: Verify amount of tokens! -> Do in CustomerService
+        ArrayList<UUID> tokenIDs = new ArrayList<>();
+        for (int i = 0; i< amount; i++) {
+            Token token = new Token(customerID);
+            tokenRepository.addToken(token);
+            tokenIDs.add(token.getTokenID());
+        }
+        return tokenIDs;
+    }
+
+
+    public void useToken(UUID tokenID) throws TokenException {
+        if (tokenRepository.containsToken(tokenID)) {
+            if (!tokenRepository.getToken(tokenID).isUsed()){
+                tokenRepository.getToken(tokenID).setUsed(true);
+            } else {
+                throw new TokenException("Token has already been used");
+            }
+        }
+        throw new TokenException("Token doesn't exist");
+    }
+
+    public boolean isTokenValid(UUID tokenID, String customerID) throws TokenException {
+        if (this.tokenRepository.containsToken(tokenID)) {
+            return this.tokenRepository.getToken(tokenID).getCustomerID().equals(customerID) && !this.tokenRepository.getToken(tokenID).isUsed();
+        }
+        throw new TokenException("Token doesn't exist");
+    }
+
+    /*
+        RabbitMQ call and callback
+     */
+
+    public void processMessage(JsonObject jsonObject) {
+        String action = jsonObject.get("action").toString()
+                .replaceAll("\"", "");
+        System.out.println("Action of message gotten by token_Service: " + action);
+        switch (action) {
+            case "addTokens":
+                System.out.println("Action equals getTokens");
+                addTokens(jsonObject);
+                break;
+        }
+    }
+
     public static void main(String[] args) {
         TokenService service = new TokenService();
         Quarkus.run();
     }
 
-    public ArrayList<UUID> addTokens(int customerID, int amount)  {
-        return this.tokenRepository.addTokens(customerID, amount);
-    }
 
     private void addTokens(JsonObject jsonObject){
         JsonObject j = (JsonObject) jsonObject.get("payload");
         System.out.println("Next json parse success");
         List<UUID> tokenIds = addTokens(
-                Integer.parseInt(j.get("customerId").toString()),
+                j.get("customerId").toString(),
                 Integer.parseInt(j.get("amount").toString())
         );
         System.out.println("Amount and customerID parse success");
@@ -56,14 +104,10 @@ public class TokenService {
         rabbitMq.sendMessage("customer_service", response);
 
     }
+        //rabbitMqTest.sendMessage("customer_service", response);
 
-    public void useToken(UUID tokenID) throws TokenException {
-        this.tokenRepository.useToken(tokenID);
     }
 
-    public boolean isTokenValid(UUID tokenID, int customerID) throws TokenException  {
-        return this.tokenRepository.isTokenValid(tokenID, customerID);
-    }
 
     public void processMessage(JsonObject jsonObject){
         String event = jsonObject.get("event").toString()
@@ -82,7 +126,6 @@ public class TokenService {
     }
 
 
-    //Calls from RabbitMQ
 
 
 }

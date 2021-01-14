@@ -1,23 +1,18 @@
 /*
-@author Oliver O. Nielsen & Rubatharisan Thirumathyam
+@author Benjamin Eriksen
  */
 
 package dtupay;
 
-import exceptions.TokenException;
+import models.Token;
 
-import javax.json.JsonObject;
-import java.util.ArrayList;
 import java.util.UUID;
 
 public interface ITokenRepository {
 
-    ArrayList<UUID> addTokens(int customerID, int amount);
+    void addToken(Token token);
 
-    void useToken(UUID tokenID) throws TokenException;
+    Token getToken(UUID tokenID);
 
-    boolean isTokenValid(UUID tokenID, int customerID) throws TokenException;
-
-    void processMessage(JsonObject jsonObject);
-
+    boolean containsToken(UUID tokenID);
 }

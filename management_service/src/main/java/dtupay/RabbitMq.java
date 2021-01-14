@@ -2,6 +2,7 @@
 @author Oliver O. Nielsen & Rubatharisan Thirumathyam
  */
 
+
 package dtupay;
 
 import com.rabbitmq.client.Channel;
@@ -76,3 +77,4 @@ public class RabbitMq implements IRabbitMq {
         }
     }
 }
+

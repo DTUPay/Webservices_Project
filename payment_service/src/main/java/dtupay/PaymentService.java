@@ -1,5 +1,6 @@
 package dtupay;
 
+import javax.ws.rs.*;
 import io.quarkus.runtime.Quarkus;
 
 import javax.json.JsonObject;
@@ -10,6 +11,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import java.util.UUID;
 
+@Path("/payment_service")
 public class PaymentService {
     IPaymentRepository paymentRepository;
     RabbitMq rabbitMq;
@@ -27,7 +29,21 @@ public class PaymentService {
         Quarkus.run();
     }
 
+    @Path("/request_payment")
+    @POST
+    @Produces(MediaType.TEXT_PLAIN)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public UUID requestPayment(@PathParam("amount") int amount, @PathParam("merchantId") int merchantId) {
+        return paymentRepository.requestPayment(amount, merchantId);
+    }
     public void demo(JsonObject jsonObject){
         // Implement me
+    }
+
+    @Path("/test")
+    @GET
+    @Produces(MediaType.TEXT_PLAIN)
+    public String test() {
+        return "Hello";
     }
 }
