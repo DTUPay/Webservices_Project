@@ -1,8 +1,6 @@
 package servants;
 
-import org.jboss.resteasy.tracing.providers.jsonb.JSONBJsonFormatRESTEasyTracingInfo;
 import servants.RestCommunicator.Service;
-
 import javax.json.Json;
 import javax.json.JsonObject;
 import java.util.ArrayList;
@@ -23,7 +21,7 @@ public class CustomerServant {
 
     public void acceptPayment(String paymentID, String tokenID) throws Exception {
         RestCommunicator communicator = new RestCommunicator(Service.CUSTOMER.port);
-        String path = Service.CUSTOMER.port + "/merchant";
+        String path = Service.CUSTOMER.port + "/" + Service.CUSTOMER.location + "/merchant";
         JsonObject payment = Json.createObjectBuilder()
                 .add("paymentID", paymentID)
                 .add("tokenID", tokenID).build();
@@ -34,7 +32,7 @@ public class CustomerServant {
         if(requestedTokens == 0)
             return;
         RestCommunicator communicator = new RestCommunicator(Service.CUSTOMER.port);
-        String path = Service.CUSTOMER.port + "/tokens";
+        String path = Service.CUSTOMER.port + "/" + Service.CUSTOMER.location + "/tokens";
             Object responseEntity = communicator.post(requestedTokens,path);
             if(verifyList(responseEntity, UUID.class))
                 addTokens((List<?>)responseEntity);
@@ -44,7 +42,7 @@ public class CustomerServant {
 
     public void requestRefund(String paymentID) throws Exception {
         RestCommunicator communicator = new RestCommunicator(Service.CUSTOMER.port);
-        String path = Service.CUSTOMER.port + "merchant";
+        String path = Service.CUSTOMER.port + "/" + Service.CUSTOMER.location + "merchant";
         boolean success = communicator.put(paymentID, path);
     }
 
@@ -58,10 +56,8 @@ public class CustomerServant {
     private <T> boolean verifyList(Object responseEntity, Class<T> type) {
         if(responseEntity instanceof List<?>) {
             List<?> list = (List<?>) responseEntity;
-            for (Object obj : list) {
-                if(!type.isInstance(obj))
-                    return false;
-            }
+            for (Object obj : list)
+                if(!type.isInstance(obj)) return false;
             return true;
         }
         return false;

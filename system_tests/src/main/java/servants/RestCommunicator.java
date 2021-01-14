@@ -56,6 +56,9 @@ public class RestCommunicator {
         else throw new Exception(response.getStatus() + " Error!");
     }
 
+    /**
+     * Service enum containing the information required to connect to the REST endpoints
+     */
     public enum Service {
         CUSTOMER ("8080", "customer_service"),
         MANAGEMENT ("8081", "management_service"),
