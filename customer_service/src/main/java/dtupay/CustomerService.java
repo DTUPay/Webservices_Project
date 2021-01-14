@@ -18,6 +18,7 @@ public class CustomerService {
     RabbitMq rabbitMq;
     public HashMap<UUID, AsyncResponse> pendingRequests = new HashMap<>();
 
+
     public CustomerService(){
         try {
             String serviceName = System.getenv("SERVICE_NAME"); //customer_service
@@ -48,4 +49,6 @@ public class CustomerService {
         UUID uuid = UUID.fromString(uuidString);
         respondPendingRequest(uuid);
     }
+
+
 }
