@@ -8,8 +8,8 @@ if [ -z ${BUILD+x} ]; then export BUILD="build-local"; else echo "BUILD is set t
 # Set service name based on the current directory name
 SERVICE_NAME=$(basename $(pwd))
 
-# Compile and build the application
-mvn package
+# Printing out information
+echo "# Building service: ${SERVICE_NAME}"
 
-# Build Docker image
-docker build --build-arg SERVICE_NAME_ARG=$SERVICE_NAME -t $SERVICE_NAME:${BUILD} .
+# Build Docker image using BuildKit
+DOCKER_BUILDKIT=1 BUILDKIT_PROGRESS=plain docker build --build-arg SERVICE_NAME_ARG=$SERVICE_NAME -t $SERVICE_NAME:${BUILD} .
