@@ -6,32 +6,39 @@ package dtupay;
 
 
 import exceptions.TokenException;
+import io.quarkus.runtime.Quarkus;
+import io.quarkus.runtime.annotations.QuarkusMain;
 
 import javax.json.Json;
 import javax.json.JsonObject;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.TimeoutException;
 
+@QuarkusMain
 public class TokenService {
     ITokenRepository tokenRepository;
-    RabbitMqTest rabbitMqTest;
+    RabbitMq rabbitMq;
+
 
     public TokenService() {
         try {
             System.out.println("Token service started");
-            this.rabbitMqTest = new RabbitMqTest("token_service", this);
+            this.rabbitMq = new RabbitMq("token_service", this);
         } catch (Exception e) { e.printStackTrace(); }
         this.tokenRepository = new TokenRepository();
+    }
+
+    public static void main(String[] args) {
+        TokenService service = new TokenService();
+        Quarkus.run();
     }
 
     public ArrayList<UUID> addTokens(int customerID, int amount)  {
         return this.tokenRepository.addTokens(customerID, amount);
     }
 
-    public void addTokens(JsonObject jsonObject){
+    private void addTokens(JsonObject jsonObject){
         JsonObject j = (JsonObject) jsonObject.get("payload");
         System.out.println("Next json parse success");
         List<UUID> tokenIds = addTokens(
@@ -46,7 +53,7 @@ public class TokenService {
                 //.add("requestId", uuid.toString())
                 .build();
         System.out.println("Response created");
-        rabbitMqTest.sendMessage("customer_service", response);
+        rabbitMq.sendMessage("customer_service", response);
 
     }
 
@@ -59,15 +66,19 @@ public class TokenService {
     }
 
     public void processMessage(JsonObject jsonObject){
-        String action = jsonObject.get("action").toString()
+        String event = jsonObject.get("event").toString()
                 .replaceAll("\"", "");
-        System.out.println("Action of message gotten by token_Service: " + action);
-        switch (action){
+        System.out.println("Event of message gotten by token_Service: " + event);
+        switch (event){
             case "addTokens":
-                System.out.println("Action equals getTokens");
+                System.out.println("Event equals addToken");
                 addTokens(jsonObject);
                 break;
         }
+    }
+
+    public void demo(JsonObject jsonObject){
+        // Implement me
     }
 
 

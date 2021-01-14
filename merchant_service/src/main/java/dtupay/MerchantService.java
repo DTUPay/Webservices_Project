@@ -1,7 +1,3 @@
-/*
-@author Oliver O. Nielsen & Rubatharisan Thirumathyam
- */
-
 package dtupay;
 
 import javax.json.JsonObject;
@@ -10,11 +6,11 @@ import javax.ws.rs.core.Response;
 import java.util.HashMap;
 import java.util.UUID;
 
-public class CustomerService {
+public class MerchantService {
     RabbitMq rabbitMq;
     public HashMap<UUID, AsyncResponse> pendingRequests = new HashMap<>();
 
-    public CustomerService(){
+    public MerchantService() {
         try {
             this.rabbitMq = new RabbitMq("customer_service", this);
         } catch (Exception e) { e.printStackTrace(); }
