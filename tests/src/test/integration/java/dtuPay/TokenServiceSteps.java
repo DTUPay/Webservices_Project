@@ -1,4 +1,4 @@
-package dtupay;
+package dtuPay;
 
 import io.cucumber.java.PendingException;
 import io.cucumber.java.en.And;
