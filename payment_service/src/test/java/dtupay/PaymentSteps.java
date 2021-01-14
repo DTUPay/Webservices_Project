@@ -8,18 +8,18 @@ import io.cucumber.java.en.When;
 import models.Payment;
 import org.junit.Before;
 
-import static org.junit.Assert.*;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
+import static org.junit.Assert.*;
+
 /**
  * @author Mikkel & Laura
  */
 public class PaymentSteps {
-    PaymentRepository repo = new PaymentRepository();
+    PaymentService service = new PaymentService();
     int merchantID;
     int amount;
     UUID paymentID;
@@ -41,7 +41,7 @@ public class PaymentSteps {
 
     @When("he request the payment in the app")
     public void heRequestThePaymentInTheApp() {
-        paymentID = repo.requestPayment(amount, merchantID);
+        paymentID = service.requestPayment(amount, merchantID);
     }
 
     @Then("he receives a paymentID with the type UUID")
@@ -52,7 +52,7 @@ public class PaymentSteps {
     @And("the payment can be found using paymentID")
     public void thePaymentCanBeFoundUsingPaymentID() {
         try {
-            assertNotNull(repo.getPayment(paymentID));
+            assertNotNull(service.getPayment(paymentID));
         } catch (PaymentException e) {
             e.printStackTrace();
         }
@@ -61,7 +61,7 @@ public class PaymentSteps {
     @And("the payment cannot be found using the wrong paymentID")
     public void thePaymentCannotBeFoundUsingTheWrongPaymentID() {
         try {
-            Payment repoPayment = repo.getPayment(UUID.randomUUID());
+            Payment repoPayment = service.getPayment(UUID.randomUUID());
             assertNotEquals(paymentID,repoPayment.getPaymentID());
         } catch (PaymentException e) {
             assertEquals(e.getClass(),PaymentException.class);
@@ -74,7 +74,7 @@ public class PaymentSteps {
 
     @When("the manager requests a summary")
     public void theManagerRequestsASummary() {
-        summary = repo.getManagerSummary();
+        summary = service.getManagerSummary();
     }
 
     @Given("there are {int} payments made")
@@ -82,7 +82,7 @@ public class PaymentSteps {
         int randomAmount = random.nextInt();
         int randomMerchantId = random.nextInt();
         for (int i = 0; i < arg0; i++) {
-            repo.requestPayment(randomAmount,randomMerchantId);
+            service.requestPayment(randomAmount,randomMerchantId);
         }
     }
 

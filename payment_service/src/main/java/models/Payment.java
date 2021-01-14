@@ -5,13 +5,12 @@ import java.util.Date;
 import java.util.UUID;
 
 public class Payment {
-    private UUID PaymentID;
-    private int MerchantID;
-    private int TokenID;
-    private Date Date;
-    private int Amount;
-    private boolean IsRefunded;
-    private PaymentStatus PaymentStatus;
+    private UUID paymentID;
+    private int merchantID;
+    private int tokenID;
+    private Date date;
+    private int amount;
+    private PaymentStatus paymentStatus;
 
     /**
      * Create pending Payment
@@ -19,65 +18,43 @@ public class Payment {
      * @param amount 
      */
     public Payment(int merchantID, int amount) {
-        MerchantID = merchantID;
-        Amount = amount;
-        PaymentStatus = PaymentStatus.PENDING;
-        Date = Calendar.getInstance().getTime();
+        this.merchantID = merchantID;
+        this.amount = amount;
+        this.paymentStatus = PaymentStatus.PENDING;
+        this.date = Calendar.getInstance().getTime();
+        this.paymentID = UUID.randomUUID();
+
     }
 
     public UUID getPaymentID() {
-        return PaymentID;
-    }
-
-    public void setPaymentID(UUID paymentID) {
-        PaymentID = paymentID;
+        return paymentID;
     }
 
     public int getMerchantID() {
-        return MerchantID;
-    }
-
-    public void setMerchantID(int merchantID) {
-        MerchantID = merchantID;
+        return merchantID;
     }
 
     public int getTokenID() {
-        return TokenID;
+        return tokenID;
     }
 
     public void setTokenID(int tokenID) {
-        TokenID = tokenID;
+        tokenID = tokenID;
     }
 
     public java.util.Date getDate() {
-        return Date;
-    }
-
-    public void setDate(java.util.Date date) {
-        Date = date;
+        return date;
     }
 
     public int getAmount() {
-        return Amount;
-    }
-
-    public void setAmount(int amount) {
-        Amount = amount;
-    }
-
-    public boolean isRefunded() {
-        return IsRefunded;
-    }
-
-    public void setRefunded(boolean refunded) {
-        IsRefunded = refunded;
+        return amount;
     }
 
     public PaymentStatus getStatus() {
-        return PaymentStatus;
+        return paymentStatus;
     }
 
     public void setStatus(PaymentStatus paymentStatus) {
-        PaymentStatus = paymentStatus;
+        paymentStatus = paymentStatus;
     }
 }
