@@ -1,17 +1,13 @@
 package dtupay;
 
-import javax.ws.rs.*;
 import io.quarkus.runtime.Quarkus;
 import io.quarkus.runtime.annotations.QuarkusMain;
 
 import javax.json.JsonObject;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import java.util.UUID;
 
+/**
+ * @author Mikkel & Laura
+ */
 @QuarkusMain
 public class PaymentService {
     IPaymentRepository paymentRepository;

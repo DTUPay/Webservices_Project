@@ -9,6 +9,7 @@ import models.Payment;
 import org.junit.Before;
 
 import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,10 +21,12 @@ import java.util.UUID;
  */
 public class PaymentSteps {
     PaymentRepository repo = new PaymentRepository();
+    Payment payment;
     int merchantID;
     int amount;
     UUID paymentID;
     Random random = new Random(System.currentTimeMillis());
+    String errorMessage = "";
     List<Payment> summary = new ArrayList<>();
 
     @Before()
@@ -41,7 +44,11 @@ public class PaymentSteps {
 
     @When("he request the payment in the app")
     public void heRequestThePaymentInTheApp() {
-        paymentID = repo.requestPayment(amount, merchantID);
+        try {
+            paymentID = repo.requestPayment(amount, merchantID);
+        } catch (PaymentException e) {
+            errorMessage = e.getMessage();
+        }
     }
 
     @Then("he receives a paymentID with the type UUID")
@@ -52,24 +59,11 @@ public class PaymentSteps {
     @And("the payment can be found using paymentID")
     public void thePaymentCanBeFoundUsingPaymentID() {
         try {
-            assertNotNull(repo.getPayment(paymentID));
+            payment = repo.getPayment(paymentID);
         } catch (PaymentException e) {
-            e.printStackTrace();
+            errorMessage = e.getMessage();
         }
-    }
-
-    @And("the payment cannot be found using the wrong paymentID")
-    public void thePaymentCannotBeFoundUsingTheWrongPaymentID() {
-        try {
-            Payment repoPayment = repo.getPayment(UUID.randomUUID());
-            assertNotEquals(paymentID,repoPayment.getPaymentID());
-        } catch (PaymentException e) {
-            assertEquals(e.getClass(),PaymentException.class);
-        }
-    }
-
-    @Given("a manager")
-    public void aManager() {
+        assertNotNull(payment);
     }
 
     @When("the manager requests a summary")
@@ -79,15 +73,24 @@ public class PaymentSteps {
 
     @Given("there are {int} payments made")
     public void thereArePaymentsMade(int arg0) {
-        int randomAmount = random.nextInt();
-        int randomMerchantId = random.nextInt();
+        int randomAmount = random.nextInt(Integer.SIZE - 1); // ensure positive number
+        int randomMerchantId = random.nextInt(Integer.SIZE - 1); // ensure positive number
         for (int i = 0; i < arg0; i++) {
-            repo.requestPayment(randomAmount,randomMerchantId);
+            try {
+                repo.requestPayment(randomAmount,randomMerchantId);
+            } catch (PaymentException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     @Then("he gets a summary with {int} payments")
     public void heGetsASummaryWithPayments(int arg0) {
         assertEquals(arg0,summary.size());
+    }
+
+    @And("an exception is made with the message {string}")
+    public void anExceptionIsMadeWithTheMessage(String arg0) {
+        assertEquals(arg0,errorMessage);
     }
 }
