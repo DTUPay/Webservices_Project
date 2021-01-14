@@ -1,3 +1,4 @@
+# syntax = docker/dockerfile:1.2
 # @author: Rubatharisan Thirumathyam
 
 # Multi-stage build: build phase and run phase
