@@ -1,5 +1,7 @@
 package models;
 
+import dtu.ws.fastmoney.User;
+
 import java.util.List;
 
 public class Customer {
@@ -11,6 +13,14 @@ public class Customer {
 
     public Customer(){
 
+    }
+
+    public User customerToUser() {
+        User newUser = new User();
+        newUser.setLastName(this.LastName);
+        newUser.setFirstName(this.FirstName);
+        newUser.setCprNumber(this.CPRNumber);
+        return newUser;
     }
 
     public int getCustomerID() {

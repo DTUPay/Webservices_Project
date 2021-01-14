@@ -19,11 +19,16 @@ import static org.junit.Assert.*;
  * @author Mikkel & Laura
  */
 public class PaymentSteps {
+  
     PaymentService service = new PaymentService();
+    PaymentRepository repo = new PaymentRepository();
+    Payment payment;
+
     int merchantID;
     int amount;
     UUID paymentID;
     Random random = new Random(System.currentTimeMillis());
+    String errorMessage = "";
     List<Payment> summary = new ArrayList<>();
 
     @Before()
@@ -41,7 +46,11 @@ public class PaymentSteps {
 
     @When("he request the payment in the app")
     public void heRequestThePaymentInTheApp() {
-        paymentID = service.requestPayment(amount, merchantID);
+        try {
+            paymentID = service.requestPayment(amount, merchantID);
+        } catch (PaymentException e) {
+            errorMessage = e.getMessage();
+        }
     }
 
     @Then("he receives a paymentID with the type UUID")
@@ -64,12 +73,9 @@ public class PaymentSteps {
             Payment repoPayment = service.getPayment(UUID.randomUUID());
             assertNotEquals(paymentID,repoPayment.getPaymentID());
         } catch (PaymentException e) {
-            assertEquals(e.getClass(),PaymentException.class);
+            errorMessage = e.getMessage();
         }
-    }
-
-    @Given("a manager")
-    public void aManager() {
+        assertNotNull(payment);
     }
 
     @When("the manager requests a summary")
@@ -79,15 +85,24 @@ public class PaymentSteps {
 
     @Given("there are {int} payments made")
     public void thereArePaymentsMade(int arg0) {
-        int randomAmount = random.nextInt();
-        int randomMerchantId = random.nextInt();
+        int randomAmount = random.nextInt(Integer.SIZE - 1); // ensure positive number
+        int randomMerchantId = random.nextInt(Integer.SIZE - 1); // ensure positive number
         for (int i = 0; i < arg0; i++) {
-            service.requestPayment(randomAmount,randomMerchantId);
+            try {
+                service.requestPayment(randomAmount,randomMerchantId);
+            } catch (PaymentException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     @Then("he gets a summary with {int} payments")
     public void heGetsASummaryWithPayments(int arg0) {
         assertEquals(arg0,summary.size());
+    }
+
+    @And("an exception is made with the message {string}")
+    public void anExceptionIsMadeWithTheMessage(String arg0) {
+        assertEquals(arg0,errorMessage);
     }
 }

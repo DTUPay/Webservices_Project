@@ -6,10 +6,10 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * @author Benjamin
+ * @author Mikkel & Laura & Benjamin
  */
-
 public interface IPaymentRepository {
+
 
     void addPayment(Payment payment);
 
@@ -18,4 +18,4 @@ public interface IPaymentRepository {
     List<Payment> getPayments();
 
 
- }
+}

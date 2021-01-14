@@ -10,11 +10,15 @@ Feature: Testing Payment Service standalone
     Then he receives a paymentID with the type UUID
     And the payment can be found using paymentID
 
-  Scenario: Unsuccessful get payment
-    Given a merchant with ID 10 who wants a payment for 20 kroners
+  Scenario: Negative payment
+    Given a merchant with ID 10 who wants a payment for -1 kroners
     When he request the payment in the app
-    Then he receives a paymentID with the type UUID
-    And the payment cannot be found using the wrong paymentID
+    Then an exception is made with the message "Non positive payment amount"
+
+  Scenario: Invalid merchant ID
+    Given a merchant with ID -10 who wants a payment for 10 kroners
+    When he request the payment in the app
+    Then an exception is made with the message "Non positive merchant ID"
 
   Scenario: Get manager summary
     Given there are 3 payments made
