@@ -1,11 +1,14 @@
 # @author: Benjamin Eriksen & Rubatharisan Thirumathyam
 Feature: Check token validity
 
-  Scenario: A new token is created
-    Given a request for 1 tokens for a customer with id 1234
-    Then those tokens are created for the customer
+Scenario: Token is valid
+  Given a tokenID and a customerID 1234
+  And that token is valid
+  When validity is checked
+  Then the response is valid
 
-  Scenario: 5 new token are created
-    Given a request for 5 tokens for a customer with id 1234
-    Then those tokens are created for the customer
+Scenario: Token doesn't exist
+  Given a fake tokenID and a customerID 1234
+  When validity is checked
+  Then an exception with message "Token doesn't exist" is thrown
 

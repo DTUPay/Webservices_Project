@@ -9,11 +9,9 @@ import exceptions.TokenException;
 
 import javax.json.Json;
 import javax.json.JsonObject;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.TimeoutException;
 
 public class TokenService {
     ITokenRepository tokenRepository;
@@ -46,7 +44,7 @@ public class TokenService {
                 //.add("requestId", uuid.toString())
                 .build();
         System.out.println("Response created");
-        rabbitMqTest.sendMessage("customer_service", response);
+        //rabbitMqTest.sendMessage("customer_service", response);
 
     }
 

@@ -2,17 +2,15 @@
 @author Oliver O. Nielsen & Rubatharisan Thirumathyam
  */
 
+
 package dtupay;
 import com.rabbitmq.client.*;
 
 import javax.json.Json;
 import javax.json.JsonObject;
-import javax.json.JsonReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.TimeoutException;
 
 
@@ -73,3 +71,4 @@ public class RabbitMqTest implements IRabbitMq {
         return "";
     }
 }
+

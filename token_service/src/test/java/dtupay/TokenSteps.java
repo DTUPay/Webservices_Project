@@ -19,6 +19,7 @@ public class TokenSteps {
     ArrayList<UUID> tokenIDs;
     UUID tokenID;
     int customerID;
+    boolean isValid;
     private String errorMsg;
 
     @Given("a request for {int} tokens for a customer with id {int}")
@@ -81,6 +82,36 @@ public class TokenSteps {
     @Given("a fake tokenID and a customerID {int}")
     public void aFakeTokenIDAndACustomerID(int id) {
         this.tokenID = UUID.randomUUID();
+    }
+
+    @When("validity is checked")
+    public void validityIsChecked() {
+        try {
+            this.isValid = this.tokenService.isTokenValid(this.tokenID,this.customerID);
+        } catch (TokenException te) {
+            this.errorMsg = te.getMessage();
+        }
+    }
+
+    @Then("the response is valid")
+    public void theResponseIsValid() {
+        assertTrue(this.isValid);
+    }
+
+    @Then("the response is invalid")
+    public void theResponseIsInvalid() {
+        assertFalse(this.isValid);
+    }
+
+    @And("that token is valid")
+    public void thatTokenIsValid() throws TokenException {
+        assertTrue(this.tokenService.isTokenValid(this.tokenID,this.customerID));
+    }
+
+    @And("that token is invalid")
+    public void thatTokenIsInvalid() throws TokenException {
+        this.tokenService.useToken(tokenID);
+        assertFalse(this.tokenService.isTokenValid(this.tokenID,this.customerID));
     }
 }
 
