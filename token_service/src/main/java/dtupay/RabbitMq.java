@@ -25,17 +25,14 @@ public class RabbitMq implements IRabbitMq {
     private TokenService service;
 
 
-    public RabbitMq(String queue, TokenService service) {
+    public RabbitMq(String queue, TokenService service) throws IOException, TimeoutException, InterruptedException {
         //If testing, do not create RabbitMQ
         if(System.getenv("ENVIRONMENT") == null)
             return;
 
         //Sleep on startup to allow rabbitMQ server to start
-        try {
-            Thread.sleep(10*1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        Thread.sleep(10*1000);
+
 
         this.service = service;
 
@@ -44,12 +41,21 @@ public class RabbitMq implements IRabbitMq {
         factory.setHost("rabbitmq"); //rabbitmq:5672
 
         //Create connection
-        try {
-            connection = factory.newConnection();
-            channel = connection.createChannel();
-            channel.queueDeclare(queue, false, false, false, null);
-        } catch (Exception e) {
-            e.printStackTrace();
+        int attempts = 0;
+        while (true){
+            try{
+                connection = factory.newConnection();
+                channel = connection.createChannel();
+                channel.queueDeclare(queue, false, false, false, null);
+                break;
+            }catch (Exception e){
+                attempts++;
+                if(attempts > 10)
+                    throw e;
+                System.out.println("Could not connect to RabbitMQ queue " + queue + ". Trying again.");
+                //Sleep before retrying connection
+                Thread.sleep(5*1000);
+            }
         }
 
         //Define callback logic
