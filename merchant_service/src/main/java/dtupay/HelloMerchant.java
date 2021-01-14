@@ -16,12 +16,12 @@ public class HelloMerchant {
         return "Welcome to Merchant Service!";
     }
 
-    @GET
+    /*@GET
     @Produces(MediaType.TEXT_PLAIN)
     @Consumes(MediaType.APPLICATION_JSON)
     public UUID requestPayment(@PathParam("amount") int amount, @PathParam("merchantId") int merchantId) {
         //return paymentRepository.requestPayment(amount, merchantId);
         return UUID.randomUUID();
-    }
+    }*/
 
 }

@@ -68,17 +68,6 @@ public class TokenService {
         RabbitMQ call and callback
      */
 
-    public void processMessage(JsonObject jsonObject) {
-        String action = jsonObject.get("action").toString()
-                .replaceAll("\"", "");
-        System.out.println("Action of message gotten by token_Service: " + action);
-        switch (action) {
-            case "addTokens":
-                System.out.println("Action equals getTokens");
-                addTokens(jsonObject);
-                break;
-        }
-    }
 
     public static void main(String[] args) {
         TokenService service = new TokenService();
@@ -105,21 +94,6 @@ public class TokenService {
 
     }
         //rabbitMqTest.sendMessage("customer_service", response);
-
-    }
-
-
-    public void processMessage(JsonObject jsonObject){
-        String event = jsonObject.get("event").toString()
-                .replaceAll("\"", "");
-        System.out.println("Event of message gotten by token_Service: " + event);
-        switch (event){
-            case "addTokens":
-                System.out.println("Event equals addToken");
-                addTokens(jsonObject);
-                break;
-        }
-    }
 
     public void demo(JsonObject jsonObject){
         // Implement me
