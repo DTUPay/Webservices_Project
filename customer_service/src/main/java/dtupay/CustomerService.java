@@ -53,16 +53,29 @@ public class CustomerService {
     }
 
     public void registerCustomer(Customer customer) throws CustomerException {
-        customerRepository.addCustomer(customer);
+            if (!customerRepository.hasCustomer(customer.getCPRNumber())) {
+            customerRepository.addCustomer(customer);
+            }
+        throw new CustomerException("Customer with CPR: "+ customer.getCPRNumber() + " already exists");
     }
 
-
     public void removeCustomer(String cpr) throws CustomerException {
-        customerRepository.removeCustomer(cpr);
+
+        if (customerRepository.hasCustomer(cpr)) {
+            customerRepository.removeCustomer(cpr);
+        }
+        throw new CustomerException("Customer with CPR: "+ cpr + " doesn't exist");
     }
 
     public Customer getCustomer(String cpr) throws CustomerException {
-        return customerRepository.getCustomer(cpr);
+        if (customerRepository.hasCustomer(cpr)) {
+            return customerRepository.getCustomer(cpr);
+        }
+        throw new CustomerException("Customer with CPR: "+ cpr + " doesn't exist");
+    }
+
+    public boolean hasCustomer(String cprNumber) {
+        return customerRepository.hasCustomer(cprNumber);
     }
 
 }

@@ -6,13 +6,13 @@ package dtupay;
 
 import exceptions.CustomerException;
 import io.cucumber.java.Before;
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import models.Customer;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class CustomerSteps {
@@ -30,17 +30,9 @@ public class CustomerSteps {
         customer = new Customer(firstname, lastname, cpr);
     }
 
-    @When("the new customer is added to the repository")
-    public void the_new_customer_is_added_to_the_repository() {
-        try {
-            service.registerCustomer(customer);
-        } catch (CustomerException e) {
-            exception = e;
-        }
-    }
 
     @Then("a customer with name {string} {string} and CPR {string} exists in the repository")
-    public void a_customer_with_name_and_cpr_exists_in_the_repository(String cpr, String string2, String string3) throws CustomerException {
+    public void a_customer_with_name_and_cpr_exists_in_the_repository(String firstname, String lastname, String cpr) throws CustomerException {
         assertEquals(service.getCustomer(cpr), customer);
     }
 
@@ -54,7 +46,24 @@ public class CustomerSteps {
     }
 
     @Then("a customer with CPR {string} does not exist in the repository")
-    public void a_customer_with_cpr_does_not_exist_in_the_repository(String string) throws CustomerException {
-        assertNull(service.getCustomer(string));
+    public void a_customer_with_cpr_does_not_exist_in_the_repository(String cpr)  {
+        assertFalse(service.hasCustomer(cpr));
     }
+
+    @And("the new customer is added to the repository")
+    public void theNewCustomerIsAddedToTheRepository() {
+        try {
+            service.registerCustomer(customer);
+        } catch (CustomerException e) {
+            exception = e;
+        }
+    }
+
+    @Then("an error message with {string} is thrown")
+    public void an_error_message_with_is_thrown(String msg) {
+
+        assertEquals(msg, this.exception.getMessage());
+    }
+
+
 }
