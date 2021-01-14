@@ -3,28 +3,38 @@ version: "3.7"
 services:
   management_service:
     image: management_service:${BUILD}
+    environment:
+      - ENVIRONMENT=CI
     ports:
       - 18080:8080
     depends_on:
       - rabbitmq
   customer_service:
     image: customer_service:${BUILD}
+    environment:
+      - ENVIRONMENT=CI
     ports:
       - 18081:8080
     depends_on:
       - rabbitmq
   merchant_service:
     image: merchant_service:${BUILD}
+    environment:
+      - ENVIRONMENT=CI
     ports:
       - 18082:8080
     depends_on:
       - rabbitmq
   payment_service:
     image: payment_service:${BUILD}
+    environment:
+      - ENVIRONMENT=CI
     depends_on:
       - rabbitmq
   token_service:
     image: token_service:${BUILD}
+    environment:
+      - ENVIRONMENT=CI
     depends_on:
       - rabbitmq
   rabbitmq:

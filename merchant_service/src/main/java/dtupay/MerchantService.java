@@ -1,7 +1,3 @@
-/*
-@author Oliver O. Nielsen & Rubatharisan Thirumathyam
- */
-
 package dtupay;
 
 import io.quarkus.runtime.Quarkus;
@@ -14,21 +10,20 @@ import java.util.HashMap;
 import java.util.UUID;
 
 @QuarkusMain
-public class CustomerService {
+public class MerchantService {
     RabbitMq rabbitMq;
     public HashMap<UUID, AsyncResponse> pendingRequests = new HashMap<>();
 
-
-    public CustomerService(){
+    public MerchantService() {
         try {
-            String serviceName = System.getenv("SERVICE_NAME"); //customer_service
+            String serviceName = System.getenv("SERVICE_NAME"); //merchant_service
             System.out.println(serviceName + " started");
             this.rabbitMq = new RabbitMq(serviceName, this);
         } catch (Exception e) { e.printStackTrace(); }
     }
 
     public static void main(String[] args) {
-        CustomerService service = new CustomerService();
+        MerchantService service = new MerchantService();
         Quarkus.run();
     }
 
@@ -49,6 +44,4 @@ public class CustomerService {
         UUID uuid = UUID.fromString(uuidString);
         respondPendingRequest(uuid);
     }
-
-
 }

@@ -7,6 +7,8 @@ package dtupay;
 
 import exceptions.TokenException;
 import models.Token;
+import io.quarkus.runtime.Quarkus;
+import io.quarkus.runtime.annotations.QuarkusMain;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -14,14 +16,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@QuarkusMain
 public class TokenService {
     ITokenRepository tokenRepository;
-    RabbitMqTest rabbitMqTest;
+    RabbitMq rabbitMq;
+
 
     public TokenService() {
         try {
-            System.out.println("Token service started");
-            this.rabbitMqTest = new RabbitMqTest("token_service", this);
+            String serviceName = System.getenv("SERVICE_NAME"); //token_service
+            System.out.println(serviceName + " started");
+            this.rabbitMq = new RabbitMq(serviceName, this);
         } catch (Exception e) { e.printStackTrace(); }
         this.tokenRepository = new TokenRepository();
     }
@@ -64,17 +69,12 @@ public class TokenService {
         RabbitMQ call and callback
      */
 
-    public void processMessage(JsonObject jsonObject) {
-        String action = jsonObject.get("action").toString()
-                .replaceAll("\"", "");
-        System.out.println("Action of message gotten by token_Service: " + action);
-        switch (action) {
-            case "addTokens":
-                System.out.println("Action equals getTokens");
-                addTokens(jsonObject);
-                break;
-        }
+
+    public static void main(String[] args) {
+        TokenService service = new TokenService();
+        Quarkus.run();
     }
+
 
     private void addTokens(JsonObject jsonObject){
         JsonObject j = (JsonObject) jsonObject.get("payload");
@@ -91,11 +91,14 @@ public class TokenService {
                 //.add("requestId", uuid.toString())
                 .build();
         System.out.println("Response created");
-        //rabbitMqTest.sendMessage("customer_service", response);
+        rabbitMq.sendMessage("customer_service", response);
 
     }
+        //rabbitMqTest.sendMessage("customer_service", response);
 
-
+    public void demo(JsonObject jsonObject){
+        // Implement me
+    }
 
 
 

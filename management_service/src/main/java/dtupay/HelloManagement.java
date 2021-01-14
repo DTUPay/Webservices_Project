@@ -12,6 +12,7 @@ import javax.ws.rs.core.MediaType;
 
 @Path("/management_service")
 public class HelloManagement {
+    ManagementService service = new ManagementService();
 
     @GET
     @Produces(MediaType.TEXT_PLAIN)

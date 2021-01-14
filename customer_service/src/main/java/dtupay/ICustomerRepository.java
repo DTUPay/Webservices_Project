@@ -4,14 +4,15 @@
 
 package dtupay;
 
+import exceptions.CustomerException;
 import models.Customer;
 
 public interface ICustomerRepository {
 
-    void registerCustomer(Customer customer) throws Exception;
+    void registerCustomer(Customer customer) throws CustomerException;
 
-    void deleteCustomer(String cpr) throws Exception;
+    void deleteCustomer(String cpr) throws CustomerException;
 
-    Customer getCustomer(String cpr);
+    Customer getCustomer(String cpr) throws CustomerException;
 
 }
