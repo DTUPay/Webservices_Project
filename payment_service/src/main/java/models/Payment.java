@@ -4,12 +4,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
 
-enum Status {
-    COMPLETED,
-    PENDING,
-    REFUNDED
-}
-
 public class Payment {
     private UUID PaymentID;
     private int MerchantID;
@@ -17,7 +11,7 @@ public class Payment {
     private Date Date;
     private int Amount;
     private boolean IsRefunded;
-    private Status Status;
+    private PaymentStatus PaymentStatus;
 
     /**
      * Create pending Payment
@@ -27,12 +21,8 @@ public class Payment {
     public Payment(int merchantID, int amount) {
         MerchantID = merchantID;
         Amount = amount;
-        Status = models.Status.PENDING;
+        PaymentStatus = PaymentStatus.PENDING;
         Date = Calendar.getInstance().getTime();
-    }
-
-    public Payment() {
-
     }
 
     public UUID getPaymentID() {
@@ -83,11 +73,11 @@ public class Payment {
         IsRefunded = refunded;
     }
 
-    public models.Status getStatus() {
-        return Status;
+    public PaymentStatus getStatus() {
+        return PaymentStatus;
     }
 
-    public void setStatus(models.Status status) {
-        Status = status;
+    public void setStatus(PaymentStatus paymentStatus) {
+        PaymentStatus = paymentStatus;
     }
 }
