@@ -1,6 +1,7 @@
 package servants;
 
 import io.cucumber.java.en.*;
+import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 
 import static org.junit.jupiter.api.Assertions.fail;
@@ -34,6 +35,7 @@ public class CustomerActionSteps {
         customer = new CustomerServant("TestID");
         try {
             customer.requestTokens(arg0);
+            Assert.assertEquals(customer.getCustomerTokens().size(),arg0);
         } catch (Exception e) {
             fail();
         }
@@ -48,16 +50,22 @@ public class CustomerActionSteps {
     public void thePaymentFails() {
     }
 
-    @Then("the customer is given {int} tokens")
-    public void theCustomerIsGivenTokens(int arg0) {
-    }
-
     @Then("the token request is denied")
     public void theTokenRequestIsDenied() {
     }
 
-    @When("the customer requests new tokens")
-    public void theCustomerRequestsNewTokens() {
+    @Then("the customer has been given {int} tokens")
+    public void theCustomerHasBeenGivenTokens(int arg0) {
+        Assert.assertEquals(customer.getCustomerTokens().size(), arg0);
+    }
+
+    @When("the customer requests {int} new tokens")
+    public void theCustomerRequestsNewTokens(int arg0) {
+        try {
+            customer.requestTokens(arg0);
+        } catch (Exception e) {
+            exception = e;
+        }
     }
 
     @When("the customer accepts the payment with id {string}")

@@ -20,17 +20,17 @@ Feature: Actions that can be performed by a customer
 
   Scenario: A customer without tokens requests tokens
     Given a customer with 0 token(s)
-    When the customer requests new tokens
-    Then the customer is given 5 tokens
+    When the customer requests 5 new tokens
+    Then the customer has been given 5 tokens
 
   Scenario: A customer with a few tokens requests new tokens
     Given a customer with 2 token(s)
-    When the customer requests new tokens
+    When the customer requests 5 new tokens
     Then the token request is denied
 
   Scenario: A customer with all tokens requests new tokens
     Given a customer with 5 token(s)
-    When the customer requests new tokens
+    When the customer requests 2 new tokens
     Then the token request is denied
     And the customer has 5 tokens
 
