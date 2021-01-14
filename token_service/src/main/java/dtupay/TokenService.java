@@ -91,7 +91,7 @@ public class TokenService {
                 //.add("requestId", uuid.toString())
                 .build();
         System.out.println("Response created");
-        rabbitMq.sendMessage("customer_service", response);
+        rabbitMq.sendMessage("customer_service", response, null);
 
     }
         //rabbitMqTest.sendMessage("customer_service", response);

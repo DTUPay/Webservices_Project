@@ -11,6 +11,7 @@ import com.rabbitmq.client.DeliverCallback;
 
 import javax.json.Json;
 import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 import java.io.IOException;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
@@ -23,12 +24,15 @@ public class RabbitMq implements IRabbitMq {
     private Channel channel;
     private DeliverCallback deliverCallback;
     private PaymentService service;
+    private String queue;
 
 
     public RabbitMq(String queue, PaymentService service) throws IOException, TimeoutException, InterruptedException {
         //If testing, do not create RabbitMQ
         if(System.getenv("ENVIRONMENT") == null)
             return;
+
+        this.queue = queue;
 
         //Sleep on startup to allow rabbitMQ server to start
         Thread.sleep(10*1000);
@@ -80,7 +84,13 @@ public class RabbitMq implements IRabbitMq {
     }
 
     @Override
-    public void sendMessage(String queue, JsonObject message) {
+    public void sendMessage(String queue, JsonObject message, String callbackFunction) {
+        if(callbackFunction != null){
+            JsonObjectBuilder callbackJson = Json.createObjectBuilder()
+                    .add("service", this.queue)
+                    .add("function", callbackFunction);
+            message = Json.createObjectBuilder(message).add("callback", callbackJson).build();
+        }
         try{
             channel.queueDeclare(queue, false, false, false, null);
             channel.basicPublish("", queue, null, message.toString().getBytes(StandardCharsets.UTF_8));

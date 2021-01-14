@@ -40,7 +40,7 @@ public class HelloCustomer {
                 .add("requestId", uuid.toString())
                 .build();
 
-        service.rabbitMq.sendMessage("token_service", message);
+        service.rabbitMq.sendMessage("token_service", message, "hello");
 
     }
 
