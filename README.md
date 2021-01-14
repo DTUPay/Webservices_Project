@@ -49,6 +49,8 @@ message:
 
 RabbitMQ.sendMessage("<service_name>", message, callback = null);
 ```
+## Message response <-> requests
+https://gist.github.com/Rubatharisan/64c3737145e8ff2805deeed104808a00 (draft)
 
 ## Server Ports
 ![Ports](docs/ports.png)
