@@ -15,6 +15,7 @@ import javax.json.JsonObjectBuilder;
 import java.io.IOException;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 import java.util.concurrent.TimeoutException;
 
 
@@ -88,9 +89,14 @@ public class RabbitMq implements IRabbitMq {
         if(callbackFunction != null){
             JsonObjectBuilder callbackJson = Json.createObjectBuilder()
                     .add("service", this.queue)
-                    .add("function", callbackFunction);
-            message = Json.createObjectBuilder(message).add("callback", callbackJson).build();
+                    .add("event", callbackFunction);
+            message = Json.createObjectBuilder(message)
+                    .add("callback", callbackJson)
+                    .build();
         }
+        message = Json.createObjectBuilder(message)
+                .add("messageId", UUID.randomUUID().toString())
+                .build();
         try{
             channel.queueDeclare(queue, false, false, false, null);
             channel.basicPublish("", queue, null, message.toString().getBytes(StandardCharsets.UTF_8));
@@ -108,6 +114,8 @@ public class RabbitMq implements IRabbitMq {
                 //Call service logic here
                 service.demo(jsonObject);
                 break;
+            case "addTokens":
+                service.addTokens(jsonObject);
         }
     }
 }

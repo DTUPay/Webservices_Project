@@ -76,14 +76,16 @@ public class TokenService {
     }
 
 
-    private void addTokens(JsonObject jsonObject){
+    public void addTokens(JsonObject jsonObject){
         JsonObject j = (JsonObject) jsonObject.get("payload");
-        System.out.println("Next json parse success");
+
+        //Call actual function with data from
         List<UUID> tokenIds = addTokens(
                 j.get("customerId").toString(),
                 Integer.parseInt(j.get("amount").toString())
         );
-        System.out.println("Amount and customerID parse success");
+
+
         String uuid = jsonObject.get("requestId").toString();
         JsonObject response = Json.createObjectBuilder()
                 .add("hello", "hello")
