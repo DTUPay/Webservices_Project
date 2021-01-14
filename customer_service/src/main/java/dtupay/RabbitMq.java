@@ -26,6 +26,17 @@ public class RabbitMq implements IRabbitMq {
 
 
     public RabbitMq(String queue, CustomerService service) throws IOException, TimeoutException {
+        //If testing, do not create RabbitMQ
+        if(System.getenv("ENVIRONMENT") == null)
+            return;
+
+        //Sleep on startup to allow rabbitMQ server to start
+        try {
+            Thread.sleep(10*1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         this.service = service;
 
         //Connect to RabbitMQ server

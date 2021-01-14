@@ -4,20 +4,31 @@
 
 package dtupay;
 
+import io.quarkus.runtime.Quarkus;
+import io.quarkus.runtime.annotations.QuarkusMain;
+
 import javax.json.JsonObject;
 import javax.ws.rs.container.AsyncResponse;
 import javax.ws.rs.core.Response;
 import java.util.HashMap;
 import java.util.UUID;
 
+@QuarkusMain
 public class CustomerService {
     RabbitMq rabbitMq;
     public HashMap<UUID, AsyncResponse> pendingRequests = new HashMap<>();
 
     public CustomerService(){
         try {
-            this.rabbitMq = new RabbitMq("customer_service", this);
+            String serviceName = System.getenv("SERVICE_NAME"); //customer_service
+            System.out.println(serviceName + " started");
+            this.rabbitMq = new RabbitMq(serviceName, this);
         } catch (Exception e) { e.printStackTrace(); }
+    }
+
+    public static void main(String[] args) {
+        CustomerService service = new CustomerService();
+        Quarkus.run();
     }
 
     public UUID addPendingRequest(AsyncResponse asyncResponse){

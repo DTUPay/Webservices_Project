@@ -24,8 +24,9 @@ public class TokenService {
 
     public TokenService() {
         try {
-            System.out.println("Token service started");
-            this.rabbitMq = new RabbitMq("token_service", this);
+            String serviceName = System.getenv("SERVICE_NAME"); //token_service
+            System.out.println(serviceName + " started");
+            this.rabbitMq = new RabbitMq(serviceName, this);
         } catch (Exception e) { e.printStackTrace(); }
         this.tokenRepository = new TokenRepository();
     }
