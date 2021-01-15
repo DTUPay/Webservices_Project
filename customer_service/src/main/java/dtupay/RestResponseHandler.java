@@ -8,7 +8,6 @@ public class RestResponseHandler {
     public HashMap<UUID, AsyncResponse> pendingRequests = new HashMap<>();
     private static RestResponseHandler instance = new RestResponseHandler();
 
-
     private RestResponseHandler(){}
 
     //Get the only object available

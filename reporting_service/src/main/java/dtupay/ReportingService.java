@@ -35,7 +35,7 @@ public class ReportingService {
 
     public void getReportByMerchant(String merchantId, AsyncResponse response) throws Exception {
 
-        Message message = new Message("reporting_service", "getReportByMerchantResponse");
+        Message message = new Message();
         CustomerServiceDTO csDTO = new CustomerServiceDTO();
 
         csDTO.setMerchantId(merchantId);

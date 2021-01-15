@@ -6,7 +6,6 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.DeliverCallback;
 import models.Message;
-import models.Payload;
 
 import java.nio.charset.StandardCharsets;
 
@@ -42,8 +41,9 @@ public class RabbitMQ implements MessageBroker {
             }
 
         } catch(Exception e){
-            e.printStackTrace();;
+            e.printStackTrace();
         }
+
     }
 
     @Override
