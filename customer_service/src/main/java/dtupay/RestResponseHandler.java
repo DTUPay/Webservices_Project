@@ -1,16 +1,12 @@
 package dtupay;
 
-import models.Message;
-
 import javax.ws.rs.container.AsyncResponse;
-import javax.ws.rs.core.Response;
 import java.util.HashMap;
 import java.util.UUID;
 
 public class RestResponseHandler {
     public HashMap<UUID, AsyncResponse> pendingRequests = new HashMap<>();
     private static RestResponseHandler instance = new RestResponseHandler();
-
 
     private RestResponseHandler(){}
 
@@ -19,19 +15,19 @@ public class RestResponseHandler {
         return instance;
     }
 
-    boolean containsRestResponseObject(UUID requestId){
+    public boolean containsRestResponseObject(UUID requestId){
         return this.pendingRequests.containsKey(requestId);
     }
 
-    AsyncResponse getRestResponseObject(UUID requestId){
+    public AsyncResponse getRestResponseObject(UUID requestId){
         return this.pendingRequests.get(requestId);
     }
 
-    void removeRestResponseObject(UUID requestId){
+    public void removeRestResponseObject(UUID requestId){
         pendingRequests.remove(requestId);
     }
 
-    UUID saveRestResponseObject(AsyncResponse response){
+    public UUID saveRestResponseObject(AsyncResponse response){
         UUID uuid = UUID.randomUUID();
         pendingRequests.put(uuid, response);
         return uuid;

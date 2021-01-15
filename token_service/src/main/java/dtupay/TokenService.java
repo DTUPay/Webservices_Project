@@ -28,19 +28,26 @@ import brokers.*;
 public class TokenService {
     ITokenRepository tokenRepository;
     RabbitMQ broker;
-    io.cucumber.messages.internal.com.google.gson.Gson gson = new io.cucumber.messages.internal.com.google.gson.Gson();
+    Gson gson = new Gson();
     DeliverCallback deliverCallback;
-
+    String queue = "token_service";
 
     public TokenService() {
         try {
-            String serviceName = System.getenv("SERVICE_NAME"); //token_service
-            System.out.println(serviceName + " started");
-            this.broker = new RabbitMQ(serviceName);
-            this.listenOnQueue(serviceName);
+            if(System.getenv("ENVIRONMENT") != null){
+                this.broker = new RabbitMQ(queue);
+                this.listenOnQueue(queue);
+            }
         } catch (Exception e) { e.printStackTrace(); }
         this.tokenRepository = new TokenRepository();
     }
+
+
+    public static void main(String[] args) {
+        TokenService service = new TokenService();
+        Quarkus.run();
+    }
+
 
     /*
         TokenService Functionality
@@ -81,16 +88,6 @@ public class TokenService {
         throw new TokenException("Token doesn't exist");
     }
 
-    /*
-        RabbitMQ call and callback
-     */
-
-
-    public static void main(String[] args) {
-        TokenService service = new TokenService();
-        Quarkus.run();
-    }
-
 
     public void addTokens(Message message, JsonObject payload){
 
@@ -115,6 +112,11 @@ public class TokenService {
         broker.sendMessage(reply);
 
     }
+
+
+    /*
+        RabbitMQ call and callback
+     */
 
     private void processMessage(Message message, JsonObject payload){
 

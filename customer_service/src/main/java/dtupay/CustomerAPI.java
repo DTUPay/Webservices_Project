@@ -5,14 +5,9 @@
 package dtupay;
 
 
-import dto.AddTokensDTO;
 import dto.ReceiveTokensDTO;
-import io.cucumber.java.bs.A;
 import models.Message;
-import models.Payload;
 
-import javax.json.Json;
-import javax.json.JsonObject;
 import javax.ws.rs.*;
 import javax.ws.rs.container.AsyncResponse;
 import javax.ws.rs.container.Suspended;
@@ -25,13 +20,9 @@ import java.util.concurrent.TimeoutException;
 
 
 @Path("/customer_service")
-public class HelloCustomer {
+public class CustomerAPI {
     CustomerService service = new CustomerService();
 
-
-    public HelloCustomer() throws IOException, TimeoutException {
-
-    }
 
     // DEBUG METHOD
     @GET
@@ -55,7 +46,8 @@ public class HelloCustomer {
         message.setService("customer_service");
 
         System.out.println("Sending message");
-        service.testReceiveTokens(message, response);
+        //service.testReceiveTokens(message, response);
+
 
         /* NEEDS FIX
         UUID uuid = service.addPendingRequest(response);
@@ -77,7 +69,8 @@ public class HelloCustomer {
 
     // ACTUAL METHODS
     @POST
-    @Path("/Payment/{id}/")
+    @Path("/payment/{id}/")
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.TEXT_PLAIN)
     public String acceptPayment(@PathParam("id") int paymentId) {
         // Get payment with id
@@ -90,7 +83,8 @@ public class HelloCustomer {
     }
 
     @PUT
-    @Path("/Payment/{id}")
+    @Path("/payment/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.TEXT_PLAIN)
     public String requestRefund(@PathParam("id") int paymentId) {
 
@@ -98,10 +92,12 @@ public class HelloCustomer {
     }
 
     @POST
-    @Path("/Tokens")
+    @Path("/tokens")
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public void requestTokens(int tokenAmount, @Suspended AsyncResponse response) {
-        System.out.println("requst tokens started");
+/*
+        System.out.println("request tokens started");
         UUID uuid = service.responseHandler.saveRestResponseObject(response);
         Message message = new Message("token_service", "addTokens");
         message.setRequestId(uuid);
@@ -115,6 +111,6 @@ public class HelloCustomer {
         payload.setAmount(tokenAmount);
         message.setPayload(payload);
 
-        service.broker.sendMessage(message);
+        service.broker.sendMessage(message);*/
     }
 }

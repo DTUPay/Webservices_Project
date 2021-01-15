@@ -43,6 +43,8 @@ bash scripts/run_integration.sh
 message:
 {
   "event": "<event>",
+  "status": 200,
+  "statusMessage": "<NONE>",
   "requestId": <UUID>,
   "messageId": <UUID>,
   "payload": {

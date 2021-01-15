@@ -4,68 +4,18 @@
 
 package dtupay;
 
-import brokers.RabbitMQ;
-import com.rabbitmq.client.DeliverCallback;
-import dto.ReceiveTokensDTO;
-import exceptions.CustomerException;
-import io.cucumber.messages.internal.com.google.gson.Gson;
-import models.Customer;
-import models.Message;
 
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.ws.rs.container.AsyncResponse;
-import javax.ws.rs.core.Response;
-import java.io.StringReader;
-import java.util.UUID;
+import brokers.CustomerBroker;
+import exceptions.CustomerException;
+import models.Customer;
 
 public class CustomerService {
-    RabbitMQ broker;
-    Gson gson = new Gson();
-    DeliverCallback deliverCallback;
-    String queue = "customer_service";
-    RestResponseHandler responseHandler;
-
-    ICustomerRepository customerRepository = new CustomerRepository();
-
+    ICustomerRepository customerRepository;
+    CustomerBroker broker;
     public CustomerService() {
-        responseHandler = RestResponseHandler.getInstance();
-
-        try {
-            this.broker = new RabbitMQ(queue);
-            this.listenOnQueue(queue);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void testReceiveTokens(Message message, AsyncResponse response) throws Exception {
-        UUID uuid = responseHandler.saveRestResponseObject(response);
-        message.setRequestId(uuid);
-
-        this.sendMessage(message, response);
-    }
-
-    public void receiveTokens(Message message, JsonObject payload) {
-        ReceiveTokensDTO dto = gson.fromJson(payload.toString(), ReceiveTokensDTO.class);
-
-        if(responseHandler.containsRestResponseObject(message.getRequestId())){
-            AsyncResponse response = responseHandler.getRestResponseObject(message.getRequestId());
-
-            response.resume(
-                    Response
-                            .status(200)
-                            .entity(gson.toJson(dto.getTokens()))
-                            .build()
-            );
-
-            responseHandler.removeRestResponseObject(message.getRequestId());
-        } else {
-            System.out.println("Event has no response");
-        }
+        broker = new CustomerBroker(this);
 
     }
-
 
     public void registerCustomer(Customer customer) throws CustomerException {
         if (!customerRepository.hasCustomer(customer.getCPRNumber())) {
@@ -93,49 +43,4 @@ public class CustomerService {
         return customerRepository.hasCustomer(cprNumber);
     }
 
-
-    private void processMessage(Message message, JsonObject payload){
-
-        switch(message.getEvent()) {
-            case "receiveTokens":
-                this.receiveTokens(message, payload);
-                break;
-            default:
-                System.out.println("Event not handled: " + message.getEvent());
-        }
-
     }
-
-    private void sendMessage(String queue, Message message) throws Exception {
-        try{
-            broker.sendMessage(message);
-        } catch(Exception e){
-            throw new Exception(e);
-        }
-    }
-
-    private void sendMessage(Message message, AsyncResponse response) throws Exception {
-        responseHandler.saveRestResponseObject(response);
-
-        try{
-            broker.sendMessage(message);
-            System.out.println("Message sent");
-        } catch(Exception e){
-            throw new Exception(e);
-        }
-    }
-
-    private void listenOnQueue(String queue){
-
-        deliverCallback = (consumerTag, delivery) -> {
-            String message = new String(delivery.getBody(), "UTF-8");
-            JsonObject jsonObject = Json.createReader(new StringReader(message)).readObject(); // @TODO: Validate Message, if it is JSON object
-
-            this.processMessage(gson.fromJson(jsonObject.toString(), Message.class), jsonObject.getJsonObject("payload"));
-        };
-
-        this.broker.onQueue(queue, deliverCallback);
-
-    }
-
-}
