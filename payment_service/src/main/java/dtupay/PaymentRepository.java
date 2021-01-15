@@ -14,9 +14,6 @@ public class PaymentRepository implements IPaymentRepository {
 
     HashMap<UUID, Payment> payments = new HashMap<>();
 
-
-
-
     @Override
     public void addPayment(Payment payment) {
         payments.put(payment.getPaymentID(),payment);
@@ -29,14 +26,7 @@ public class PaymentRepository implements IPaymentRepository {
 
     @Override
     public List<Payment> getPayments() {
-        return new ArrayList<Payment>(payments.values());
-        /*
-        List<Payment> paymentList = new ArrayList<>();
-        for (UUID uuid : payments.keySet()) {
-            paymentList.add(payments.get(uuid));
-        }
-        return paymentList;
-*/
+        return new ArrayList<>(payments.values());
     }
 
 

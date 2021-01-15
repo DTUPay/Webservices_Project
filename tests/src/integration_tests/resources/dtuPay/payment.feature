@@ -1,2 +1,0 @@
-Feature: Payment
-  Scenario:
