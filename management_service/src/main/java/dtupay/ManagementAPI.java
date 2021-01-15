@@ -5,6 +5,7 @@
 package dtupay;
 
 import models.Merchant;
+import models.Message;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -12,7 +13,17 @@ import javax.ws.rs.core.MediaType;
 
 @Path("/management_service")
 public class ManagementAPI {
-    ManagementService service = new ManagementService();
+    ManagementService service = ManagementService.getInstance();
+
+    @GET
+    @Path("/debug")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String debug() {
+        Message message = new Message();
+
+        return "Welcome to Management Service!";
+    }
+
 
     @GET
     @Produces(MediaType.TEXT_PLAIN)

@@ -33,7 +33,6 @@ public class TokenService {
     String queue = "token_service";
 
     public TokenService() {
-        System.out.println("Hei!");
         try {
             if(System.getenv("ENVIRONMENT") != null){
                 this.broker = new RabbitMQ(queue);
