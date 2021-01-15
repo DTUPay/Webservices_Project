@@ -34,22 +34,24 @@ public class CustomerBroker implements IMessageBroker {
 
             factory.setHost("rabbitmq");
 
-            int attempts = 0;
-            while (true){
-                try{
+            if(System.getenv("ENVIRONMENT") != null){
+                int attempts = 0;
+                while (true){
+                    try{
 
-                    connection = factory.newConnection();
-                    channel = connection.createChannel();
-                    channel.queueDeclare(queue, false, false, false, null);
+                        connection = factory.newConnection();
+                        channel = connection.createChannel();
+                        channel.queueDeclare(queue, false, false, false, null);
 
-                    break;
-                }catch (Exception e){
-                    attempts++;
-                    if(attempts > 10)
-                        throw e;
-                    System.out.println("Could not connect to RabbitMQ queue " + queue + ". Trying again.");
-                    //Sleep before retrying connection
-                    Thread.sleep(5*1000);
+                        break;
+                    }catch (Exception e){
+                        attempts++;
+                        if(attempts > 10)
+                            throw e;
+                        System.out.println("Could not connect to RabbitMQ queue " + queue + ". Trying again.");
+                        //Sleep before retrying connection
+                        Thread.sleep(5*1000);
+                    }
                 }
             }
 

@@ -18,6 +18,7 @@ import javax.ws.rs.core.MediaType;
 public class CustomerAPI {
     CustomerService service = CustomerService.getInstance();
 
+    // @Status: Implemented
     @PUT
     @Path("/refund")
     @Produces(MediaType.APPLICATION_JSON)
@@ -25,6 +26,7 @@ public class CustomerAPI {
         service.requestRefund(payment, response);
     }
 
+    // @Status: Implemented
     @POST
     @Path("/tokens")
     @Produces(MediaType.APPLICATION_JSON)
