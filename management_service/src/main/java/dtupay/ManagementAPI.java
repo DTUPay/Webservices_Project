@@ -4,26 +4,27 @@
 
 package dtupay;
 
+import dto.CustomerDTO;
+import dto.MerchantDTO;
 import models.Merchant;
 import models.Message;
 
 import javax.ws.rs.*;
+import javax.ws.rs.container.AsyncResponse;
+import javax.ws.rs.container.Suspended;
 import javax.ws.rs.core.MediaType;
 
 
 @Path("/management_service")
 public class ManagementAPI {
-    //ManagementService service = ManagementService.getInstance();
+    ManagementService service = ManagementService.getInstance();
 
     @GET
     @Path("/debug")
     @Produces(MediaType.TEXT_PLAIN)
     public String debug() {
-        Message message = new Message();
-
         return "Welcome to Management Service!";
     }
-
 
     @GET
     @Produces(MediaType.TEXT_PLAIN)
@@ -34,28 +35,28 @@ public class ManagementAPI {
     @POST
     @Path("/customer")
     @Consumes(MediaType.APPLICATION_JSON)
-    public String addCustomer() {
-        return "A customer was added";
+    public void registerCustomer(@Suspended AsyncResponse response, CustomerDTO customer) {
+        service.registerCustomer(customer, response);
     }
 
     @DELETE
-    @Path("/customer/{id}")
-    public String deleteCustomer(@PathParam("id") int customerId) {
-        return "A customer was added";
+    @Path("/customer/{customerID}")
+    public void removeCustomer(@Suspended AsyncResponse response, @PathParam("customerID") String customerID) {
+        service.removeCustomer(customerID, response);
     }
 
     @POST
     @Path("/merchant")
     @Produces(MediaType.APPLICATION_JSON)
-    public String addMerchant(Merchant merchant) {
-        return "A merchant was added";
+    public void registerMerchant(@Suspended AsyncResponse response, MerchantDTO merchant) {
+        service.registerMerchant(merchant, response);
     }
 
     @DELETE
-    @Path("/customer/{id}")
+    @Path("/merchant/{merchantID}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public String deleteMerchant(@PathParam("id") int merchantId) {
-        return "A customer was added";
+    public void removeMerchant(@Suspended AsyncResponse response, @PathParam("merchantID") String merchantID) {
+        service.removeMerchant(merchantID, response);
     }
 
     @GET
