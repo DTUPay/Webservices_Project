@@ -115,17 +115,17 @@ public class CustomerService {
     // @TODO: Missing in UML
     // @Status: Implemented
     public void requestRefund(PaymentDTO payment, AsyncResponse response){
-        UUID requestId = UUID.randomUUID();
 
         Message message = new Message();
         message.setEvent("requestRefund");
         message.setService("payment_service");
-        message.setRequestId(requestId);
         message.setPayload(payment);
         message.setCallback(new Callback("customer_service", "requestRefundResponse"));
 
+        UUID requestId = RestfulHandler.saveRestResponseObject(response);
+        message.setRequestId(requestId);
+
         this.broker.sendMessage(message);
-        RestfulHandler.saveRestResponseObject(response);
     }
 
     // @TODO: Missing in UML
