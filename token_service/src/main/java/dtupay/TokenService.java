@@ -28,7 +28,7 @@ import brokers.*;
 public class TokenService {
     ITokenRepository tokenRepository;
     RabbitMQ broker;
-    io.cucumber.messages.internal.com.google.gson.Gson gson = new io.cucumber.messages.internal.com.google.gson.Gson();
+    Gson gson = new Gson();
     DeliverCallback deliverCallback;
 
 
