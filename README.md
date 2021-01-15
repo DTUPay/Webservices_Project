@@ -25,7 +25,7 @@
 ## Implemented services
 | Name                 | Status                                                                                                     |
 |----------------------|----------------------------------------------------------------------------------------------------------|
-| management_service   | In progress                                                                                              |
+| management_service   | Implemented                                                                                              |
 | merchant_service     | In progress                                                                                              |
 | customer_service     | Implemented                                                                                              |
 | token_service        | Implemented                                                                                              |
