@@ -60,9 +60,14 @@ public class TokenService {
         throw new TokenException("Token doesn't exist");
     }
 
-    public boolean isTokenValid(UUID tokenID, String customerID) throws TokenException {
+    public String isTokenValid(UUID tokenID) throws TokenException {
         if (this.tokenRepository.containsToken(tokenID)) {
-            return this.tokenRepository.getToken(tokenID).getCustomerID().equals(customerID) && !this.tokenRepository.getToken(tokenID).isUsed();
+            if (!this.tokenRepository.getToken(tokenID).isUsed()) {
+                return this.tokenRepository.getToken(tokenID).getCustomerID();
+            }
+            else {
+                throw new TokenException("Token has already been used");
+            }
         }
         throw new TokenException("Token doesn't exist");
     }
