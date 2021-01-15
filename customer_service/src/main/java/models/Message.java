@@ -12,6 +12,8 @@ public class Message {
     private String event;
     private UUID requestId;
     private UUID messageId;
+    private int statusCode;
+    private String errorMessage;
     private String payload;
     private Callback callback;
 
@@ -61,6 +63,22 @@ public class Message {
 
     public Callback getCallback() {
         return callback;
+    }
+
+    public int getStatusCode() {
+        return statusCode;
+    }
+
+    public void setStatusCode(int statusCode) {
+        this.statusCode = statusCode;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
     }
 
     public void setCallback(Callback callback) {
