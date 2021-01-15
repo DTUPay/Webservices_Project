@@ -21,6 +21,10 @@ public class CustomerServant {
         this.customerTokens = new ArrayList<>();
     }
 
+    public String getID() {
+        return this.id;
+    }
+
     public Customer getCustomer() {
         return customer;
     }
@@ -40,12 +44,15 @@ public class CustomerServant {
 
     }
 
-    public void requestTokens(Integer requestedTokens) throws Exception {
-        if(requestedTokens == 0)
-            return;
+    public void requestTokens(String customerID, Integer requestedTokens) throws Exception {
+        if(requestedTokens == 0) return;
         RestCommunicator communicator = new RestCommunicator(Service.CUSTOMER.port);
         String path = Service.CUSTOMER.port + "/" + Service.CUSTOMER.location + "/tokens";
-            Object responseEntity = communicator.post(requestedTokens,path);
+        JsonObject tokenRequest = Json.createObjectBuilder()
+                .add("customerID", customerID)
+                .add("amount", requestedTokens)
+                .build();
+            Object responseEntity = communicator.post(tokenRequest,path);
             if(verifyList(responseEntity, UUID.class))
                 addTokens((List<?>)responseEntity);
             else throw new Exception("The returned entity type did not match List<String>!");
@@ -56,6 +63,9 @@ public class CustomerServant {
         RestCommunicator communicator = new RestCommunicator(Service.CUSTOMER.port);
         String path = Service.CUSTOMER.port + "/" + Service.CUSTOMER.location + "refund";
         boolean success = communicator.put(paymentID, path);
+        if(success)
+            return;
+        throw new Exception("Refunding the payment: " + paymentID + " failed!");
     }
 
     private void addTokens(List list) {
