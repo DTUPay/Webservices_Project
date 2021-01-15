@@ -1,6 +1,14 @@
 # Webservices Project
 [![Build Status](http://g-20.compute.dtu.dk:8282/buildStatus/icon?job=DTUPay-CI_CD&build=0&subject=CI/CD)](http://g-20.compute.dtu.dk:8282/job/DTUPay-CI_CD/lastBuild/)
 
+## Participants
+* Björn Wilting (s184214)
+* Mikkel Rosenfeldt Anderson (s184230)
+* Laura Sønderskov Hansen (s184234)
+* Oliver Orla Nielsen (s164917)
+* Benjamin Eriksen (s153724)
+* Rubatharisan Thirumathyam (s205904)
+
 ## Web-service (debug) endpoints
 | Name                 | Production                                                                                               |
 |----------------------|----------------------------------------------------------------------------------------------------------|

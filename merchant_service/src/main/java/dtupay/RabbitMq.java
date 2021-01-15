@@ -65,7 +65,7 @@ public class RabbitMq implements IRabbitMq {
         //Define callback logic
         deliverCallback = (consumerTag, delivery) -> {
             String message = new String(delivery.getBody(), "UTF-8");
-            System.out.println("Token_service consumed a message");
+            System.out.println("Merchant_service consumed a message");
             this.parseMessage(message);
         };
 

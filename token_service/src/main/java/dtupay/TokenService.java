@@ -6,6 +6,7 @@ package dtupay;
 
 
 import com.google.gson.Gson;
+import com.google.gson.JsonParser;
 import exceptions.TokenException;
 import models.Token;
 import io.quarkus.runtime.Quarkus;
@@ -78,7 +79,10 @@ public class TokenService {
 
 
     public void addTokens(JsonObject jsonObject){
-        JsonObject payload = (JsonObject) jsonObject.get("payload");
+        String payloadString = jsonObject.get("payload").toString();
+        payloadString = payloadString.substring( 1, payloadString.length() - 1 ).replaceAll("\\\\", "");
+        System.out.println(payloadString);
+        com.google.gson.JsonObject payload = new JsonParser().parse(payloadString).getAsJsonObject();
         JsonObject callback = (JsonObject) jsonObject.get("callback");
         String callbackService = callback.get("service").toString().replaceAll("\"", "");
         String callbackEvent = callback.get("event").toString().replaceAll("\"", "");

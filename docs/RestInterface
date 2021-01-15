@@ -1,0 +1,268 @@
+swagger: '2.0'
+info:
+  description: |
+    Author: Oliver O. Nielsen
+  version: 1.0.0
+  title: DTUpay
+
+tags:
+- name: Management Service
+- name: Customer Service
+- name: Merchant Service
+
+# schemes:
+# - http
+
+paths:
+  /management_service/Customer:
+    post:
+      tags:
+      - Management Service
+      summary: Add a customer to the system
+      operationId: addCustomer
+      consumes:
+      - application/json
+      parameters:
+      - in: body
+        name: customer
+        description: The customer to be added
+        required: true
+        schema:
+          $ref: '#/definitions/Customer'
+      responses:
+        201:
+          description: OK, object created
+        400:
+          description: Invalid CustomerID
+    delete:
+      tags:
+      - Management Service
+      summary: Delete customer by id
+      operationId: deleteCustomer
+      parameters:
+      - in: query
+        name: id
+        type: integer
+        description: Id of customer to delete
+      responses:
+        202:
+          description: resource was marked for deletion
+        404:
+          description: Customer not found
+          
+          
+  /management_service/Merchant:
+    post:
+      tags:
+      - Management Service
+      summary: Add a merchant to the system
+      operationId: addMerchant
+      consumes:
+      - application/json
+      parameters:
+      - in: body
+        name: merchant
+        description: The merchant to be added
+        required: true
+        schema:
+          $ref: '#/definitions/Merchant'
+      responses:
+        201:
+          description: OK, object created
+        400:
+          description: Invalid MerchantID
+    delete:
+      tags:
+      - Management Service
+      summary: Delete merchant by id
+      operationId: deleteMerchant
+      parameters:
+      - in: query
+        name: id
+        type: integer
+        description: Id of merchant to delete
+      responses:
+        202:
+          description: resource was marked for deletion
+        404:
+          description: Merchant not found
+          
+  /management_service/Report:
+    get:
+      tags:
+      - Management Service
+      summary: Generate a report of the transactions
+      operationId: getReport
+      responses:
+        200:
+          description: TODO return report object here
+        500:
+          description: Unexpected internal error
+          
+  /customer_service/Payment:
+    post:
+      tags:
+      - Customer Service
+      summary: Complete a payment as customer
+      operationId: acceptPayment
+      parameters:
+      - in: query
+        name: id
+        type: integer
+        description: Id of payment to pay
+      responses:
+        200:
+          description: OK, payment complete
+        400:
+          description: Insufficient funds
+    put:
+      tags:
+      - Customer Service
+      summary: Request a refund of a paid payment
+      operationId: requestRefund
+      parameters:
+      - in: query
+        name: id
+        type: integer
+        description: Id of payment to refund
+      responses:
+        200:
+          description: Refund granted
+        400:
+          description: Refund denied
+          
+  /customer_service/Tokens:
+    post:
+      tags:
+      - Customer Service
+      summary: Request a new set of tokens
+      operationId: requestTokens
+      parameters:
+      - in: query
+        name: id
+        type: integer
+        description: Amount of tokens to request
+      responses:
+        200:
+          description: TODO insert token return here
+        400:
+          description: Token request denied TODO proper return here
+          
+  /Merchant_service/Payment:
+    post:
+      tags:
+      - Merchant Service
+      summary: Request a payment
+      operationId: requestPayment
+      consumes:
+      - application/json
+      parameters:
+      - in: body
+        name: merchant
+        description: The payment to be added
+        required: true
+        schema:
+          $ref: '#/definitions/PaymentRequest'
+      responses:
+        201:
+          description: OK, payment created
+        500:
+          description: Unexpected internal error
+  /Merchant_service/Report:
+    get:
+      tags:
+      - Merchant Service
+      summary: Generate a report for a merchant
+      operationId: generateReport
+      produces:
+      - application/json
+      parameters:
+      - in: query
+        name: id
+        type: integer
+        description: merchant Id
+      responses:
+        200:
+          description: TODO insert report return here
+        500:
+          description: Unexpected internal error
+
+ 
+ 
+ 
+
+definitions:
+  Token:
+    type: object
+    properties:
+      TokenID:
+        type: integer
+        format: int64
+      ExpireDate:
+        type: string
+        format: date
+      CustomerID:
+        type: integer
+        format: int64
+    xml:
+      name: Tag
+      
+  Customer:
+    type: object
+    properties:
+      CustomerID:
+        type: integer
+        format: int64
+      FirstName:
+        type: string
+        example: Peter
+      LastName:
+        type: string
+        example: Jensen
+      CPRNumber:
+        type: string
+        example: 110996xxxx
+      Tokens:
+        type: array
+        xml:
+          name: tag
+          wrapped: true
+        items:
+          $ref: '#/definitions/Token'
+    xml:
+      name: Customer
+      
+      
+  Merchant:
+    type: object
+    properties:
+      MerchantID:
+        type: integer
+        format: int64
+      Name:
+        type: string
+        example: Elgiganten
+      CVR:
+        type: string
+        example: 10982234
+    xml:
+      name: Merchant
+      
+  PaymentRequest:
+    type: object
+    properties:
+      MerchantID:
+        type: integer
+        format: int64
+      Amount:
+        type: integer
+        format: int64
+    xml:
+      name: PaymentRequest
+      
+      
+host: g-20.compute.dtu.dk
+# basePath: DTUpay/test/1.0.0
+schemes:
+ - https
+ - http
