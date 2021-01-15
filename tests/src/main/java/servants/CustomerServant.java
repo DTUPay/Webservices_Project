@@ -12,9 +12,7 @@ import java.util.UUID;
  * @author Björn Wilting s184214
  */
 public class CustomerServant {
-    private String name;
-    private String cpr;
-    private int balance;
+    private Customer customer;
     private String id;
     private List<UUID> customerTokens;
 
@@ -22,27 +20,13 @@ public class CustomerServant {
         this.id = id;
         this.customerTokens = new ArrayList<>();
     }
-    public CustomerServant(String name, String cpr, int balance) {
-        this.name = name;
-        this.cpr = cpr;
-        this.balance = balance;
-        this.customerTokens = new ArrayList<>();
+
+    public Customer getCustomer() {
+        return customer;
     }
 
-    public String getID() {
-        return id;
-    }
-
-    public int getBalance() {
-        return balance;
-    }
-
-    public void setID(String id) {
-        this.id = id;
-    }
-
-    public void setBalance(int balance) {
-        this.balance = balance;
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 
     public void acceptPayment(int amount, String merchantID, UUID tokenID) throws Exception {
@@ -70,7 +54,7 @@ public class CustomerServant {
 
     public void requestRefund(String paymentID) throws Exception {
         RestCommunicator communicator = new RestCommunicator(Service.CUSTOMER.port);
-        String path = Service.CUSTOMER.port + "/" + Service.CUSTOMER.location + "merchant";
+        String path = Service.CUSTOMER.port + "/" + Service.CUSTOMER.location + "refund";
         boolean success = communicator.put(paymentID, path);
     }
 
