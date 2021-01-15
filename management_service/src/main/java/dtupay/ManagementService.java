@@ -1,34 +1,33 @@
 package dtupay;
 
 import brokers.ManagementBroker;
+import com.google.gson.Gson;
+import dto.CustomerDTO;
+import dto.MerchantDTO;
 import io.quarkus.runtime.Quarkus;
 import io.quarkus.runtime.annotations.QuarkusMain;
+import models.Callback;
+import models.Customer;
 import models.Message;
 
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.ws.rs.container.AsyncResponse;
+import javax.ws.rs.core.Response;
 import java.io.StringReader;
+import java.util.UUID;
 
 @QuarkusMain
 public class ManagementService {
     ManagementBroker broker;
     private static ManagementService instance = new ManagementService();
+    RestResponseHandler RestfulHandler = RestResponseHandler.getInstance();
+    Gson gson = new Gson();
 
-    /*
-    private ManagementService(){
-
-        try {
-            if(System.getenv("ENVIRONMENT") != null){
-                this.broker = new RabbitMQ(queue);
-                this.listenOnQueue(queue);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public ManagementService() {
+        broker = new ManagementBroker(this);
     }
 
-    //Get the only object available
     public static ManagementService getInstance(){
         return instance;
     }
@@ -38,60 +37,104 @@ public class ManagementService {
         Quarkus.run();
     }
 
+    // @TODO: Missing in UML
+    // @Status: Implemented
+    public void registerCustomer(CustomerDTO customer, AsyncResponse response){
+        Message message = new Message();
 
-    /*
-        Management service methods
-     */
+        message.setService("customer_service");
+        message.setEvent("registerCustomer");
+        message.setPayload(customer);
+        message.setCallback(new Callback("management_service", "registerCustomerResponse"));
 
+        UUID requestId = RestfulHandler.saveRestResponseObject(response);
+        message.setRequestId(requestId);
 
-
-    /*
-        RabbitMQ call and callback
-     */
-
-    /*
-    private void processMessage(Message message, JsonObject payload){
-        switch(message.getEvent()) {
-            case "receiveMessage":
-                System.out.println(message.toString());
-                break;
-            default:
-                System.out.println("Event not handled: " + message.getEvent());
-        }
-
+        this.broker.sendMessage(message);
     }
 
-    private void sendMessage(String queue, Message message) throws Exception {
-        try{
-            broker.sendMessage(message);
-        } catch(Exception e){
-            throw new Exception(e);
-        }
+    // @TODO: Missing in UML
+    // @Status: Implemented
+    public void registerCustomerResponse(Message message){
+        AsyncResponse response = RestfulHandler.getRestResponseObject(message.getRequestId());
+        response.resume(Response.status(message.getStatus()).entity(message.getStatusMessage()).build());
     }
 
-    private void sendMessage(Message message, AsyncResponse response) throws Exception {
-        responseHandler.saveRestResponseObject(response);
+    // @TODO: Missing in UML
+    // @Status: Implemented
+    public void removeCustomer(String customerID, AsyncResponse response){
+        Message message = new Message();
 
-        try{
-            broker.sendMessage(message);
-            System.out.println("Message sent");
-        } catch(Exception e){
-            throw new Exception(e);
-        }
+        message.setService("customer_service");
+        message.setEvent("removeCustomer");
+
+        CustomerDTO customer = new CustomerDTO();
+        customer.setCpr(customerID);
+
+        message.setPayload(customer);
+        message.setCallback(new Callback("management_service", "removeCustomerResponse"));
+
+        UUID requestId = RestfulHandler.saveRestResponseObject(response);
+        message.setRequestId(requestId);
+
+        this.broker.sendMessage(message);
     }
 
-    private void listenOnQueue(String queue){
-
-        deliverCallback = (consumerTag, delivery) -> {
-            String message = new String(delivery.getBody());
-            JsonObject jsonObject = Json.createReader(new StringReader(message)).readObject(); // @TODO: Validate Message, if it is JSON object
-
-            this.processMessage(gson.fromJson(jsonObject.toString(), Message.class), jsonObject.getJsonObject("payload"));
-        };
-
-        this.broker.onQueue(queue, deliverCallback);
-
+    // @TODO: Missing in UML
+    // @Status: Implemented
+    public void removeCustomerResponse(Message message){
+        AsyncResponse response = RestfulHandler.getRestResponseObject(message.getRequestId());
+        response.resume(Response.status(message.getStatus()).entity(message.getStatusMessage()).build());
     }
-    */
 
+
+    // @TODO: Missing in UML
+    // @Status: Implemented
+    public void registerMerchant(MerchantDTO merchant, AsyncResponse response) {
+        Message message = new Message();
+
+        message.setService("merchant_service");
+        message.setEvent("registerMerchant");
+        message.setPayload(merchant);
+        message.setCallback(new Callback("management_service", "registerMerchantResponse"));
+
+        UUID requestId = RestfulHandler.saveRestResponseObject(response);
+        message.setRequestId(requestId);
+
+        this.broker.sendMessage(message);
+    }
+
+    // @TODO: Missing in UML
+    // @Status: Implemented
+    public void registerMerchantResponse(Message message){
+        AsyncResponse response = RestfulHandler.getRestResponseObject(message.getRequestId());
+        response.resume(Response.status(message.getStatus()).entity(message.getStatusMessage()).build());
+    }
+
+    // @TODO: Missing in UML
+    // @Status: Implemented
+    public void removeMerchant(String merchantID, AsyncResponse response){
+        Message message = new Message();
+
+        message.setService("merchant_service");
+        message.setEvent("removeMerchant");
+
+        MerchantDTO customer = new MerchantDTO();
+        customer.setCvr(merchantID);
+
+        message.setPayload(customer);
+        message.setCallback(new Callback("management_service", "removeMerchantResponse"));
+
+        UUID requestId = RestfulHandler.saveRestResponseObject(response);
+        message.setRequestId(requestId);
+
+        this.broker.sendMessage(message);
+    }
+
+    // @TODO: Missing in UML
+    // @Status: Implemented
+    public void removeMerchantResponse(Message message){
+        AsyncResponse response = RestfulHandler.getRestResponseObject(message.getRequestId());
+        response.resume(Response.status(message.getStatus()).entity(message.getStatusMessage()).build());
+    }
 }
