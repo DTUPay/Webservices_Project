@@ -24,26 +24,37 @@ public class CustomerBroker implements IMessageBroker {
     RestResponseHandler responseHandler;
     String queue = "customer_service";
 
-
     CustomerService customerService;
 
     public CustomerBroker(CustomerService customerService) {
-        customerService = customerService;
+        this.customerService = customerService;
         RestResponseHandler responseHandler = RestResponseHandler.getInstance();
 
         try {
-            if (System.getenv("ENVIRONMENT") == null) {
-                return;
-            }
-            Thread.sleep(10 * 1000);
-            factory.setHost("rabbitmq");
-            connection = factory.newConnection();
-            channel = connection.createChannel();
-            channel.queueDeclare(queue, false, false, false, null);
-            this.listenOnQueue(queue);
 
-        } catch (Exception e) {
-            e.printStackTrace();
+            factory.setHost("rabbitmq");
+
+            int attempts = 0;
+            while (true){
+                try{
+
+                    connection = factory.newConnection();
+                    channel = connection.createChannel();
+                    channel.queueDeclare(queue, false, false, false, null);
+
+                    break;
+                }catch (Exception e){
+                    attempts++;
+                    if(attempts > 10)
+                        throw e;
+                    System.out.println("Could not connect to RabbitMQ queue " + queue + ". Trying again.");
+                    //Sleep before retrying connection
+                    Thread.sleep(5*1000);
+                }
+            }
+
+        } catch(Exception e){
+            e.printStackTrace();;
         }
     }
 
@@ -63,6 +74,7 @@ public class CustomerBroker implements IMessageBroker {
     @Override
     public void sendMessage(Message message) {
         try {
+            channel.queueDeclare(message.getService(), false, false, false, null);
             channel.basicPublish("", message.getService(), null, gson.toJson(message).getBytes(StandardCharsets.UTF_8));
         } catch (Exception e) {
             e.printStackTrace();
@@ -122,5 +134,7 @@ public class CustomerBroker implements IMessageBroker {
             throw new Exception(e);
         }
     }
+
+
 
 }

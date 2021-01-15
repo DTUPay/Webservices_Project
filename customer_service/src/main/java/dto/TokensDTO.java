@@ -2,7 +2,7 @@ package dto;
 
 import models.Payload;
 
-public class AddTokensDTO extends Payload {
+public class TokensDTO extends Payload {
     private String customerId;
     private int amount;
 

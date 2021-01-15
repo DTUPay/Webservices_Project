@@ -1,8 +1,6 @@
 package dtupay;
 
-import brokers.RabbitMQ;
-import com.google.gson.Gson;
-import com.rabbitmq.client.DeliverCallback;
+import brokers.ManagementBroker;
 import io.quarkus.runtime.Quarkus;
 import io.quarkus.runtime.annotations.QuarkusMain;
 import models.Message;
@@ -10,23 +8,14 @@ import models.Message;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.ws.rs.container.AsyncResponse;
-import javax.ws.rs.core.Response;
 import java.io.StringReader;
-import java.util.HashMap;
-import java.util.UUID;
 
 @QuarkusMain
 public class ManagementService {
-    String queue = "management_service";
-    RestResponseHandler responseHandler;
-    RabbitMQ broker;
-    Gson gson = new Gson();
-    DeliverCallback deliverCallback;
-
+    ManagementBroker broker;
     private static ManagementService instance = new ManagementService();
 
     private ManagementService(){
-        responseHandler = RestResponseHandler.getInstance();
 
         try {
             if(System.getenv("ENVIRONMENT") != null){

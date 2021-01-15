@@ -6,6 +6,7 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.DeliverCallback;
 import dtupay.CustomerService;
+import dtupay.ManagementService;
 import dtupay.RestResponseHandler;
 import models.Message;
 
@@ -15,20 +16,20 @@ import javax.ws.rs.container.AsyncResponse;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 
-public class CustomerBroker implements IMessageBroker {
+public class ManagementBroker implements IMessageBroker {
     ConnectionFactory factory = new ConnectionFactory();
     Connection connection;
     Channel channel;
     DeliverCallback deliverCallback;
     Gson gson = new Gson();
     RestResponseHandler responseHandler;
-    String queue = "customer_service";
+    String queue = "management_queue";
 
 
-    CustomerService customerService;
+    ManagementService managementService;
 
-    public CustomerBroker(CustomerService customerService) {
-        customerService = customerService;
+    public ManagementBroker(ManagementService managementService) {
+        this.managementService = managementService;
         RestResponseHandler responseHandler = RestResponseHandler.getInstance();
 
         try {
@@ -47,7 +48,6 @@ public class CustomerBroker implements IMessageBroker {
         }
     }
 
-    //track 'customer_service'-queue
     private void listenOnQueue(String queue){
         deliverCallback = (consumerTag, delivery) -> {
             String message = new String(delivery.getBody(), "UTF-8");
@@ -86,8 +86,6 @@ public class CustomerBroker implements IMessageBroker {
         reply.setRequestId(originalMessage.getRequestId());
         return reply;
     }
-
-
 
     //Fire and forget
     private void sendMessage(String queue, Message message) throws Exception {
