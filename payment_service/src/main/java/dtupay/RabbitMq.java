@@ -65,7 +65,7 @@ public class RabbitMq implements IRabbitMq {
         //Define callback logic
         deliverCallback = (consumerTag, delivery) -> {
             String message = new String(delivery.getBody(), "UTF-8");
-            System.out.println("Token_service consumed a message");
+            System.out.println("Payment_service consumed a message");
             this.parseMessage(message);
         };
 
@@ -110,9 +110,8 @@ public class RabbitMq implements IRabbitMq {
         String event = jsonObject.get("event").toString().replaceAll("\"", "");
 
         switch (event){
-            case "demo":
-                //Call service logic here
-                service.demo(jsonObject);
+            case "acceptPayment":
+                service.acceptPayment(jsonObject);
                 break;
         }
     }
