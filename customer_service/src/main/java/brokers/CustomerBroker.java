@@ -43,6 +43,8 @@ public class CustomerBroker implements IMessageBroker {
                         channel = connection.createChannel();
                         channel.queueDeclare(queue, false, false, false, null);
 
+                        this.listenOnQueue(queue);
+
                         break;
                     }catch (Exception e){
                         attempts++;
@@ -117,6 +119,9 @@ public class CustomerBroker implements IMessageBroker {
             case "registerCustomer":
                 customerService.registerCustomer(message, payload);
                 break;
+            case "removeCustomer":
+                customerService.removeCustomer(message, payload);
+                break;
             default:
                 System.out.println("Event not handled: " + message.getEvent());
         }
@@ -132,6 +137,7 @@ public class CustomerBroker implements IMessageBroker {
         } catch(Exception e){
             throw new Exception(e);
         }
+
     }
 
 
