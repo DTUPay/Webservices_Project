@@ -5,7 +5,6 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.DeliverCallback;
-import dtupay.CustomerService;
 import dtupay.ManagementService;
 import dtupay.RestResponseHandler;
 import models.Message;
