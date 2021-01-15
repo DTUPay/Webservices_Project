@@ -43,8 +43,6 @@ public class RabbitMQ implements MessageBroker {
                 }
             }
 
-
-
         } catch(Exception e){
             e.printStackTrace();
         }
