@@ -20,11 +20,11 @@ public class MerchantServiceSteps {
         service = new MerchantService();
     }
 
-    @Given("^a merchant with name \"([^\"]*)\" and CVR \"([^\"]*)\" that does not exist in the repository$")
-    public void aMerchantWithNameAndCVRThatDoesNotExistInTheRepository(String arg0, String arg1) throws Throwable {
-        merchant = new Merchant(arg0, arg1);
+    @Given("a merchant with name {string} and CVR {string} that does not exist in the repository")
+    public void aMerchantWithNameAndCVRThatDoesNotExistInTheRepository(String name, String cvr) throws Throwable {
+        merchant = new Merchant(name, cvr);
         try {
-            service.getMerchant(arg1);
+            service.getMerchant(cvr);
             fail();
         }
         catch (MerchantException e) {
@@ -32,36 +32,36 @@ public class MerchantServiceSteps {
         }
     }
 
-    @Given("^a new merchant with name \"([^\"]*)\" and CVR \"([^\"]*)\"$")
-    public void aNewMerchantWithNameAndCVR(String arg0, String arg1) throws Throwable {
+    @Given("a new merchant with name {string} and CVR {string}")
+    public void aNewMerchantWithNameAndCVR(String name, String cvr) throws Throwable {
         // Write code here that turns the phrase above into concrete actions
-        merchant = new Merchant(arg0, arg1);
+        merchant = new Merchant(name, cvr);
     }
 
     @Given("a merchant with name {string} and CVR {string} that does exist in the repository")
-    public void aMerchantWithNameAndCVRThatDoesExistInTheRepository(String arg0, String arg1) {
-        merchant = new Merchant(arg0, arg1);
+    public void aMerchantWithNameAndCVRThatDoesExistInTheRepository(String name, String cvr) {
+        merchant = new Merchant(name, cvr);
         try {
             service.registerMerchant(merchant);
-            assertEquals(service.getMerchant(arg1), merchant);
+            assertEquals(service.getMerchant(cvr), merchant);
         } catch (MerchantException e) {
             fail();
         }
     }
 
-    @Then("^a merchant with name \"([^\"]*)\" and CVR \"([^\"]*)\" exists in the repository$")
-    public void aMerchantWithNameAndCVRExistsInTheRepository(String arg0, String arg1) throws Throwable {
+    @Then("a merchant with name {string} and CVR {string} exists in the repository")
+    public void aMerchantWithNameAndCVRExistsInTheRepository(String name, String cvr) throws Throwable {
         // Write code here that turns the phrase above into concrete actions
-        Merchant merchant1 = service.getMerchant(arg1);
-        assertEquals(service.getMerchant(arg1), merchant);
-        assertEquals(service.getMerchant(arg1).getName(),arg0);
+        Merchant merchant1 = service.getMerchant(cvr);
+        assertEquals(service.getMerchant(cvr), merchant);
+        assertEquals(service.getMerchant(cvr).getName(),name);
     }
 
-    @Then("^a merchant with CVR \"([^\"]*)\" does not exist in the repository$")
-    public void aMerchantWithCVRDoesNotExistInTheRepository(String arg0) throws Throwable {
+    @Then("a merchant with CVR {string} does not exist in the repository")
+    public void aMerchantWithCVRDoesNotExistInTheRepository(String cvr) throws Throwable {
         // Write code here that turns the phrase above into concrete actions
         try {
-            service.getMerchant(arg0);
+            service.getMerchant(cvr);
             fail();
         }
         catch (MerchantException e) {
@@ -69,23 +69,23 @@ public class MerchantServiceSteps {
         }
     }
 
-    @Then("^an error message with \"([^\"]*)\" is thrown$")
-    public void anErrorMessageWithIsThrown(String arg0) throws Throwable {
+    @Then("an error message with {string} is thrown")
+    public void anErrorMessageWithIsThrown(String msg) throws Throwable {
         // Write code here that turns the phrase above into concrete actions
-        Assertions.assertEquals(arg0, this.exception.getMessage());
+        Assertions.assertEquals(msg, this.exception.getMessage());
     }
 
-    @When("^a merchant with CVR \"([^\"]*)\" is removed from the repository$")
-    public void aMerchantWithCVRIsRemovedFromTheRepository(String arg0) throws Throwable {
+    @When("a merchant with CVR {string} is removed from the repository")
+    public void aMerchantWithCVRIsRemovedFromTheRepository(String cvr) throws Throwable {
         // Write code here that turns the phrase above into concrete actions
         try {
-            service.removeMerchant(arg0);
+            service.removeMerchant(cvr);
         } catch (MerchantException e) {
             exception = e;
         }
     }
 
-    @When("^the new merchant is added to the repository$")
+    @When("the new merchant is added to the repository")
     public void theNewMerchantIsAddedToTheRepository() {
         try {
             service.registerMerchant(merchant);
