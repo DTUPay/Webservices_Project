@@ -9,6 +9,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonParser;
 import com.rabbitmq.client.DeliverCallback;
 import dto.AddTokensDTO;
+import dto.CustomerIDDTO;
+import dto.TokenIDDTO;
 import dto.TokenIdListDTO;
 import exceptions.TokenException;
 import models.Message;
@@ -27,7 +29,7 @@ import brokers.*;
 @QuarkusMain
 public class TokenService {
     ITokenRepository tokenRepository;
-    RabbitMQ broker;
+    TokenBroker broker;
     Gson gson = new Gson();
     DeliverCallback deliverCallback;
     String queue = "token_service";
@@ -35,8 +37,7 @@ public class TokenService {
     public TokenService() {
         try {
             if(System.getenv("ENVIRONMENT") != null){
-                this.broker = new RabbitMQ(queue);
-                this.listenOnQueue(queue);
+                this.broker = new TokenBroker(this);
             }
         } catch (Exception e) { e.printStackTrace(); }
         this.tokenRepository = new TokenRepository();
@@ -76,6 +77,17 @@ public class TokenService {
         throw new TokenException("Token doesn't exist");
     }
 
+    public void useToken(Message message, JsonObject payload){
+        System.out.println(payload);
+        Message reply = broker.createReply(message);
+        TokenIDDTO dto = gson.fromJson(payload.toString(), TokenIDDTO.class);
+        try {
+            useToken(dto.getTokenID());
+        } catch (TokenException e) {
+            e.printStackTrace();
+        }
+    }
+
     public String isTokenValid(UUID tokenID) throws TokenException {
         if (this.tokenRepository.containsToken(tokenID)) {
             if (!this.tokenRepository.getToken(tokenID).isUsed()) {
@@ -86,6 +98,24 @@ public class TokenService {
             }
         }
         throw new TokenException("Token doesn't exist");
+    }
+
+    public void isTokenValid(Message message, JsonObject payload){
+        System.out.println(payload);
+        Message reply = broker.createReply(message);
+        TokenIDDTO dto = gson.fromJson(payload.toString(), TokenIDDTO.class);
+        try {
+            String customerId = isTokenValid(dto.getTokenID());
+            CustomerIDDTO replyPayload = new CustomerIDDTO();
+            replyPayload.setCustomerID(customerId);
+            reply.payload = replyPayload;
+        } catch (TokenException e) {
+            reply.setStatus(400);
+            broker.sendMessage(reply);
+        }
+
+        System.out.println("Sending response");
+        broker.sendMessage(reply);
     }
 
 
@@ -112,41 +142,4 @@ public class TokenService {
         broker.sendMessage(reply);
 
     }
-
-
-    /*
-        RabbitMQ call and callback
-     */
-
-    private void processMessage(Message message, JsonObject payload){
-
-        switch(message.getEvent()) {
-            case "addTokens":
-                System.out.println("Addtoken event caught");
-                this.addTokens(message, payload);
-                break;
-            default:
-                System.out.println("Event not handled: " + message.getEvent());
-        }
-
-    }
-
-    private void listenOnQueue(String queue){
-
-        deliverCallback = (consumerTag, delivery) -> {
-            String message = new String(delivery.getBody(), "UTF-8");
-            JsonObject jsonObject = Json.createReader(new StringReader(message)).readObject(); // @TODO: Validate Message, if it is JSON object
-            System.out.println(jsonObject.toString());
-
-            System.out.println("Message received on token side");
-            this.processMessage(gson.fromJson(jsonObject.toString(), Message.class), jsonObject.getJsonObject("payload"));
-        };
-
-        this.broker.onQueue(queue, deliverCallback);
-
-    }
-
-
-
-
 }
