@@ -115,7 +115,8 @@ public class CustomerBroker implements IMessageBroker {
     // Decodes payload and calls customerService
     private void processMessage(Message message, JsonObject payload) {
         switch(message.getEvent()) {
-            case "receiveTokens":
+            case "registerCustomer":
+                customerService.registerCustomer(message, payload);
                 // use customer broker to decode payload
                 // call customer service function with arguments from payload
                 // customerService.receiveTokens(...);

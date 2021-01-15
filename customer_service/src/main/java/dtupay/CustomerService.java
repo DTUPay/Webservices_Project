@@ -43,10 +43,14 @@ public class CustomerService {
     }
 
     public void registerCustomer(Customer customer) throws CustomerException {
-        if (!customerRepository.hasCustomer(customer.getCPRNumber())) {
+        if (!customerRepository.hasCustomer(customer.getCpr())) {
             customerRepository.addCustomer(customer);
         }
-        else throw new CustomerException("Customer with CPR: " + customer.getCPRNumber() + " already exists");
+        else throw new CustomerException("Customer with CPR: " + customer.getCpr() + " already exists");
+    }
+
+    public void registerCustomer(Message message, JsonObject payload) {
+
     }
 
     public void removeCustomer(String cpr) throws CustomerException {
@@ -132,7 +136,10 @@ public class CustomerService {
         response.resume(Response.status(400).entity("Customer ID could not be found"));
     }
 
+
+
     // @Status: In dispute / in partial implemented
-    public void getNumberOfTokens(String customerID, AsyncResponse response) {}
+    // public void getNumberOfTokens(String customerID, AsyncResponse response) {
+    // }
 
 }
