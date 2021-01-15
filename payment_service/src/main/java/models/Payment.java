@@ -7,6 +7,7 @@ import java.util.UUID;
 public class Payment {
     private final UUID paymentID;
     private final int merchantID;
+    private String cpr;
     private int tokenID;
     private final Date date;
     private final int amount;
@@ -55,5 +56,13 @@ public class Payment {
 
     public void setStatus(PaymentStatus paymentStatus) {
         paymentStatus = paymentStatus;
+    }
+
+    public String getCpr() {
+        return cpr;
+    }
+
+    public void setCpr(String cpr) {
+        this.cpr = cpr;
     }
 }
