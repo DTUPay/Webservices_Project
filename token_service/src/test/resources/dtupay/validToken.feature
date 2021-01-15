@@ -5,7 +5,7 @@ Scenario: Token is valid
   Given a tokenID and a customerID "1234"
   And that token is valid
   When validity is checked
-  Then the response is valid
+  Then the response is the customerID "1234"
 
 Scenario: Token doesn't exist
   Given a fake tokenID and a customerID "1234"

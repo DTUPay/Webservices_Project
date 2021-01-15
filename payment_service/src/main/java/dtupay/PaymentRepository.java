@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * @author Mikkel & Laura & Benjamin
@@ -29,5 +30,8 @@ public class PaymentRepository implements IPaymentRepository {
         return new ArrayList<>(payments.values());
     }
 
-
+    @Override
+    public List<Payment> getPayments(String cpr) {
+        return payments.values().stream().filter(payment -> payment.getCpr().equals(cpr)).collect(Collectors.toList());
+    }
 }

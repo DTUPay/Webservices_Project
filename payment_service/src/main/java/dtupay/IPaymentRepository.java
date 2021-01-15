@@ -10,12 +10,11 @@ import java.util.UUID;
  */
 public interface IPaymentRepository {
 
-
     void addPayment(Payment payment);
 
     Payment getPayment(UUID paymentID);
 
     List<Payment> getPayments();
 
-
+    List<Payment> getPayments(String cpr);
 }
