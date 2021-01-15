@@ -24,24 +24,25 @@ public class CustomerService {
     RabbitMQ broker;
     Gson gson = new Gson();
     DeliverCallback deliverCallback;
-    String queue = "customer_service";
 
     ICustomerRepository customerRepository = new CustomerRepository();
 
     public CustomerService() {
+        String serviceName = System.getenv("SERVICE_NAME"); //customer_service
+        System.out.println(serviceName + " started");
         try {
-            this.broker = new RabbitMQ(queue);
-            this.listenOnQueue(queue);
+            this.broker = new RabbitMQ(serviceName);
+            this.listenOnQueue(serviceName);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     public void testReceiveTokens(Message message, AsyncResponse response) throws Exception {
-        UUID uuid = UUID.randomUUID();
+        UUID uuid = responseHandler.saveRestResponseObject(response);
         message.setRequestId(uuid);
 
-        this.sendMessage("customer_service", message, response);
+        this.sendMessage(message, response);
     }
 
     public void receiveTokens(Message message, JsonObject payload) {
@@ -84,20 +85,21 @@ public class CustomerService {
         return customerRepository.hasCustomer(cprNumber);
     }
 
-    private void sendMessage(String queue, Message message) throws Exception {
+
+    private void sendMessage(Message message) throws Exception {
         try{
-            broker.sendMessage(queue, gson.toJson(message));
+            broker.sendMessage(message);
         } catch(Exception e){
             throw new Exception(e);
         }
     }
 
-
-    private void sendMessage(String queue, Message message, AsyncResponse response) throws Exception {
-        responseHandler.saveRestResponseObject(message.getRequestId(), response);
+    private void sendMessage(Message message, AsyncResponse response) throws Exception {
+        responseHandler.saveRestResponseObject(response);
 
         try{
-            broker.sendMessage(queue, gson.toJson(message));
+            broker.sendMessage(message);
+            System.out.println("Message sent");
         } catch(Exception e){
             throw new Exception(e);
         }

@@ -9,15 +9,15 @@ import java.util.UUID;
 
 public class ReceiveTokensDTO extends Payload {
 
-    private List<UUID> tokens;
+    private List<UUID> tokenIds;
 
 
     public List<UUID> getTokens() {
-        return tokens;
+        return tokenIds;
     }
 
     public void setTokens(List<UUID> tokens) {
-        this.tokens = tokens;
+        this.tokenIds = tokens;
     }
 
 

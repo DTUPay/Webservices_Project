@@ -7,28 +7,37 @@ package dtupay;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonParser;
+import com.rabbitmq.client.DeliverCallback;
+import dto.AddTokensDTO;
+import dto.TokenIdListDTO;
 import exceptions.TokenException;
+import models.Message;
 import models.Token;
 import io.quarkus.runtime.Quarkus;
 import io.quarkus.runtime.annotations.QuarkusMain;
 
 import javax.json.Json;
 import javax.json.JsonObject;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import brokers.*;
 
 @QuarkusMain
 public class TokenService {
     ITokenRepository tokenRepository;
-    RabbitMq rabbitMq;
+    RabbitMQ broker;
+    io.cucumber.messages.internal.com.google.gson.Gson gson = new io.cucumber.messages.internal.com.google.gson.Gson();
+    DeliverCallback deliverCallback;
 
 
     public TokenService() {
         try {
             String serviceName = System.getenv("SERVICE_NAME"); //token_service
             System.out.println(serviceName + " started");
-            this.rabbitMq = new RabbitMq(serviceName, this);
+            this.broker = new RabbitMQ(serviceName);
+            this.listenOnQueue(serviceName);
         } catch (Exception e) { e.printStackTrace(); }
         this.tokenRepository = new TokenRepository();
     }
@@ -78,41 +87,56 @@ public class TokenService {
     }
 
 
-    public void addTokens(JsonObject jsonObject){
-        String payloadString = jsonObject.get("payload").toString();
-        payloadString = payloadString.substring( 1, payloadString.length() - 1 ).replaceAll("\\\\", "");
-        System.out.println(payloadString);
-        com.google.gson.JsonObject payload = new JsonParser().parse(payloadString).getAsJsonObject();
-        JsonObject callback = (JsonObject) jsonObject.get("callback");
-        String callbackService = callback.get("service").toString().replaceAll("\"", "");
-        String callbackEvent = callback.get("event").toString().replaceAll("\"", "");
+    public void addTokens(Message message, JsonObject payload){
+
+        System.out.println(payload);
+        AddTokensDTO dto = gson.fromJson(payload.toString(), AddTokensDTO.class);
 
         //Call actual function with data from
         List<UUID> tokenIds = addTokens(
-                payload.get("customerId").toString().replaceAll("\"", ""),
-                Integer.parseInt(payload.get("amount").toString().replaceAll("\"", ""))
+                dto.getCustomerId(),
+                dto.getAmount()
         );
 
+        System.out.println("Tokends added");
         //Create payload JSON
-        JsonObject responsePayload = Json.createObjectBuilder()
-                .add("tokenIds", new Gson().toJson(tokenIds)).build();
+        TokenIdListDTO replyPayload = new TokenIdListDTO();
+        replyPayload.setTokenIds(tokenIds);
 
-        String uuid = jsonObject.get("requestId").toString();
-        JsonObject response = Json.createObjectBuilder()
-                .add("requestId", uuid)
-                .add("messageId", UUID.randomUUID().toString())
-                .add("event", callbackEvent)
-                .add("payload", responsePayload)
-                .build();
+        Message reply = broker.createReply(message);
+        reply.payload = replyPayload;
 
         System.out.println("Response created");
-        rabbitMq.sendMessage(callbackService, response, null);
+        broker.sendMessage(reply);
 
     }
-        //rabbitMqTest.sendMessage("customer_service", response);
 
-    public void demo(JsonObject jsonObject){
-        // Implement me
+    private void processMessage(Message message, JsonObject payload){
+
+        switch(message.getEvent()) {
+            case "addTokens":
+                System.out.println("Addtoken event caught");
+                this.addTokens(message, payload);
+                break;
+            default:
+                System.out.println("Event not handled: " + message.getEvent());
+        }
+
+    }
+
+    private void listenOnQueue(String queue){
+
+        deliverCallback = (consumerTag, delivery) -> {
+            String message = new String(delivery.getBody(), "UTF-8");
+            JsonObject jsonObject = Json.createReader(new StringReader(message)).readObject(); // @TODO: Validate Message, if it is JSON object
+            System.out.println(jsonObject.toString());
+
+            System.out.println("Message received on token side");
+            this.processMessage(gson.fromJson(jsonObject.toString(), Message.class), jsonObject.getJsonObject("payload"));
+        };
+
+        this.broker.onQueue(queue, deliverCallback);
+
     }
 
 

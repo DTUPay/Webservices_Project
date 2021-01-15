@@ -26,8 +26,10 @@ public class RestResponseHandler {
         pendingRequests.remove(requestId);
     }
 
-    void saveRestResponseObject(UUID requestId, AsyncResponse response){
-        pendingRequests.put(requestId, response);
+    UUID saveRestResponseObject(AsyncResponse response){
+        UUID uuid = UUID.randomUUID();
+        pendingRequests.put(uuid, response);
+        return uuid;
     }
 
     public Integer getSizeOfPendingRequests() {
