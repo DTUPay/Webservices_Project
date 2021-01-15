@@ -75,12 +75,12 @@ public class CustomerService {
     }
 
     public void removeCustomer(String cpr) throws CustomerException {
-
         if (customerRepository.hasCustomer(cpr)) {
             customerRepository.removeCustomer(cpr);
-        }
+
         else throw new CustomerException("Customer with CPR: " + cpr + " doesn't exist");
     }
+
 
     public Customer getCustomer(String cpr) throws CustomerException {
         if (customerRepository.hasCustomer(cpr)) {
