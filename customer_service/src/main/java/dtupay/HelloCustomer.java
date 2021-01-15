@@ -5,14 +5,9 @@
 package dtupay;
 
 
-import dto.AddTokensDTO;
 import dto.ReceiveTokensDTO;
-import io.cucumber.java.bs.A;
 import models.Message;
-import models.Payload;
 
-import javax.json.Json;
-import javax.json.JsonObject;
 import javax.ws.rs.*;
 import javax.ws.rs.container.AsyncResponse;
 import javax.ws.rs.container.Suspended;
@@ -55,7 +50,7 @@ public class HelloCustomer {
         message.setService("customer_service");
 
         System.out.println("Sending message");
-        service.testReceiveTokens(message, response);
+        //service.testReceiveTokens(message, response);
 
         /* NEEDS FIX
         UUID uuid = service.addPendingRequest(response);
@@ -101,7 +96,8 @@ public class HelloCustomer {
     @Path("/Tokens")
     @Produces(MediaType.APPLICATION_JSON)
     public void requestTokens(int tokenAmount, @Suspended AsyncResponse response) {
-        System.out.println("requst tokens started");
+/*
+        System.out.println("request tokens started");
         UUID uuid = service.responseHandler.saveRestResponseObject(response);
         Message message = new Message("token_service", "addTokens");
         message.setRequestId(uuid);
@@ -115,6 +111,6 @@ public class HelloCustomer {
         payload.setAmount(tokenAmount);
         message.setPayload(payload);
 
-        service.broker.sendMessage(message);
+        service.broker.sendMessage(message);*/
     }
 }
