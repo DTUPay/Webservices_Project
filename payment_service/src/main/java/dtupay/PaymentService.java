@@ -1,6 +1,7 @@
 package dtupay;
 
 import dtu.ws.fastmoney.*;
+import exceptions.BankException;
 import exceptions.PaymentException;
 import io.cucumber.messages.internal.com.google.gson.Gson;
 import io.quarkus.runtime.Quarkus;
@@ -15,9 +16,7 @@ import javax.json.JsonObject;
 import javax.ws.rs.container.AsyncResponse;
 import javax.ws.rs.core.Response;
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * @author Mikkel & Laura & Benjamin
@@ -50,7 +49,6 @@ public class PaymentService {
         return newPayment.getPaymentID();
     }
 
-
     public List<Payment> getManagerSummary() {
         return paymentRepository.getPayments();
     }
@@ -60,26 +58,44 @@ public class PaymentService {
     /*
      *  Bank Interactions
      */
-    //TODO: Bank custom exception for bank interactions?
-    public String createAccountWithBalance(Customer customer, int amount) throws PaymentException {
+    public String createAccountWithBalance(Customer customer, int amount) throws BankException {
         User user = customer.customerToUser();
         String accountNumber;
         try {
             accountNumber = bankService.createAccountWithBalance(user, BigDecimal.valueOf(amount));
         } catch (BankServiceException_Exception e) {
-            throw new PaymentException(e.getMessage());
+            throw new BankException(e.getMessage());
         }
         return accountNumber;
     }
 
-    public Account getAccount(String accountNumber) {
+    public Account getAccount(String accountNumber) throws BankException {
         Account account = new Account();
         try {
             account = bankService.getAccount(accountNumber);
         } catch (BankServiceException_Exception e) {
-            e.printStackTrace();
+            throw new BankException(e.getMessage());
         }
         return account;
+    }
+
+    /**
+     * Gets all accounts
+     * @return List with accounts
+     * @throws BankException
+     */
+    public List<Account> getAccounts() throws BankException {
+        List<Account> accounts = new ArrayList<>();
+        List<AccountInfo> accountInfos = bankService.getAccounts();
+        for (AccountInfo accountInfo : accountInfos) {
+            try {
+                Account account = bankService.getAccount(accountInfo.getAccountId());
+                accounts.add(account);
+            } catch (BankServiceException_Exception e) {
+                throw new BankException(e.getMessage());
+            }
+        }
+        return accounts;
     }
 
     public void deleteAccount(String cpr) throws PaymentException {
@@ -104,6 +120,13 @@ public class PaymentService {
 
         return PaymentStatus.PENDING;
     }
+    // </editor-fold>
+
+    private String validateToken(UUID tokenID) {
+        // TODO validate in token service
+        return "";
+    }
+
     // </editor-fold>
 
     //<editor-fold desc="Rabbit MQ">
