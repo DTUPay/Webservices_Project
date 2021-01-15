@@ -19,9 +19,6 @@ public class RabbitMQ implements MessageBroker {
 
     public RabbitMQ(String queue) {
         try {
-            if(System.getenv("ENVIRONMENT") == null){
-                return;
-            }
 
             factory.setHost("rabbitmq");
 
