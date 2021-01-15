@@ -32,12 +32,18 @@ public class CustomerService {
         responseHandler = RestResponseHandler.getInstance();
 
         try {
-            this.broker = new RabbitMQ(queue);
-            this.listenOnQueue(queue);
+            if(System.getenv("ENVIRONMENT") == null){
+                this.broker = new RabbitMQ(queue);
+                this.listenOnQueue(queue);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Customer service methods
+     * */
 
     public void testReceiveTokens(Message message, AsyncResponse response) throws Exception {
         UUID uuid = responseHandler.saveRestResponseObject(response);
@@ -93,6 +99,9 @@ public class CustomerService {
         return customerRepository.hasCustomer(cprNumber);
     }
 
+    /*
+        RabbitMQ call and callback
+     */
 
     private void processMessage(Message message, JsonObject payload){
 
@@ -128,13 +137,15 @@ public class CustomerService {
     private void listenOnQueue(String queue){
 
         deliverCallback = (consumerTag, delivery) -> {
-            String message = new String(delivery.getBody(), "UTF-8");
+            String message = new String(delivery.getBody());
             JsonObject jsonObject = Json.createReader(new StringReader(message)).readObject(); // @TODO: Validate Message, if it is JSON object
 
             this.processMessage(gson.fromJson(jsonObject.toString(), Message.class), jsonObject.getJsonObject("payload"));
         };
 
         this.broker.onQueue(queue, deliverCallback);
+
+
 
     }
 
