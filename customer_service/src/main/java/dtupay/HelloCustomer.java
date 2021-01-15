@@ -12,14 +12,13 @@ import javax.ws.rs.container.AsyncResponse;
 import javax.ws.rs.container.Suspended;
 import javax.ws.rs.core.MediaType;
 import java.io.IOException;
-import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeoutException;
 
 
 @Path("/customer_service")
 public class HelloCustomer {
-    CustomerService service = Main.service;
+    CustomerService service = new CustomerService();
 
 
     public HelloCustomer() throws IOException, TimeoutException {
