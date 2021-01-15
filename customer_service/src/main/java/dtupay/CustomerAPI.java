@@ -18,6 +18,7 @@ import javax.ws.rs.core.MediaType;
 public class CustomerAPI {
     CustomerService service = CustomerService.getInstance();
 
+    // @Status: Implemented
     @PUT
     @Path("/refund")
     @Produces(MediaType.APPLICATION_JSON)
@@ -25,6 +26,7 @@ public class CustomerAPI {
         service.requestRefund(payment, response);
     }
 
+    // @Status: Implemented
     @POST
     @Path("/tokens")
     @Produces(MediaType.APPLICATION_JSON)
@@ -32,59 +34,25 @@ public class CustomerAPI {
         service.requestTokens(token, response);
     }
 
-
-
-
-
-}
-/*
-
-
-    // ACTUAL METHODS
-    @POST
-    @Path("/payment/{id}/")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.TEXT_PLAIN)
-    public String acceptPayment(@PathParam("id") int paymentId) {
-        // Get payment with id
-        // Ensure payment is valid
-        // Ensure token is valid
-        // Ensure user has funds
-        // Transfer money from user to merchant
-        // Mark payment as paid
-        return "Welcome to Customer Service!";
-    }
-
-    @PUT
-    @Path("/payment/{id}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.TEXT_PLAIN)
-    public String requestRefund(@PathParam("id") int paymentId) {
-
-        return "Welcome to Customer Service!";
-    }
-
-    @POST
-    @Path("/tokens")
-    @Consumes(MediaType.APPLICATION_JSON)
+    // @Status: In dispute / in partial
+    /*
+    @GET
+    @Path("/token/{customerID}")
     @Produces(MediaType.APPLICATION_JSON)
-    public void requestTokens(int tokenAmount, @Suspended AsyncResponse response) {
-/*
-        System.out.println("request tokens started");
-        UUID uuid = service.responseHandler.saveRestResponseObject(response);
-        Message message = new Message("token_service", "addTokens");
-        message.setRequestId(uuid);
-        message.getCallback().setEvent("receiveTokens");
-        message.getCallback().setService("customer_service");
+    public void getUnusedToken(@Suspended AsyncResponse response, @PathParam("customerID") String customerID) throws Exception {
+        service.getUnusedToken(customerID, response);
+    }
+    */
 
-        System.out.println("message created");
-        //Create payload
-        AddTokensDTO payload = new AddTokensDTO();
-        payload.setCustomerId("testId");
-        payload.setAmount(tokenAmount);
-        message.setPayload(payload);
+    // @Status: In dispute / in partial
+    /*
+    @GET
+    @Path("/token/{customerID}/amount")
+    @Produces(MediaType.APPLICATION_JSON)
+    public void getNumberOfTokens(@Suspended AsyncResponse response, @PathParam("customerID") String customerID) throws Exception {
+        service.getNumberOfTokens(customerID, response);
+    }
+    */
 
-        service.broker.sendMessage(message);*/
-/*
+
 }
-*/

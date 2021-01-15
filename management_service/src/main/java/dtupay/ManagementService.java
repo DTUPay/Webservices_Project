@@ -15,6 +15,7 @@ public class ManagementService {
     ManagementBroker broker;
     private static ManagementService instance = new ManagementService();
 
+    /*
     private ManagementService(){
 
         try {
@@ -48,6 +49,7 @@ public class ManagementService {
         RabbitMQ call and callback
      */
 
+    /*
     private void processMessage(Message message, JsonObject payload){
         switch(message.getEvent()) {
             case "receiveMessage":
@@ -90,5 +92,6 @@ public class ManagementService {
         this.broker.onQueue(queue, deliverCallback);
 
     }
+    */
 
 }

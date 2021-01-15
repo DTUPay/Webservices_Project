@@ -13,7 +13,7 @@ public class CustomerRepository implements ICustomerRepository {
 
     @Override
     public void addCustomer(Customer customer) {
-        customers.put(customer.getCPRNumber(), customer);
+        customers.put(customer.getCpr(), customer);
     }
 
     @Override

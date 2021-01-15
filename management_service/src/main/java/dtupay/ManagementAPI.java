@@ -13,7 +13,7 @@ import javax.ws.rs.core.MediaType;
 
 @Path("/management_service")
 public class ManagementAPI {
-    ManagementService service = ManagementService.getInstance();
+    //ManagementService service = ManagementService.getInstance();
 
     @GET
     @Path("/debug")

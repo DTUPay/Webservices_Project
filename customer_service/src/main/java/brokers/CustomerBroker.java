@@ -34,22 +34,24 @@ public class CustomerBroker implements IMessageBroker {
 
             factory.setHost("rabbitmq");
 
-            int attempts = 0;
-            while (true){
-                try{
+            if(System.getenv("ENVIRONMENT") != null){
+                int attempts = 0;
+                while (true){
+                    try{
 
-                    connection = factory.newConnection();
-                    channel = connection.createChannel();
-                    channel.queueDeclare(queue, false, false, false, null);
+                        connection = factory.newConnection();
+                        channel = connection.createChannel();
+                        channel.queueDeclare(queue, false, false, false, null);
 
-                    break;
-                }catch (Exception e){
-                    attempts++;
-                    if(attempts > 10)
-                        throw e;
-                    System.out.println("Could not connect to RabbitMQ queue " + queue + ". Trying again.");
-                    //Sleep before retrying connection
-                    Thread.sleep(5*1000);
+                        break;
+                    }catch (Exception e){
+                        attempts++;
+                        if(attempts > 10)
+                            throw e;
+                        System.out.println("Could not connect to RabbitMQ queue " + queue + ". Trying again.");
+                        //Sleep before retrying connection
+                        Thread.sleep(5*1000);
+                    }
                 }
             }
 
@@ -113,7 +115,8 @@ public class CustomerBroker implements IMessageBroker {
     // Decodes payload and calls customerService
     private void processMessage(Message message, JsonObject payload) {
         switch(message.getEvent()) {
-            case "receiveTokens":
+            case "registerCustomer":
+                customerService.registerCustomer(message, payload);
                 // use customer broker to decode payload
                 // call customer service function with arguments from payload
                 // customerService.receiveTokens(...);
