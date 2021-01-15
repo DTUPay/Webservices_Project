@@ -29,10 +29,10 @@ public class CustomerSteps {
     }
 
     @Given("a new customer with name {string} {string} and CPR {string} that does not exist in the repository")
-    public void aNewCustomerWithNameAndCPRThatDoesNotExistInTheRepository(String arg0, String arg1, String arg2) {
-        customer = new Customer(arg0, arg1, arg2);
+    public void aNewCustomerWithNameAndCPRThatDoesNotExistInTheRepository(String firstName, String lastName, String cpr) {
+        customer = new Customer(firstName, lastName, cpr);
         try {
-            service.getCustomer(arg2);
+            service.getCustomer(cpr);
             fail();
         } catch (CustomerException e) {
             assertTrue(true);
@@ -40,11 +40,11 @@ public class CustomerSteps {
     }
 
     @Given("a new customer with name {string} {string} and CPR {string} that does exist in the repository")
-    public void aNewCustomerWithNameAndCPRThatDoesExistInTheRepository(String arg0, String arg1, String arg2) {
-        customer = new Customer(arg0, arg1, arg2);
+    public void aNewCustomerWithNameAndCPRThatDoesExistInTheRepository(String firstName, String lastName, String cpr) {
+        customer = new Customer(firstName, lastName, cpr);
         try {
             service.registerCustomer(customer);
-            assertEquals(service.getCustomer(arg2), customer);
+            assertEquals(service.getCustomer(cpr), customer);
         } catch (CustomerException e) {
             fail();
         }
