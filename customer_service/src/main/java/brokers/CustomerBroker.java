@@ -7,7 +7,6 @@ import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.DeliverCallback;
 import dtupay.CustomerService;
 import dtupay.RestResponseHandler;
-import exceptions.CustomerException;
 import models.Message;
 
 import javax.json.Json;
@@ -35,7 +34,7 @@ public class CustomerBroker implements IMessageBroker {
 
             factory.setHost("rabbitmq");
 
-            if(System.getenv("ENVIRONMENT") == null){
+            if(System.getenv("ENVIRONMENT") != null){
                 int attempts = 0;
                 while (true){
                     try{
