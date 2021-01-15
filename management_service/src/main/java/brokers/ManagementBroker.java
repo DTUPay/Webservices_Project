@@ -22,8 +22,7 @@ public class ManagementBroker implements IMessageBroker {
     DeliverCallback deliverCallback;
     Gson gson = new Gson();
     RestResponseHandler responseHandler;
-    String queue = "management_queue";
-
+    String queue = "management_service";
 
     ManagementService managementService;
 
@@ -31,17 +30,31 @@ public class ManagementBroker implements IMessageBroker {
         this.managementService = managementService;
         RestResponseHandler responseHandler = RestResponseHandler.getInstance();
 
-        try {
-            if (System.getenv("ENVIRONMENT") == null) {
-                return;
-            }
-            Thread.sleep(10 * 1000);
-            factory.setHost("rabbitmq");
-            connection = factory.newConnection();
-            channel = connection.createChannel();
-            channel.queueDeclare(queue, false, false, false, null);
-            this.listenOnQueue(queue);
+        factory.setHost("rabbitmq");
 
+        try {
+            if(System.getenv("ENVIRONMENT") != null){
+                int attempts = 0;
+                while (true){
+                    try{
+
+                        connection = factory.newConnection();
+                        channel = connection.createChannel();
+                        channel.queueDeclare(queue, false, false, false, null);
+
+                        this.listenOnQueue(queue);
+
+                        break;
+                    }catch (Exception e){
+                        attempts++;
+                        if(attempts > 10)
+                            throw e;
+                        System.out.println("Could not connect to RabbitMQ queue " + queue + ". Trying again.");
+                        //Sleep before retrying connection
+                        Thread.sleep(5*1000);
+                    }
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -98,10 +111,17 @@ public class ManagementBroker implements IMessageBroker {
     // Decodes payload and calls customerService
     private void processMessage(Message message, JsonObject payload) {
         switch(message.getEvent()) {
-            case "receiveTokens":
-                // use customer broker to decode payload
-                // call customer service function with arguments from payload
-                // customerService.receiveTokens(...);
+            case "registerCustomerResponse":
+                this.managementService.registerCustomerResponse(message);
+                break;
+            case "removeCustomerResponse":
+                this.managementService.removeCustomerResponse(message);
+                break;
+            case "registerMerchantResponse":
+                this.managementService.registerMerchantResponse(message);
+                break;
+            case "removeMerchantResponse":
+                this.managementService.removeMerchantResponse(message);
                 break;
             default:
                 System.out.println("Event not handled: " + message.getEvent());
