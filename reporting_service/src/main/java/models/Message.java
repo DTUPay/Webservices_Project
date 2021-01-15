@@ -4,6 +4,7 @@ package models;
  */
 
 
+import javax.json.JsonObject;
 import java.util.UUID;
 
 public class Message {
@@ -13,7 +14,7 @@ public class Message {
     private int status = 200;
     private String statusMessage;
     private UUID messageId = UUID.randomUUID();
-    public Payload payload;
+    private Payload payload;
     private Callback callback = new Callback();
 
     public Message(){

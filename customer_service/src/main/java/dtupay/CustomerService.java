@@ -4,72 +4,59 @@
 
 package dtupay;
 
+import brokers.RabbitMQ;
+import com.rabbitmq.client.DeliverCallback;
+import dto.ReceiveTokensDTO;
 import exceptions.CustomerException;
-import io.quarkus.runtime.annotations.QuarkusMain;
+import io.cucumber.messages.internal.com.google.gson.Gson;
 import models.Customer;
+import models.Message;
 
+import javax.json.Json;
 import javax.json.JsonObject;
 import javax.ws.rs.container.AsyncResponse;
 import javax.ws.rs.core.Response;
-import java.util.HashMap;
+import java.io.StringReader;
 import java.util.UUID;
 
 public class CustomerService {
-    public HashMap<UUID, AsyncResponse> pendingRequests = new HashMap<>();
-    RabbitMq rabbitMq;
+    RestResponseHandler responseHandler = new RestResponseHandler();
+    RabbitMQ broker;
+    Gson gson = new Gson();
+    DeliverCallback deliverCallback;
+    String queue = "customer_service";
+
     ICustomerRepository customerRepository = new CustomerRepository();
 
     public CustomerService() {
         try {
-            String serviceName = System.getenv("SERVICE_NAME"); //customer_service
-            System.out.println(serviceName + " started");
-            this.rabbitMq = new RabbitMq(serviceName, this);
+            this.broker = new RabbitMQ(queue);
+            this.listenOnQueue(queue);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public UUID addPendingRequest(AsyncResponse asyncResponse) {
+    public void testReceiveTokens(Message message, AsyncResponse response) throws Exception {
         UUID uuid = UUID.randomUUID();
-        pendingRequests.put(uuid, asyncResponse);
-        return uuid;
+        message.setRequestId(uuid);
+
+        this.sendMessage("customer_service", message, response);
     }
 
-    public void respondPendingRequest(UUID uuid, String data) {
-        //TODO add data here
-        System.out.println("Reply request with uuid: " + uuid.toString());
-        System.out.println("Pending requests: " + pendingRequests.size());
-        pendingRequests.get(uuid).resume(
-                Response.status(200)
-                        .entity(data)
+    public void receiveTokens(Message message, JsonObject payload) {
+        ReceiveTokensDTO dto = gson.fromJson(payload.toString(), ReceiveTokensDTO.class);
+
+        System.out.println("Token ids gotten: " + dto.getTokens());
+        AsyncResponse response = responseHandler.getRestResponseObject(message.getRequestId());
+        response.resume(
+                Response
+                        .status(200)
+                        .entity(gson.toJson(dto.getTokens()))
                         .build()
         );
-        pendingRequests.remove(uuid);
     }
 
-    public void demo(JsonObject jsonObject) {
-        // UUID needs to be trimmed after convertion from JSON
-        String uuidString = jsonObject.get("uuid").toString().replaceAll("\"", "").replaceAll("\\\\", "");
-        UUID uuid = UUID.fromString(uuidString);
-        //respondPendingRequest(uuid, null);
-    }
-
-    public void requestTokens(JsonObject jsonObject) {
-        JsonObject payload = (JsonObject) jsonObject.get("payload");
-
-        //Get data from response
-        String tokenIds = payload.get("tokenIds").toString().replaceAll("\"", "");
-
-        System.out.println("Token ids gotten: " + tokenIds);
-        // UUID needs to be trimmed after convertion from JSON
-        String uuidString = jsonObject.get("requestId").toString()
-                .replaceAll("\"", "")
-                .replaceAll("\\\\", "");
-
-        UUID uuid = UUID.fromString(uuidString);
-        respondPendingRequest(uuid, tokenIds);
-
-    }
 
     public void registerCustomer(Customer customer) throws CustomerException {
         if (!customerRepository.hasCustomer(customer.getCPRNumber())) {
@@ -95,6 +82,53 @@ public class CustomerService {
 
     public boolean hasCustomer(String cprNumber) {
         return customerRepository.hasCustomer(cprNumber);
+    }
+
+    private void sendMessage(String queue, Message message) throws Exception {
+        try{
+            broker.sendMessage(queue, gson.toJson(message));
+        } catch(Exception e){
+            throw new Exception(e);
+        }
+    }
+
+
+    private void sendMessage(String queue, Message message, AsyncResponse response) throws Exception {
+        responseHandler.saveRestResponseObject(message.getRequestId(), response);
+
+        try{
+            broker.sendMessage(queue, gson.toJson(message));
+        } catch(Exception e){
+            throw new Exception(e);
+        }
+    }
+
+
+    private void processMessage(Message message, JsonObject payload){
+
+        switch(message.getEvent()) {
+            case "receiveTokens":
+                this.receiveTokens(message, payload);
+                break;
+            default:
+                System.out.println("Event not handled: " + message.getEvent());
+        }
+
+    }
+
+
+    private void listenOnQueue(String queue){
+
+        deliverCallback = (consumerTag, delivery) -> {
+            String message = new String(delivery.getBody(), "UTF-8");
+            JsonObject jsonObject = Json.createReader(new StringReader(message)).readObject(); // @TODO: Validate Message, if it is JSON object
+            System.out.println(jsonObject.toString());
+
+            this.processMessage(gson.fromJson(jsonObject.toString(), Message.class), jsonObject.getJsonObject("payload"));
+        };
+
+        this.broker.onQueue(queue, deliverCallback);
+
     }
 
 }
