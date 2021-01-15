@@ -32,8 +32,8 @@ public class CustomerService {
         responseHandler = RestResponseHandler.getInstance();
 
         try {
-            this.broker = new RabbitMQ(serviceName);
-            this.listenOnQueue(serviceName);
+            this.broker = new RabbitMQ(queue);
+            this.listenOnQueue(queue);
         } catch (Exception e) {
             e.printStackTrace();
         }
