@@ -40,10 +40,10 @@ public class CustomerService {
     }
 
     public void testReceiveTokens(Message message, AsyncResponse response) throws Exception {
-        UUID uuid = UUID.randomUUID();
+        UUID uuid = responseHandler.saveRestResponseObject(response);
         message.setRequestId(uuid);
 
-        this.sendMessage("customer_service", message, response);
+        this.sendMessage(message, response);
     }
 
     public void receiveTokens(Message message, JsonObject payload) {
@@ -108,18 +108,18 @@ public class CustomerService {
 
     private void sendMessage(String queue, Message message) throws Exception {
         try{
-            broker.sendMessage(queue, gson.toJson(message));
+            broker.sendMessage(message);
         } catch(Exception e){
             throw new Exception(e);
         }
     }
 
-
-    private void sendMessage(String queue, Message message, AsyncResponse response) throws Exception {
-        responseHandler.saveRestResponseObject(message.getRequestId(), response);
+    private void sendMessage(Message message, AsyncResponse response) throws Exception {
+        responseHandler.saveRestResponseObject(response);
 
         try{
-            broker.sendMessage(queue, gson.toJson(message));
+            broker.sendMessage(message);
+            System.out.println("Message sent");
         } catch(Exception e){
             throw new Exception(e);
         }

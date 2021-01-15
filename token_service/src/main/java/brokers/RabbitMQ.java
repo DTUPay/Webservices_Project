@@ -1,13 +1,12 @@
 package brokers;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.DeliverCallback;
 import models.Message;
+import models.Payload;
 
 import java.nio.charset.StandardCharsets;
 
@@ -36,10 +35,8 @@ public class RabbitMQ implements MessageBroker {
     @Override
     public void sendMessage(Message message) {
         try {
-            System.out.println("Sending message");
             channel.basicPublish("", message.getService(), null, gson.toJson(message).getBytes(StandardCharsets.UTF_8));
         } catch(Exception e) {
-            System.out.println("Send error");
             e.printStackTrace();
         }
     }
@@ -51,6 +48,13 @@ public class RabbitMQ implements MessageBroker {
         } catch(Exception e){
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public Message createReply(Message originalMessage){
+        Message reply = new Message(originalMessage.getCallback().getService(), originalMessage.getCallback().getEvent());
+        reply.setRequestId(originalMessage.getRequestId());
+        return reply;
     }
 
 }
