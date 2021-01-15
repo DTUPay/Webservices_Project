@@ -1,6 +1,7 @@
 package dtupay;
 
 import dtu.ws.fastmoney.Account;
+import exceptions.BankException;
 import exceptions.PaymentException;
 import io.cucumber.java.After;
 import io.cucumber.java.en.And;
@@ -41,7 +42,7 @@ public class SoapSteps {
     public void theCustomerIsCreated() {
         try {
             accountNumber = service.createAccountWithBalance(customer,balance);
-        } catch (PaymentException e) {
+        } catch (BankException e) {
             errorMessage = e.getMessage();
         }
     }
@@ -56,7 +57,11 @@ public class SoapSteps {
 
     @And("the account is fetched")
     public void theAccountIsFetched() {
-        account = service.getAccount(accountNumber);
+        try {
+            account = service.getAccount(accountNumber);
+        } catch (BankException e) {
+            e.printStackTrace();
+        }
         fetchedBalance = account.getBalance().intValue();
     }
 }
