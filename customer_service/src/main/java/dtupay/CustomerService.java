@@ -25,7 +25,6 @@ public class CustomerService {
     DeliverCallback deliverCallback;
     String queue = "customer_service";
     RestResponseHandler responseHandler;
-
     ICustomerRepository customerRepository = new CustomerRepository();
 
     public CustomerService() {
