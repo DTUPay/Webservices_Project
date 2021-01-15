@@ -34,7 +34,7 @@ public class CustomerActionSteps {
     public void aCustomerWithTokens(int arg0) {
         customer = new CustomerServant("TestID");
         try {
-            customer.requestTokens(arg0);
+            customer.requestTokens(customer.getID(), arg0);
             Assert.assertEquals(customer.getCustomerTokens().size(),arg0);
         } catch (Exception e) {
             fail();
@@ -62,7 +62,7 @@ public class CustomerActionSteps {
     @When("the customer requests {int} new tokens")
     public void theCustomerRequestsNewTokens(int arg0) {
         try {
-            customer.requestTokens(arg0);
+            customer.requestTokens(customer.getID(), arg0);
         } catch (Exception e) {
             exception = e;
         }

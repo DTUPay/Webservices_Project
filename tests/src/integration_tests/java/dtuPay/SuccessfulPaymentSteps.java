@@ -32,7 +32,7 @@ public class SuccessfulPaymentSteps {
     public void theCustomerHasTokens(int arg0) {
         assertEquals(customerAccount.getCustomerTokens().size(), 0);
         try {
-            customerAccount.requestTokens(5);
+            customerAccount.requestTokens(customerAccount.getID(),5);
             tokenCount = customerAccount.getCustomerTokens().size();
             assertEquals(tokenCount, 5);
         } catch (Exception e) {
