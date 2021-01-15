@@ -8,6 +8,8 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.DeliverCallback;
+import io.cucumber.messages.internal.com.google.gson.Gson;
+import models.Message;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -82,21 +84,10 @@ public class RabbitMq implements IRabbitMq {
     }
 
     @Override
-    public void sendMessage(String queue, JsonObject message, String callbackFunction) {
-        if(callbackFunction != null){
-            JsonObjectBuilder callbackJson = Json.createObjectBuilder()
-                    .add("service", this.queue)
-                    .add("event", callbackFunction);
-            message = Json.createObjectBuilder(message)
-                    .add("callback", callbackJson)
-                    .build();
-        }
-        message = Json.createObjectBuilder(message)
-                .add("messageId", UUID.randomUUID().toString())
-                .build();
+    public void sendMessage(String queue, Message message) {
         try{
             channel.queueDeclare(queue, false, false, false, null);
-            channel.basicPublish("", queue, null, message.toString().getBytes(StandardCharsets.UTF_8));
+            channel.basicPublish("", queue, null, new Gson().toJson(message).getBytes(StandardCharsets.UTF_8));
         }catch (Exception e){
             System.out.println(e);
         }

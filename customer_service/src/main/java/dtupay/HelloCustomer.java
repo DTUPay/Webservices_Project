@@ -5,6 +5,8 @@
 package dtupay;
 
 
+import models.Message;
+
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.ws.rs.*;
@@ -19,7 +21,7 @@ import java.util.concurrent.TimeoutException;
 
 @Path("/customer_service")
 public class HelloCustomer {
-    CustomerService service = Main.service;
+    CustomerService service = new CustomerService();
 
 
     public HelloCustomer() throws IOException, TimeoutException {
@@ -41,7 +43,7 @@ public class HelloCustomer {
                 .add("requestId", uuid.toString())
                 .build();
 
-        service.rabbitMq.sendMessage("token_service", message, "hello");
+        service.rabbitMq.sendMessage("token_service", new Message());
 
     }
 
@@ -72,16 +74,17 @@ public class HelloCustomer {
     @Produces(MediaType.APPLICATION_JSON)
     public void requestTokens(int tokenAmount, @Suspended AsyncResponse response) {
         UUID uuid = service.addPendingRequest(response);
-        JsonObject payload = Json.createObjectBuilder()
-                .add("customerId", 1234123)
-                .add("amount", 3)
-                .build();
-        JsonObject message = Json.createObjectBuilder()
-                .add("event", "addTokens")
-                .add("payload", payload)
-                .add("requestId", uuid.toString())
-                .build();
+        Message message = new Message(service.rabbitMq);
+        message.setRequestId(uuid);
+        message.setEvent("addTokens");
+        message.getCallback().setEvent("requestTokens");
+        message.setPayload(
+                 Json.createObjectBuilder()
+                        .add("customerId", 1234123)
+                        .add("amount", 3)
+                        .build().toString()
+        );
 
-        service.rabbitMq.sendMessage("token_service", message, "requestTokens");
+        service.rabbitMq.sendMessage("token_service", message);
     }
 }

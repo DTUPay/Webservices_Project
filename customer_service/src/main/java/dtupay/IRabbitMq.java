@@ -4,12 +4,14 @@
 
 package dtupay;
 
+import models.Message;
+
 import javax.json.JsonObject;
 
 public interface IRabbitMq {
     void parseMessage(String queue);
 
-    void sendMessage(String queue, JsonObject message, String callbackFucktion);
+    void sendMessage(String queue, Message message);
     void processMessage(JsonObject jsonObject);
 
 }
