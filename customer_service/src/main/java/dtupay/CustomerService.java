@@ -14,7 +14,6 @@ import javax.ws.rs.core.Response;
 import java.util.HashMap;
 import java.util.UUID;
 
-@QuarkusMain
 public class CustomerService {
     public HashMap<UUID, AsyncResponse> pendingRequests = new HashMap<>();
     RabbitMq rabbitMq;
