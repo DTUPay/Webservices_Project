@@ -5,26 +5,23 @@
 package dtupay;
 
 
+import brokers.TokenBroker;
 import com.google.gson.Gson;
-import com.google.gson.JsonParser;
 import com.rabbitmq.client.DeliverCallback;
 import dto.AddTokensDTO;
 import dto.CustomerIDDTO;
 import dto.TokenIDDTO;
 import dto.TokenIdListDTO;
 import exceptions.TokenException;
-import models.Message;
-import models.Token;
 import io.quarkus.runtime.Quarkus;
 import io.quarkus.runtime.annotations.QuarkusMain;
+import models.Message;
+import models.Token;
 
-import javax.json.Json;
 import javax.json.JsonObject;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import brokers.*;
 
 @QuarkusMain
 public class TokenService {

@@ -1,20 +1,17 @@
 package dtupay;
 
+import brokers.PaymentBroker;
 import dtu.ws.fastmoney.*;
 import exceptions.BankException;
 import exceptions.PaymentException;
 import io.cucumber.messages.internal.com.google.gson.Gson;
 import io.quarkus.runtime.Quarkus;
 import io.quarkus.runtime.annotations.QuarkusMain;
-import models.Customer;
-import models.Payment;
-import models.PaymentStatus;
-import models.Token;
+import models.*;
 
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.ws.rs.container.AsyncResponse;
-import javax.ws.rs.core.Response;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -26,7 +23,7 @@ public class PaymentService {
     public HashMap<UUID, AsyncResponse> pendingRequests = new HashMap<>();
     IPaymentRepository paymentRepository;
     BankService bankService = new BankServiceService().getBankServicePort();
-    RabbitMq rabbitMq;
+    PaymentBroker paymentBroker;
 
     // <editor-fold desc="Repository Interactions">
     public Payment getPayment(UUID PaymentID) throws PaymentException {
@@ -122,9 +119,20 @@ public class PaymentService {
     }
     // </editor-fold>
 
-    private String validateToken(UUID tokenID) {
+    private void validateToken(UUID tokenID) {
+        //TODO convert tokenID to JSON
+        UuidDTO uuidDTO = new UuidDTO(tokenID);
         // TODO validate in token service
-        return "";
+        Message message = new Message();
+        message.setEvent("isTokenValid");
+        message.setService("token_service");
+        message.setPayload(uuidDTO);
+        message.setCallback(new Callback("payment_service","validateTokenResponse"));
+        this.paymentBroker.sendMessage(message);
+    }
+
+    private void validateTokenResponse(Message message, JsonObject payload) {
+        
     }
 
     // </editor-fold>
@@ -134,7 +142,7 @@ public class PaymentService {
         try {
             String serviceName = System.getenv("SERVICE_NAME"); //payment_service
             System.out.println(serviceName + " started");
-            this.rabbitMq = new RabbitMq(serviceName, this);
+            this.paymentBroker = new PaymentBroker(this);
         } catch (Exception e) { e.printStackTrace(); }
         this.paymentRepository = new PaymentRepository();
     }
@@ -170,7 +178,7 @@ public class PaymentService {
                 .build();
 
         System.out.println("Response created");
-        rabbitMq.sendMessage(callbackService, response, null);
+        paymentBroker.sendMessage(callbackService, response, null);
     }
     //</editor-fold>
 }
