@@ -20,16 +20,17 @@ import java.io.StringReader;
 import java.util.UUID;
 
 public class CustomerService {
-    RestResponseHandler responseHandler = new RestResponseHandler();
     RabbitMQ broker;
     Gson gson = new Gson();
     DeliverCallback deliverCallback;
+    String queue = "customer_service";
+    RestResponseHandler responseHandler;
 
     ICustomerRepository customerRepository = new CustomerRepository();
 
     public CustomerService() {
-        String serviceName = System.getenv("SERVICE_NAME"); //customer_service
-        System.out.println(serviceName + " started");
+        responseHandler = RestResponseHandler.getInstance();
+
         try {
             this.broker = new RabbitMQ(serviceName);
             this.listenOnQueue(serviceName);
@@ -48,14 +49,21 @@ public class CustomerService {
     public void receiveTokens(Message message, JsonObject payload) {
         ReceiveTokensDTO dto = gson.fromJson(payload.toString(), ReceiveTokensDTO.class);
 
-        System.out.println("Token ids gotten: " + dto.getTokens());
-        AsyncResponse response = responseHandler.getRestResponseObject(message.getRequestId());
-        response.resume(
-                Response
-                        .status(200)
-                        .entity(gson.toJson(dto.getTokens()))
-                        .build()
-        );
+        if(responseHandler.containsRestResponseObject(message.getRequestId())){
+            AsyncResponse response = responseHandler.getRestResponseObject(message.getRequestId());
+
+            response.resume(
+                    Response
+                            .status(200)
+                            .entity(gson.toJson(dto.getTokens()))
+                            .build()
+            );
+
+            responseHandler.removeRestResponseObject(message.getRequestId());
+        } else {
+            System.out.println("Event has no response");
+        }
+
     }
 
 
@@ -86,7 +94,19 @@ public class CustomerService {
     }
 
 
-    private void sendMessage(Message message) throws Exception {
+    private void processMessage(Message message, JsonObject payload){
+
+        switch(message.getEvent()) {
+            case "receiveTokens":
+                this.receiveTokens(message, payload);
+                break;
+            default:
+                System.out.println("Event not handled: " + message.getEvent());
+        }
+
+    }
+
+    private void sendMessage(String queue, Message message) throws Exception {
         try{
             broker.sendMessage(message);
         } catch(Exception e){
@@ -105,26 +125,11 @@ public class CustomerService {
         }
     }
 
-
-    private void processMessage(Message message, JsonObject payload){
-
-        switch(message.getEvent()) {
-            case "receiveTokens":
-                this.receiveTokens(message, payload);
-                break;
-            default:
-                System.out.println("Event not handled: " + message.getEvent());
-        }
-
-    }
-
-
     private void listenOnQueue(String queue){
 
         deliverCallback = (consumerTag, delivery) -> {
             String message = new String(delivery.getBody(), "UTF-8");
             JsonObject jsonObject = Json.createReader(new StringReader(message)).readObject(); // @TODO: Validate Message, if it is JSON object
-            System.out.println(jsonObject.toString());
 
             this.processMessage(gson.fromJson(jsonObject.toString(), Message.class), jsonObject.getJsonObject("payload"));
         };
