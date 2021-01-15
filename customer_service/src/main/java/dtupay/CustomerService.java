@@ -75,7 +75,7 @@ public class CustomerService {
         if (!customerRepository.hasCustomer(customer.getCPRNumber())) {
             customerRepository.addCustomer(customer);
         }
-        throw new CustomerException("Customer with CPR: " + customer.getCPRNumber() + " already exists");
+        else throw new CustomerException("Customer with CPR: " + customer.getCPRNumber() + " already exists");
     }
 
     public void removeCustomer(String cpr) throws CustomerException {
@@ -83,14 +83,14 @@ public class CustomerService {
         if (customerRepository.hasCustomer(cpr)) {
             customerRepository.removeCustomer(cpr);
         }
-        throw new CustomerException("Customer with CPR: " + cpr + " doesn't exist");
+        else throw new CustomerException("Customer with CPR: " + cpr + " doesn't exist");
     }
 
     public Customer getCustomer(String cpr) throws CustomerException {
         if (customerRepository.hasCustomer(cpr)) {
             return customerRepository.getCustomer(cpr);
         }
-        throw new CustomerException("Customer with CPR: " + cpr + " doesn't exist");
+        else throw new CustomerException("Customer with CPR: " + cpr + " doesn't exist");
     }
 
     public boolean hasCustomer(String cprNumber) {
