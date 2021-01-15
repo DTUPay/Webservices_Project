@@ -3,14 +3,20 @@ package dtupay;
 import models.Message;
 
 import javax.ws.rs.container.AsyncResponse;
+import javax.ws.rs.core.Response;
 import java.util.HashMap;
 import java.util.UUID;
 
 public class RestResponseHandler {
     public HashMap<UUID, AsyncResponse> pendingRequests = new HashMap<>();
+    private static RestResponseHandler instance = new RestResponseHandler();
 
-    public RestResponseHandler(){
 
+    private RestResponseHandler(){}
+
+    //Get the only object available
+    public static RestResponseHandler getInstance(){
+        return instance;
     }
 
     boolean containsRestResponseObject(UUID requestId){
@@ -22,7 +28,6 @@ public class RestResponseHandler {
     }
 
     void removeRestResponseObject(UUID requestId){
-        System.out.println("Removing key: " + requestId);
         pendingRequests.remove(requestId);
     }
 
