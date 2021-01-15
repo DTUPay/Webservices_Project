@@ -32,7 +32,7 @@ public class CustomerService {
         responseHandler = RestResponseHandler.getInstance();
 
         try {
-            if(System.getenv("ENVIRONMENT") == null){
+            if(System.getenv("ENVIRONMENT") != null){
                 this.broker = new RabbitMQ(queue);
                 this.listenOnQueue(queue);
             }
