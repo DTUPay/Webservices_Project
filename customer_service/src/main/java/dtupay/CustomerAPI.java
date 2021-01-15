@@ -34,7 +34,15 @@ public class CustomerAPI {
         service.requestTokens(token, response);
     }
 
-
+    // @Status: In dispute / in partial
+    /*
+    @GET
+    @Path("/token/{customerID}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public void getUnusedToken(@Suspended AsyncResponse response, @PathParam("customerID") String customerID) throws Exception {
+        service.getUnusedToken(customerID, response);
+    }
+     */
 
 
 

@@ -6,6 +6,7 @@ package dtupay;
 
 
 import brokers.CustomerBroker;
+import com.google.gson.Gson;
 import dto.PaymentDTO;
 import dto.TokensDTO;
 import exceptions.CustomerException;
@@ -26,6 +27,7 @@ public class CustomerService {
     ICustomerRepository customerRepository = new CustomerRepository();
     private static CustomerService instance = new CustomerService();
     RestResponseHandler RestfulHandler = RestResponseHandler.getInstance();
+    Gson gson = new Gson();
 
     public CustomerService() {
         broker = new CustomerBroker(this);
@@ -111,5 +113,26 @@ public class CustomerService {
         AsyncResponse response = RestfulHandler.getRestResponseObject(message.getRequestId());
         response.resume(Response.status(message.getStatus()).entity(message.getStatusMessage()));
     }
+
+    // @Status: In dispute / in partial implemented
+    public void getUnusedToken(String customerID, AsyncResponse response) {
+        if(customerRepository.hasCustomer(customerID)){
+            Customer customer = customerRepository.getCustomer(customerID);
+            UUID token = customer.getTokenIDs().get(customer.getTokenIDs().size() - 1);
+
+            if (token != null) {
+                response.resume(Response.status(200).entity(gson.toJson(token)));
+            } else {
+                response.resume(Response.status(400).entity("No more tokens left"));
+            }
+
+            return;
+        }
+
+        response.resume(Response.status(400).entity("Customer ID could not be found"));
+    }
+
+    // @Status: In dispute / in partial implemented
+    public void getNumberOfTokens(String customerID, AsyncResponse response) {}
 
 }
