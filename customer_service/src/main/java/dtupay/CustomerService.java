@@ -7,6 +7,7 @@ package dtupay;
 
 import brokers.CustomerBroker;
 import com.google.gson.Gson;
+import dto.CustomerDTO;
 import dto.PaymentDTO;
 import dto.TokensDTO;
 import exceptions.CustomerException;
@@ -50,7 +51,15 @@ public class CustomerService {
     }
 
     public void registerCustomer(Message message, JsonObject payload) {
+        CustomerDTO dto = gson.fromJson(payload.toString(), CustomerDTO.class);
+        if(customerRepository.hasCustomer(dto.getCpr())){
+            Message reply = this.broker.createReply(message);
 
+        }
+        Customer customer = new Customer();
+        customer.setCpr(dto.getCpr());
+        customer.setFirstName(dto.getFirstName());
+        customer.setLastName(dto.getLastName());
     }
 
     public void removeCustomer(String cpr) throws CustomerException {

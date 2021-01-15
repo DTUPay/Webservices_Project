@@ -43,6 +43,8 @@ public class CustomerBroker implements IMessageBroker {
                         channel = connection.createChannel();
                         channel.queueDeclare(queue, false, false, false, null);
 
+                        this.listenOnQueue(queue);
+
                         break;
                     }catch (Exception e){
                         attempts++;
@@ -117,9 +119,6 @@ public class CustomerBroker implements IMessageBroker {
         switch(message.getEvent()) {
             case "registerCustomer":
                 customerService.registerCustomer(message, payload);
-                // use customer broker to decode payload
-                // call customer service function with arguments from payload
-                // customerService.receiveTokens(...);
                 break;
             default:
                 System.out.println("Event not handled: " + message.getEvent());
