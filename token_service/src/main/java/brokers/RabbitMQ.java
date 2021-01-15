@@ -22,11 +22,28 @@ public class RabbitMQ implements MessageBroker {
             if(System.getenv("ENVIRONMENT") == null){
                 return;
             }
-            Thread.sleep(10*1000);
+
             factory.setHost("rabbitmq");
-            connection = factory.newConnection();
-            channel = connection.createChannel();
-            channel.queueDeclare(queue, false, false, false, null);
+
+            int attempts = 0;
+            while (true){
+                try{
+
+                    connection = factory.newConnection();
+                    channel = connection.createChannel();
+                    channel.queueDeclare(queue, false, false, false, null);
+
+                    break;
+                }catch (Exception e){
+                    attempts++;
+                    if(attempts > 10)
+                        throw e;
+                    System.out.println("Could not connect to RabbitMQ queue " + queue + ". Trying again.");
+                    //Sleep before retrying connection
+                    Thread.sleep(5*1000);
+                }
+            }
+
         } catch(Exception e){
             e.printStackTrace();;
         }
