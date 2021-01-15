@@ -4,7 +4,7 @@ public class Merchant {
     private String name;
     private String cvr;
 
-    public Merchant(String cvr, String name){
+    public Merchant(String name, String cvr){
         this.cvr = cvr;
         this.name = name;
     }

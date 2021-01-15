@@ -1,7 +1,9 @@
 package dtupay;
 
+import exceptions.MerchantException;
 import io.quarkus.runtime.Quarkus;
 import io.quarkus.runtime.annotations.QuarkusMain;
+import models.Merchant;
 
 import javax.json.JsonObject;
 import javax.ws.rs.container.AsyncResponse;
@@ -13,7 +15,7 @@ import java.util.UUID;
 public class MerchantService {
     RabbitMq rabbitMq;
     public HashMap<UUID, AsyncResponse> pendingRequests = new HashMap<>();
-    IMerchantRepository customerRepository = new MerchantRepository();
+    IMerchantRepository merchantRepository = new MerchantRepository();
 
     public MerchantService() {
         try {
@@ -44,5 +46,27 @@ public class MerchantService {
         String uuidString = jsonObject.get("uuid").toString().replaceAll("\"", "").replaceAll("\\\\", "");
         UUID uuid = UUID.fromString(uuidString);
         respondPendingRequest(uuid);
+    }
+
+    public void registerMerchant(Merchant merchant) throws MerchantException {
+        if (!merchantRepository.hasMerchant(merchant.getCVR())) {
+            merchantRepository.addMerchant(merchant);
+        }
+        else throw new MerchantException("Merchant with CVR: " + merchant.getCVR() + " already exists");
+    }
+
+    public void removeMerchant(String cvr) throws MerchantException {
+
+        if (merchantRepository.hasMerchant(cvr)) {
+            merchantRepository.removeMerchant(cvr);
+        }
+        else throw new MerchantException("Merchant with CVR: " + cvr + " doesn't exist");
+    }
+
+    public Merchant getMerchant(String cvr) throws MerchantException {
+        if (merchantRepository.hasMerchant(cvr)) {
+            return merchantRepository.getMerchant(cvr);
+        }
+        else throw new MerchantException("Merchant with CVR: " + cvr + " doesn't exist");
     }
 }

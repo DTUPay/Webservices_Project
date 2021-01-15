@@ -35,7 +35,7 @@ public class PaymentSteps {
     public void init(){
         merchantID = 0;
         amount = 0;
-        paymentID = UUID.randomUUID();
+        paymentID = null;
     }
 
     @Given("a merchant with ID {int} who wants a payment for {int} kroners")
