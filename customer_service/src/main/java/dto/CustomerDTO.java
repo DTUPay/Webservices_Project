@@ -1,8 +1,10 @@
 package dto;
 
+import models.Payload;
+
 import java.util.UUID;
 
-public class CustomerDTO {
+public class CustomerDTO extends Payload {
     private String firstName;
     private String lastName;
     private UUID customerID;

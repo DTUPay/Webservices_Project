@@ -39,13 +39,19 @@ public class CustomerService {
         Quarkus.run();
     }
 
-    public void registerCustomer(Customer customer) throws CustomerException {
-        UUID customerID = UUID.randomUUID();
+    public UUID registerCustomer(Customer customer) throws CustomerException {
+        UUID customerID;
 
-        if (customerRepository.hasCustomer(customerID)) {
-            customerRepository.addCustomer(customer);
+        while(true) {
+            customerID = UUID.randomUUID();
+            if(!customerRepository.hasCustomer(customerID)){
+                break;
+            }
         }
-        else throw new CustomerException("Customer with UUID: " + customer.getCustomerID() + " already exists");
+
+        customer.setCustomerID(customerID);
+        customerRepository.addCustomer(customer);
+        return customer.getCustomerID();
     }
 
     public void removeCustomer(UUID customerID) throws CustomerException {

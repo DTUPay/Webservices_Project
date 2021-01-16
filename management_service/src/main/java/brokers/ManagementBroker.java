@@ -112,13 +112,13 @@ public class ManagementBroker implements IMessageBroker {
     private void processMessage(Message message, JsonObject payload) {
         switch(message.getEvent()) {
             case "registerCustomerResponse":
-                this.managementService.registerCustomerResponse(message);
+                this.managementService.registerCustomerResponse(message, payload);
                 break;
             case "removeCustomerResponse":
                 this.managementService.removeCustomerResponse(message);
                 break;
             case "registerMerchantResponse":
-                this.managementService.registerMerchantResponse(message);
+                this.managementService.registerMerchantResponse(message, payload);
                 break;
             case "removeMerchantResponse":
                 this.managementService.removeMerchantResponse(message);

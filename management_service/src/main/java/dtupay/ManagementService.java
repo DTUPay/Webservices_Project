@@ -57,9 +57,13 @@ public class ManagementService {
 
     // @TODO: Missing in UML
     // @Status: Implemented
-    public void registerCustomerResponse(Message message){
+    public void registerCustomerResponse(Message message, JsonObject payload){
         AsyncResponse response = RestfulHandler.getRestResponseObject(message.getRequestId());
-        response.resume(Response.status(message.getStatus()).entity(message.getStatusMessage()).build());
+        if(message.getStatus() == 200){
+            response.resume(Response.status(message.getStatus()).entity(payload).build());
+        } else {
+            response.resume(Response.status(message.getStatus()).entity(message.getStatusMessage()).build());
+        }
     }
 
     // @TODO: Missing in UML
@@ -108,9 +112,13 @@ public class ManagementService {
 
     // @TODO: Missing in UML
     // @Status: Implemented
-    public void registerMerchantResponse(Message message){
+    public void registerMerchantResponse(Message message, JsonObject payload){
         AsyncResponse response = RestfulHandler.getRestResponseObject(message.getRequestId());
-        response.resume(Response.status(message.getStatus()).entity(message.getStatusMessage()).build());
+        if(message.getStatus() == 200){
+            response.resume(Response.status(message.getStatus()).entity(payload).build());
+        } else {
+            response.resume(Response.status(message.getStatus()).entity(message.getStatusMessage()).build());
+        }
     }
 
     // @TODO: Missing in UML

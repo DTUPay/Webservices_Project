@@ -14,6 +14,7 @@ public class Customer {
     private String accountID;
     private UUID customerID;
     private List<UUID> tokenIDs;
+    private String accountID;
 
     public Customer(){
 
@@ -23,6 +24,7 @@ public class Customer {
         this.lastName = lastName;
         this.accountID = accountID;
         this.customerID = customerID;
+        this.accountID = accountID;
         this.tokenIDs = new ArrayList<UUID>();
     }
 
@@ -64,5 +66,13 @@ public class Customer {
 
     public void setTokenIDs(List<UUID> tokenIDs) {
         this.tokenIDs = tokenIDs;
+    }
+
+    public String getAccountID() {
+        return accountID;
+    }
+
+    public void setAccountID(String accountID) {
+        this.accountID = accountID;
     }
 }
