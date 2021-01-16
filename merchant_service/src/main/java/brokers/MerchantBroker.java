@@ -127,10 +127,11 @@ public class MerchantBroker implements IMessageBroker {
                 System.out.println("Merchant report reveiced");
                 returnMerchantReport(message, payload);
                 break;
+            case "requestPaymentComplete":
+                System.out.println("requestPaymentComplete reveiced");
             default:
                 System.out.println("Event not handled: " + message.getEvent());
         }
-
     }
 
     // @Status: Implemented
@@ -192,11 +193,19 @@ public class MerchantBroker implements IMessageBroker {
         Message message = new Message();
         message.setEvent("requestPayment");
         message.setService("payment_service");
+        message.setCallback(new Callback("merchant_service", "requestPaymentComplete"));
         message.setPayload(payment);
         UUID requestId = responsehandler.saveRestResponseObject(response);
         message.setRequestId(requestId);
 
         this.sendMessage(message);
+    }
+
+    public void requestPaymentComplete(Message message, JsonObject payload) {
+        //Return status of rabbitMQ request
+        AsyncResponse request = responsehandler.getRestResponseObject(message.getRequestId());
+        responsehandler.removeRestResponseObject(message.getRequestId());
+        request.resume(Response.status(message.getStatus()));
     }
     
     /*
