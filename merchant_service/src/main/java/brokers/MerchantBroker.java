@@ -5,25 +5,39 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.DeliverCallback;
+import dto.MerchantIDDTO;
+import dto.PaymentDTO;
 import dtupay.MerchantService;
+import dtupay.RestResponseHandler;
+import exceptions.MerchantException;
+import models.Callback;
+import models.Merchant;
 import models.Message;
 
 import javax.json.Json;
 import javax.json.JsonObject;
+import javax.ws.rs.container.AsyncResponse;
+import javax.ws.rs.core.Response;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 
+/**
+ * @author Mikkel & Benjamin
+ */
 public class MerchantBroker implements IMessageBroker {
     ConnectionFactory factory = new ConnectionFactory();
     Connection connection;
     Channel channel;
     DeliverCallback deliverCallback;
     Gson gson = new Gson();
+    RestResponseHandler responsehandler;
     String queue = "merchant_service";
     MerchantService merchantService;
 
     public MerchantBroker(MerchantService service) {
         this.merchantService = service;
+        this.responsehandler = RestResponseHandler.getInstance();
 
         try {
 
@@ -98,20 +112,20 @@ public class MerchantBroker implements IMessageBroker {
         switch(message.getEvent()) {
             case "registerMerchant":
                 System.out.println("registerMerchant event caught");
-                merchantService.registerMerchant(message, payload);
+                registerMerchant(message, payload);
                 break;
             case "removeMerchant":
                 System.out.println("removeMerchant event caught");
-                merchantService.removeMerchant(message, payload);
+                removeMerchant(message, payload);
                 break;
             case "getMerchant":
                 System.out.println("getMerchant event caught");
-                merchantService.getMerchant(message, payload);
+                getMerchant(message, payload);
                 break;
             // generate report receivers
             case "returnMerchantSummary":
                 System.out.println("Merchant report reveiced");
-                merchantService.returnMerchantReport(message, payload);
+                returnMerchantReport(message, payload);
                 break;
             default:
                 System.out.println("Event not handled: " + message.getEvent());
@@ -119,4 +133,104 @@ public class MerchantBroker implements IMessageBroker {
 
     }
 
+    // @Status: Implemented
+    public void registerMerchant(Message message, JsonObject payload){
+        Message reply = createReply(message);
+        try{
+            Merchant merchant = gson.fromJson(payload.toString(), Merchant.class);
+            merchantService.registerMerchant(merchant);
+        } catch (Exception e) {
+
+            reply.setStatus(400);
+            reply.setStatusMessage(e.toString());
+            sendMessage(reply);
+            return;
+
+        }
+        sendMessage(reply);
+    }
+
+    // @Status: Implemented
+    public void removeMerchant(Message message, JsonObject payload){
+        Message reply = createReply(message);
+        try{
+            MerchantIDDTO dto = gson.fromJson(payload.toString(), MerchantIDDTO.class);
+            System.out.println(dto.getMerchantID());
+            merchantService.removeMerchant(dto.getMerchantID());
+        } catch (Exception e) {
+            reply.setStatus(400);
+            reply.setStatusMessage(e.toString());
+            sendMessage(reply);
+            return;
+        }
+        sendMessage(reply);
+    }
+
+    public void getMerchant(Message message, JsonObject payload){
+        Message reply = createReply(message);
+        try{
+            MerchantIDDTO dto = gson.fromJson(payload.toString(), MerchantIDDTO.class);
+            reply.payload = merchantService.getMerchant(dto.getMerchantID());
+        } catch (Exception e) {
+            reply.setStatus(400);
+            sendMessage(reply);
+            return;
+        }
+        sendMessage(reply);
+    }
+
+    // @Status: Implemented
+    // Request payment functions
+    public void requestPayment(PaymentDTO payment, AsyncResponse response){
+        try {
+            this.merchantService.getMerchant(payment.getMerchantID());
+        } catch (MerchantException me) {
+            response.resume(Response.status(400).entity(me.getMessage()).build());
+            return;
+        }
+
+        Message message = new Message();
+        message.setEvent("requestPayment");
+        message.setService("payment_service");
+        message.setPayload(payment);
+        UUID requestId = responsehandler.saveRestResponseObject(response);
+        message.setRequestId(requestId);
+
+        this.sendMessage(message);
+    }
+    
+    /*
+    Generate report functions
+     */
+
+    public void generateReport(PaymentDTO reportRequestDTO, AsyncResponse response){
+        UUID requestId = responsehandler.saveRestResponseObject(response);
+
+        Message message = new Message();
+        message.setEvent("getMerchantSummary");
+        message.setService("payment_service");
+        message.setRequestId(requestId);
+
+        message.setPayload(reportRequestDTO);
+        message.setCallback(new Callback("merchant_service", "returnMerchantSummary"));
+        sendMessage(message);
+    }
+
+    public void returnMerchantReport(Message message, JsonObject payload) {
+        AsyncResponse request = responsehandler.getRestResponseObject(message.getRequestId());
+        responsehandler.removeRestResponseObject(message.getRequestId());
+        if(message.getStatus() != 200){
+            request.resume(Response.status(message.getStatus()));
+            return;
+        }
+
+        //TODO cast payload to expected DTO before returning
+        request.resume(Response.status(message.getStatus()).entity(payload));
+    }
+
+    // Request payment functions
+    public void requestPaymentResponse(Message message){
+        AsyncResponse response = responsehandler.getRestResponseObject(message.getRequestId());
+        response.resume(Response.status(message.getStatus()).entity(message.getStatusMessage()).build());
+    }
 }

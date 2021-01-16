@@ -19,7 +19,7 @@ public class MerchantRepository implements IMerchantRepository {
 
     @Override
     public void addMerchant(Merchant merchant) {
-        merchants.put(merchant.getCVR(), merchant);
+        merchants.put(merchant.getMerchantID(), merchant);
     }
 
     @Override
