@@ -30,7 +30,7 @@ public class TokenBroker implements IMessageBroker {
 
             factory.setHost("rabbitmq");
 
-            if(System.getenv("ENVIRONMENT") != null){
+            if(System.getenv("ENVIRONMENT") == null){
                 int attempts = 0;
                 while (true){
                     try{
@@ -71,6 +71,7 @@ public class TokenBroker implements IMessageBroker {
     @Override
     public void sendMessage(Message message) {
         try {
+            channel.queueDeclare(message.getService(), false, false, false, null);
             channel.basicPublish("", message.getService(), null, gson.toJson(message).getBytes(StandardCharsets.UTF_8));
         } catch(Exception e) {
             e.printStackTrace();
@@ -97,13 +98,9 @@ public class TokenBroker implements IMessageBroker {
     private void processMessage(Message message, JsonObject payload){
 
         switch(message.getEvent()) {
-            case "addTokens":
-                System.out.println("Addtoken event caught");
-                tokenService.addTokens(message, payload);
-                break;
-            case "isTokenValid":
-                System.out.println("isTokenValid event caught");
-                tokenService.isTokenValid(message, payload);
+            case "requestTokens":
+                System.out.println("requestTokens event caught");
+                tokenService.requestTokens(message, payload);
                 break;
             case "useToken":
                 System.out.println("useToken event caught");
