@@ -21,42 +21,22 @@ import java.util.UUID;
 @QuarkusMain
 public class MerchantService {
     MerchantBroker broker;
-    public HashMap<UUID, AsyncResponse> pendingRequests = new HashMap<>();
-    IMerchantRepository merchantRepository;
+    IMerchantRepository merchantRepository = new MerchantRepository();
     RestResponseHandler RestfulHandler = RestResponseHandler.getInstance();
+    private static MerchantService instance = new MerchantService();
     PayloadHandler payloadHandler = PayloadHandler.getInstance();
     Gson gson = new Gson();
 
     public MerchantService() {
-        try {
-            if(System.getenv("ENVIRONMENT") != null){
-                this.broker = new MerchantBroker(this);
-            }
-        } catch (Exception e) { e.printStackTrace(); }
-        this.merchantRepository = new MerchantRepository();
+        broker = new MerchantBroker(this);
+    }
+    public static MerchantService getInstance(){
+        return instance;
     }
 
     public static void main(String[] args) {
-        MerchantService service = new MerchantService();
+        MerchantService service = MerchantService.getInstance();
         Quarkus.run();
-    }
-
-    public UUID addPendingRequest(AsyncResponse asyncResponse){
-        UUID uuid = UUID.randomUUID();
-        pendingRequests.put(uuid, asyncResponse);
-        return uuid;
-    }
-
-    public void respondPendingRequest(UUID uuid){
-        pendingRequests.get(uuid).resume(Response.status(202).build());
-        pendingRequests.remove(uuid);
-    }
-
-    public void demo(JsonObject jsonObject){
-        // UUID needs to be trimmed after convertion from JSON
-        String uuidString = jsonObject.get("uuid").toString().replaceAll("\"", "").replaceAll("\\\\", "");
-        UUID uuid = UUID.fromString(uuidString);
-        respondPendingRequest(uuid);
     }
 
     public void registerMerchant(Merchant merchant) throws MerchantException {
@@ -66,7 +46,7 @@ public class MerchantService {
         else throw new MerchantException("Merchant with CVR: " + merchant.getCVR() + " already exists");
     }
 
-    //Fire and forget for now
+    // @Status: Needs testing
     public void registerMerchant(Message message, JsonObject payload){
         Message reply = broker.createReply(message);
         try{
@@ -74,11 +54,13 @@ public class MerchantService {
             registerMerchant(dto);
         } catch (Exception e) {
 
-            /*reply.setStatus(400);
+            reply.setStatus(400);
+            reply.setStatusMessage(e.toString());
             broker.sendMessage(reply);
-            return;*/
+            return;
+
         }
-        //broker.sendMessage(reply);
+        broker.sendMessage(reply);
     }
 
     public void removeMerchant(String cvr) throws MerchantException {
