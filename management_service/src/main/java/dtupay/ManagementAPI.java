@@ -6,8 +6,6 @@ package dtupay;
 
 import dto.CustomerDTO;
 import dto.MerchantDTO;
-import models.Merchant;
-import models.Message;
 
 import javax.ws.rs.*;
 import javax.ws.rs.container.AsyncResponse;

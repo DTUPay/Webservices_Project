@@ -1,28 +1,29 @@
 package dto;
+// @author: Rubatharisan Thirumathyam & Oliver O. Nielsen
 
 import models.Payload;
 
 import java.util.UUID;
 
 public class PaymentDTO extends Payload {
-    private String customerID;
-    private String merchantID;
+    private UUID customerID;
+    private UUID merchantID;
     private UUID paymentID;
 
-    public String getCustomerID() {
+    public UUID getCustomerID() {
         return customerID;
     }
 
-    public void setCustomerID(String customerID) {
+    public void setCustomerID(UUID customerID) {
         this.customerID = customerID;
     }
 
-    public String getMechantID() {
+    public UUID getMerchantID() {
         return merchantID;
     }
 
-    public void setMechantID(String mechantID) {
-        this.merchantID = mechantID;
+    public void setMerchantID(UUID merchantID) {
+        this.merchantID = merchantID;
     }
 
     public UUID getPaymentID() {

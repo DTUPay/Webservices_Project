@@ -1,25 +1,26 @@
 package dto;
-
+// @author: Rubatharisan Thirumathyam
 import models.Payload;
 
-public class TokensDTO extends Payload {
-    private String customerID;
-    private int amount;
+import java.util.UUID;
 
-    public String getCustomerID() {
+public class TokensDTO extends Payload {
+    private UUID customerID;
+    private float amount;
+
+    public UUID getCustomerID() {
         return customerID;
     }
 
-    public void setCustomerID(String customerID) {
+    public void setCustomerID(UUID customerID) {
         this.customerID = customerID;
     }
 
-    public int getAmount() {
+    public float getAmount() {
         return amount;
     }
 
-    public void setAmount(int amount) {
+    public void setAmount(float amount) {
         this.amount = amount;
     }
-
 }

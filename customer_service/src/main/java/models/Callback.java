@@ -2,7 +2,6 @@
 @author Oliver O. Nielsen & Rubatharisan Thirumathyam
  */
 package models;
-
 public class Callback {
     private String service;
     private String event;
