@@ -30,7 +30,7 @@ public class TokenBroker implements IMessageBroker {
 
             factory.setHost("rabbitmq");
 
-            if(System.getenv("ENVIRONMENT") == null){
+            if(System.getenv("ENVIRONMENT") != null){
                 int attempts = 0;
                 while (true){
                     try{
