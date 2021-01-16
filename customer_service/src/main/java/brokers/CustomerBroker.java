@@ -163,11 +163,13 @@ public class CustomerBroker implements IMessageBroker {
             CustomerDTO dto = gson.fromJson(payload.toString(), CustomerDTO.class);
 
             Customer customer = new Customer();
-            customer.setCustomerID(dto.getCustomerID());
             customer.setFirstName(dto.getFirstName());
             customer.setLastName(dto.getLastName());
+            customer.setAccountID(dto.getAccountNumber());
 
-            customerService.registerCustomer(customer);
+            UUID customerID = customerService.registerCustomer(customer);
+            dto.setCustomerID(customerID);
+            reply.setPayload(dto);
 
         } catch(CustomerException e){
             reply.setStatus(400);
