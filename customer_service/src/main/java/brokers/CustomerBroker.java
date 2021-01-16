@@ -23,6 +23,10 @@ import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
+
+/**
+ * @author Mikkel & Benjamin
+ */
 public class CustomerBroker implements IMessageBroker {
     ConnectionFactory factory = new ConnectionFactory();
     Connection connection;

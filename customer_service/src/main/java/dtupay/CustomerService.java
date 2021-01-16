@@ -14,6 +14,10 @@ import models.Customer;
 
 import java.util.UUID;
 
+
+/**
+ * @author Mikkel & Benjamin
+ */
 @QuarkusMain
 public class CustomerService {
     CustomerBroker broker;
