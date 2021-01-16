@@ -9,6 +9,7 @@ import io.quarkus.runtime.annotations.QuarkusMain;
 import models.Callback;
 import models.Message;
 
+import javax.json.JsonObject;
 import javax.ws.rs.container.AsyncResponse;
 import javax.ws.rs.core.Response;
 import java.util.UUID;
