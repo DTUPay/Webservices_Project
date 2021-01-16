@@ -6,7 +6,7 @@ import java.util.UUID;
 
 public class PaymentDTO extends Payload {
     private String customerID;
-    private String mechantID;
+    private String merchantID;
     private UUID paymentID;
 
     public String getCustomerID() {
@@ -18,11 +18,11 @@ public class PaymentDTO extends Payload {
     }
 
     public String getMechantID() {
-        return mechantID;
+        return merchantID;
     }
 
     public void setMechantID(String mechantID) {
-        this.mechantID = mechantID;
+        this.merchantID = mechantID;
     }
 
     public UUID getPaymentID() {

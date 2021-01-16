@@ -25,7 +25,7 @@ import java.util.UUID;
 
 
 /**
- * @author Mikkel & Benjamin
+ * @author Mikkel & Benjamin & Rubatharisan & Oliver
  */
 public class CustomerBroker implements IMessageBroker {
     ConnectionFactory factory = new ConnectionFactory();
@@ -244,7 +244,7 @@ public class CustomerBroker implements IMessageBroker {
     }
 
     // @Status: In dispute / in partial implemented
-    public void getUnusedToken(String customerID, AsyncResponse response) {
+    public void getUnusedToken(UUID customerID, AsyncResponse response) {
         try {
             UUID tokenID = customerService.getUnusedToken(customerID);
             response.resume(Response.status(200).entity(gson.toJson(tokenID)));

@@ -1,9 +1,12 @@
 package dto;
 
+import java.util.UUID;
+
 public class CustomerDTO {
     private String firstName;
     private String lastName;
-    private String cpr;
+    private UUID customerID;
+    private String accountNumber;
 
     public String getFirstName() {
         return firstName;
@@ -21,11 +24,19 @@ public class CustomerDTO {
         this.lastName = lastName;
     }
 
-    public String getCustomerID() {
-        return cpr;
+    public UUID getCustomerID() {
+        return customerID;
     }
 
-    public void setCpr(String cpr) {
-        this.cpr = cpr;
+    public void setCustomerID(UUID customerID) {
+        this.customerID = customerID;
+    }
+
+    public String getAccountNumber() {
+        return accountNumber;
+    }
+
+    public void setAccountNumber(String accountNumber) {
+        this.accountNumber = accountNumber;
     }
 }

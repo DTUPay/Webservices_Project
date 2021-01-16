@@ -40,31 +40,33 @@ public class CustomerService {
     }
 
     public void registerCustomer(Customer customer) throws CustomerException {
-        if (!customerRepository.hasCustomer(customer.getCustomerID())) {
+        UUID customerID = UUID.randomUUID();
+
+        if (customerRepository.hasCustomer(customerID)) {
             customerRepository.addCustomer(customer);
         }
-        else throw new CustomerException("Customer with CPR: " + customer.getCustomerID() + " already exists");
+        else throw new CustomerException("Customer with UUID: " + customer.getCustomerID() + " already exists");
     }
 
-    public void removeCustomer(String customerID) throws CustomerException {
+    public void removeCustomer(UUID customerID) throws CustomerException {
         if (customerRepository.hasCustomer(customerID)) {
             customerRepository.removeCustomer(customerID);
         }
-        else throw new CustomerException("Customer with CPR: " + customerID + " doesn't exist");
+        else throw new CustomerException("Customer with UUID: " + customerID + " doesn't exist");
     }
 
-    public Customer getCustomer(String customerID) throws CustomerException {
+    public Customer getCustomer(UUID customerID) throws CustomerException {
         if (customerRepository.hasCustomer(customerID)) {
             return customerRepository.getCustomer(customerID);
         }
-        else throw new CustomerException("Customer with CPR: " + customerID + " doesn't exist");
+        else throw new CustomerException("Customer with UUID: " + customerID + " doesn't exist");
     }
 
-    public boolean hasCustomer(String customerID) {
+    public boolean hasCustomer(UUID customerID) {
         return customerRepository.hasCustomer(customerID);
     }
 
-    public UUID getUnusedToken(String customerID) throws CustomerException {
+    public UUID getUnusedToken(UUID customerID) throws CustomerException {
         if (customerRepository.hasCustomer(customerID)) {
             try {
                 return customerRepository.getCustomer(customerID).getTokenIDs().remove(0);
@@ -72,7 +74,7 @@ public class CustomerService {
                 throw new CustomerException("No more tokens left");
             }
         } else {
-            throw new CustomerException("Customer with CPR: " + customerID + " doesn't exist");
+            throw new CustomerException("Customer with CustomerID: " + customerID + " doesn't exist");
         }
     }
 }

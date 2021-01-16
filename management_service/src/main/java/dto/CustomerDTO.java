@@ -5,7 +5,8 @@ import models.Payload;
 public class CustomerDTO extends Payload {
     private String firstName;
     private String lastName;
-    private String cpr;
+    private String accountNumber;
+    private String customerID;
 
     public String getFirstName() {
         return firstName;
@@ -23,11 +24,19 @@ public class CustomerDTO extends Payload {
         this.lastName = lastName;
     }
 
-    public String getCpr() {
-        return cpr;
+    public String getAccountNumber() {
+        return accountNumber;
     }
 
-    public void setCpr(String cpr) {
-        this.cpr = cpr;
+    public void setAccountNumber(String accountNumber) {
+        this.accountNumber = accountNumber;
+    }
+
+    public String getCustomerID() {
+        return customerID;
+    }
+
+    public void setCustomerID(String customerID) {
+        this.customerID = customerID;
     }
 }

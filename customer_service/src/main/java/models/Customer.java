@@ -11,24 +11,24 @@ import java.util.UUID;
 public class Customer {
     private String firstName;
     private String lastName;
-    private String customerID;
+    private UUID customerID;
     private List<UUID> tokenIDs;
 
     public Customer(){
 
     }
-    public Customer(String firstName, String lastName, String CPR){
+    public Customer(String firstName, String lastName, UUID customerID){
         this.firstName = firstName;
         this.lastName = lastName;
-        this.customerID = CPR;
+        this.customerID = customerID;
         this.tokenIDs = new ArrayList<UUID>();
     }
 
-    public String getCustomerID() {
+    public UUID getCustomerID() {
         return customerID;
     }
 
-    public void setCustomerID(String customerID) {
+    public void setCustomerID(UUID customerID) {
         this.customerID = customerID;
     }
 

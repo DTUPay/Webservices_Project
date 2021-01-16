@@ -6,13 +6,15 @@ package dtupay;
 
 import models.Customer;
 
+import java.util.UUID;
+
 public interface ICustomerRepository {
 
     void addCustomer(Customer customer);
 
-    Customer getCustomer(String cpr);
+    Customer getCustomer(UUID customerID);
 
-    void removeCustomer(String cpr);
+    void removeCustomer(UUID customerID);
 
-    boolean hasCustomer(String cpr);
+    boolean hasCustomer(UUID customerID);
 }

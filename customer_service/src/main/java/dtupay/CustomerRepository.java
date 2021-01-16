@@ -7,9 +7,11 @@ package dtupay;
 import models.Customer;
 
 import java.util.HashMap;
+import java.util.UUID;
+
 public class CustomerRepository implements ICustomerRepository {
 
-    HashMap<String, Customer> customers = new HashMap<>();
+    HashMap<UUID, Customer> customers = new HashMap<>();
 
     @Override
     public void addCustomer(Customer customer) {
@@ -17,18 +19,18 @@ public class CustomerRepository implements ICustomerRepository {
     }
 
     @Override
-    public Customer getCustomer(String cpr)  {
-        return customers.get(cpr);
+    public Customer getCustomer(UUID customerID)  {
+        return customers.get(customerID);
     }
 
     @Override
-    public void removeCustomer(String cpr) {
-        customers.remove(cpr);
+    public void removeCustomer(UUID customerID) {
+        customers.remove(customerID);
     }
 
     @Override
-    public boolean hasCustomer(String cpr) {
-        return customers.containsKey(cpr);
+    public boolean hasCustomer(UUID customerID) {
+        return customers.containsKey(customerID);
     }
 
 }

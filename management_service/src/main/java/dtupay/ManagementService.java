@@ -17,6 +17,8 @@ import javax.ws.rs.core.Response;
 import java.io.StringReader;
 import java.util.UUID;
 
+// @author: Rubatharisan Thirumathyam
+
 @QuarkusMain
 public class ManagementService {
     ManagementBroker broker;
@@ -69,7 +71,7 @@ public class ManagementService {
         message.setEvent("removeCustomer");
 
         CustomerDTO customer = new CustomerDTO();
-        customer.setCpr(customerID);
+        customer.setCustomerID(customerID);
 
         message.setPayload(customer);
         message.setCallback(new Callback("management_service", "removeCustomerResponse"));
@@ -120,7 +122,7 @@ public class ManagementService {
         message.setEvent("removeMerchant");
 
         MerchantDTO customer = new MerchantDTO();
-        customer.setCvr(merchantID);
+        customer.setMerchantID(merchantID);
 
         message.setPayload(customer);
         message.setCallback(new Callback("management_service", "removeMerchantResponse"));
