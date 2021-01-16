@@ -5,24 +5,20 @@
 package dtupay;
 
 
+import brokers.TokenBroker;
 import com.google.gson.Gson;
 import com.rabbitmq.client.DeliverCallback;
-import dto.RequestTokensDTO;
-import dto.TokenDTO;
-import dto.TokenIDDTO;
-import dto.TokenIdListDTO;
 import exceptions.TokenException;
-import models.Message;
-import models.Token;
 import io.quarkus.runtime.Quarkus;
 import io.quarkus.runtime.annotations.QuarkusMain;
+import models.Token;
 
-import javax.json.JsonObject;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
-import brokers.*;
 
+/**
+ * @author Oliver O. Nielsen & Rubatharisan Thirumathyam & Benjamin Eriksen & Mikkel Rosenfeldt Anderson
+ */
 @QuarkusMain
 public class TokenService {
     ITokenRepository tokenRepository = TokenRepository.getInstance();
@@ -93,45 +89,5 @@ public class TokenService {
     }
 
 
-    public void useToken(Message message, JsonObject payload){
-        Message reply = broker.createReply(message);
-        TokenIDDTO dto = gson.fromJson(payload.toString(), TokenIDDTO.class);
 
-        try {
-            if(this.useToken(dto.getTokenID())){
-                TokenDTO tokenDTO = new TokenDTO(getToken(dto.getTokenID()));
-                reply.setPayload(tokenDTO);
-                this.broker.sendMessage(reply);
-            }
-        } catch(Exception e){
-            reply.setStatus(400);
-            reply.setStatusMessage(e.toString());
-            this.broker.sendMessage(reply);
-        }
-    }
-
-
-    public void requestTokens(Message message, JsonObject payload){
-
-        System.out.println(payload);
-        RequestTokensDTO dto = gson.fromJson(payload.toString(), RequestTokensDTO.class);
-
-        //Call actual function with data from
-        List<UUID> tokenIds = addTokens(
-                dto.getCustomerId(),
-                dto.getAmount()
-        );
-
-        System.out.println("Tokends added");
-        //Create payload JSON
-        TokenIdListDTO replyPayload = new TokenIdListDTO();
-        replyPayload.setTokenIds(tokenIds);
-
-        Message reply = broker.createReply(message);
-        reply.payload = replyPayload;
-
-        System.out.println("Response created");
-        broker.sendMessage(reply);
-
-    }
 }

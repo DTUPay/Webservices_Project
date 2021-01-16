@@ -19,7 +19,7 @@ import java.math.BigDecimal;
 import java.util.*;
 
 /**
- * @author Mikkel & Laura & Benjamin
+ * @author Mikkel Rosenfeldt Anderson & Laura & Benjamin
  */
 @QuarkusMain
 public class PaymentService {

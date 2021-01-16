@@ -25,7 +25,7 @@ import java.util.UUID;
 
 
 /**
- * @author Mikkel & Benjamin
+ * @author Mikkel Rosenfeldt Anderson & Benjamin
  */
 public class CustomerBroker implements IMessageBroker {
     ConnectionFactory factory = new ConnectionFactory();

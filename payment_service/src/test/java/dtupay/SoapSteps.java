@@ -13,7 +13,7 @@ import models.Customer;
 import static org.junit.Assert.assertEquals;
 
 /**
- * @author Mikkel & Laura
+ * @author Mikkel Rosenfeldt Anderson & Laura
  */
 public class SoapSteps {
     PaymentService service = new PaymentService();

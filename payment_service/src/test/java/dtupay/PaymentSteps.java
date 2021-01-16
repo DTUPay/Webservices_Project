@@ -16,7 +16,7 @@ import java.util.UUID;
 import static org.junit.Assert.*;
 
 /**
- * @author Mikkel & Laura
+ * @author Mikkel Rosenfeldt Anderson & Laura
  */
 public class PaymentSteps {
   

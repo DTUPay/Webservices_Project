@@ -5,15 +5,24 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.DeliverCallback;
+import dto.RequestTokensDTO;
+import dto.TokenDTO;
+import dto.TokenIDDTO;
+import dto.TokenIdListDTO;
 import dtupay.TokenService;
+import dtupay.RestResponseHandler;
 import models.Message;
-import models.Payload;
 
 import javax.json.Json;
 import javax.json.JsonObject;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.UUID;
 
+/**
+ * @author Mikkel Rosenfeldt Anderson & Oliver
+ */
 public class TokenBroker implements IMessageBroker {
     ConnectionFactory factory = new ConnectionFactory();
     Connection connection;
@@ -21,10 +30,12 @@ public class TokenBroker implements IMessageBroker {
     DeliverCallback deliverCallback;
     Gson gson = new Gson();
     String queue = "token_service";
+    RestResponseHandler responseHandler;
     TokenService tokenService;
 
     public TokenBroker(TokenService service) {
         this.tokenService = service;
+        this.responseHandler = RestResponseHandler.getInstance();
 
         try {
 
@@ -100,16 +111,56 @@ public class TokenBroker implements IMessageBroker {
         switch(message.getEvent()) {
             case "requestTokens":
                 System.out.println("requestTokens event caught");
-                tokenService.requestTokens(message, payload);
+                requestTokens(message, payload);
                 break;
             case "useToken":
                 System.out.println("useToken event caught");
-                tokenService.useToken(message, payload);
+                useToken(message, payload);
                 break;
             default:
                 System.out.println("Event not handled: " + message.getEvent());
         }
 
     }
+    public void useToken(Message message, JsonObject payload){
+        Message reply = createReply(message);
+        TokenIDDTO dto = gson.fromJson(payload.toString(), TokenIDDTO.class);
 
+        try {
+            if(tokenService.useToken(dto.getTokenID())){
+                TokenDTO tokenDTO = new TokenDTO(tokenService.getToken(dto.getTokenID()));
+                reply.setPayload(tokenDTO);
+                sendMessage(reply);
+            }
+        } catch(Exception e){
+            reply.setStatus(400);
+            reply.setStatusMessage(e.toString());
+            sendMessage(reply);
+        }
+    }
+
+
+    public void requestTokens(Message message, JsonObject payload){
+
+        System.out.println(payload);
+        RequestTokensDTO dto = gson.fromJson(payload.toString(), RequestTokensDTO.class);
+
+        //Call actual function with data from
+        List<UUID> tokenIds = tokenService.addTokens(
+                dto.getCustomerId(),
+                dto.getAmount()
+        );
+
+        System.out.println("Tokends added");
+        //Create payload JSON
+        TokenIdListDTO replyPayload = new TokenIdListDTO();
+        replyPayload.setTokenIds(tokenIds);
+
+        Message reply = createReply(message);
+        reply.payload = replyPayload;
+
+        System.out.println("Response created");
+        sendMessage(reply);
+
+    }
 }

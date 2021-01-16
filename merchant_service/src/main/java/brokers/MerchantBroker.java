@@ -23,7 +23,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 /**
- * @author Mikkel & Benjamin
+ * @author Mikkel Rosenfeldt Anderson & Benjamin
  */
 public class MerchantBroker implements IMessageBroker {
     ConnectionFactory factory = new ConnectionFactory();

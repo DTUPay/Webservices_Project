@@ -9,7 +9,7 @@ import models.Merchant;
 
 
 /**
- * @author Mikkel & Benjamin
+ * @author Mikkel Rosenfeldt Anderson & Benjamin
  */
 @QuarkusMain
 public class MerchantService {

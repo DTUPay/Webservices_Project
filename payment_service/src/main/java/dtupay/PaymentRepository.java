@@ -9,7 +9,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
- * @author Mikkel & Laura & Benjamin
+ * @author Mikkel Rosenfeldt Anderson & Laura & Benjamin
  */
 public class PaymentRepository implements IPaymentRepository {
 
