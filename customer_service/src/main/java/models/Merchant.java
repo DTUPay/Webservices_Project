@@ -5,20 +5,11 @@
 package models;
 
 public class Merchant {
-    private int merchantID;
     private String name;
-    private String CVR;
+    private String merchantID;
 
     public Merchant(){
 
-    }
-
-    public int getMerchantID() {
-        return merchantID;
-    }
-
-    public void setMerchantID(int merchantID) {
-        this.merchantID = merchantID;
     }
 
     public String getName() {
@@ -29,11 +20,11 @@ public class Merchant {
         this.name = name;
     }
 
-    public String getCVR() {
-        return CVR;
+    public String getMerchantID() {
+        return merchantID;
     }
 
-    public void setCVR(String CVR) {
-        this.CVR = CVR;
+    public void setMerchantID(String merchantID) {
+        this.merchantID = merchantID;
     }
 }

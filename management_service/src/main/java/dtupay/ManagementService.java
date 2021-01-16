@@ -7,14 +7,10 @@ import dto.MerchantDTO;
 import io.quarkus.runtime.Quarkus;
 import io.quarkus.runtime.annotations.QuarkusMain;
 import models.Callback;
-import models.Customer;
 import models.Message;
 
-import javax.json.Json;
-import javax.json.JsonObject;
 import javax.ws.rs.container.AsyncResponse;
 import javax.ws.rs.core.Response;
-import java.io.StringReader;
 import java.util.UUID;
 
 @QuarkusMain
@@ -120,7 +116,7 @@ public class ManagementService {
         message.setEvent("removeMerchant");
 
         MerchantDTO customer = new MerchantDTO();
-        customer.setCvr(merchantID);
+        customer.setMerchantID(merchantID);
 
         message.setPayload(customer);
         message.setCallback(new Callback("management_service", "removeMerchantResponse"));

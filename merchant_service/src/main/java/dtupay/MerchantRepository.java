@@ -23,18 +23,18 @@ public class MerchantRepository implements IMerchantRepository {
     }
 
     @Override
-    public void removeMerchant(String cvr) {
-        merchants.remove(cvr);
+    public void removeMerchant(String merchantID) {
+        merchants.remove(merchantID);
     }
 
     @Override
-    public Merchant getMerchant(String cvr) {
-        return merchants.get(cvr);
+    public Merchant getMerchant(String merchantID) {
+        return merchants.get(merchantID);
     }
 
     @Override
-    public boolean hasMerchant(String cvr) {
+    public boolean hasMerchant(String merchantID) {
         System.out.println(merchants.toString());
-        return merchants.containsKey(cvr);
+        return merchants.containsKey(merchantID);
     }
 }

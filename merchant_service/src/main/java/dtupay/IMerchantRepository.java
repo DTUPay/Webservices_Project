@@ -6,10 +6,10 @@ public interface IMerchantRepository {
 
     void addMerchant(Merchant merchant) ;
 
-    void removeMerchant(String cvr);
+    void removeMerchant(String merchantID);
 
-    Merchant getMerchant(String cvr);
+    Merchant getMerchant(String merchantID);
 
-    boolean hasMerchant(String cvr);
+    boolean hasMerchant(String merchantID);
 
 }

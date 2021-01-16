@@ -3,15 +3,15 @@ package dto;
 import models.Payload;
 
 public class MerchantDTO extends Payload {
-    private String cvr;
+    private String merchantID;
     private String name;
 
-    public String getCvr() {
-        return cvr;
+    public String getMerchantID() {
+        return merchantID;
     }
 
-    public void setCvr(String cvr) {
-        this.cvr = cvr;
+    public void setMerchantID(String merchantID) {
+        this.merchantID = merchantID;
     }
 
     public String getName() {
