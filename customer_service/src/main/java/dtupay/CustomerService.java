@@ -65,7 +65,7 @@ public class CustomerService {
         if (customerRepository.hasCustomer(customerID)) {
             return customerRepository.getCustomer(customerID);
         }
-        else throw new CustomerException("Customer with UUID: " + customerID + " doesn't exist");
+        else throw new CustomerException("Customer with given customerID doesn't exist");
     }
 
     public boolean hasCustomer(UUID customerID) {

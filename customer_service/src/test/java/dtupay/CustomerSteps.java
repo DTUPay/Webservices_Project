@@ -109,4 +109,14 @@ public class CustomerSteps {
             exception = e;
         }
     }
+
+    @Given("a random customerID that does not exist")
+    public void aInvalidCustomerID() {
+        try {
+            service.getCustomer(UUID.randomUUID());
+        } catch(CustomerException e){
+            exception = e;
+        }
+    }
+
 }
