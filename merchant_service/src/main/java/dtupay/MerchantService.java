@@ -46,7 +46,7 @@ public class MerchantService {
         else throw new MerchantException("Merchant with CVR: " + merchant.getCVR() + " already exists");
     }
 
-    // @Status: Needs testing
+    // @Status: Implemented
     public void registerMerchant(Message message, JsonObject payload){
         Message reply = broker.createReply(message);
         try{
@@ -63,6 +63,7 @@ public class MerchantService {
         broker.sendMessage(reply);
     }
 
+    // @Status: Implemented
     public void removeMerchant(String cvr) throws MerchantException {
 
         if (merchantRepository.hasMerchant(cvr)) {
@@ -71,18 +72,19 @@ public class MerchantService {
         else throw new MerchantException("Merchant with CVR: " + cvr + " doesn't exist");
     }
 
+    // @Status: Implemented
     public void removeMerchant(Message message, JsonObject payload){
         Message reply = broker.createReply(message);
         try{
             MerchantIDDTO dto = gson.fromJson(payload.toString(), MerchantIDDTO.class);
             removeMerchant(dto.getMerchantID());
         } catch (Exception e) {
-
-            /*reply.setStatus(400);
+            reply.setStatus(400);
+            reply.setStatusMessage(e.toString());
             broker.sendMessage(reply);
-            return;*/
+            return;
         }
-        //broker.sendMessage(reply);
+        broker.sendMessage(reply);
     }
 
     public Merchant getMerchant(String cvr) throws MerchantException {
