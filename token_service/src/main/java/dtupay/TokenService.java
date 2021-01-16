@@ -6,8 +6,6 @@ package dtupay;
 
 
 import brokers.TokenBroker;
-import com.google.gson.Gson;
-import com.rabbitmq.client.DeliverCallback;
 import exceptions.TokenException;
 import io.quarkus.runtime.Quarkus;
 import io.quarkus.runtime.annotations.QuarkusMain;
@@ -21,24 +19,20 @@ import java.util.UUID;
  */
 @QuarkusMain
 public class TokenService {
+    private static TokenService instance = new TokenService();
     ITokenRepository tokenRepository = TokenRepository.getInstance();
     TokenBroker broker;
-    Gson gson = new Gson();
-    DeliverCallback deliverCallback;
-    String queue = "token_service";
-    private static TokenService instance = new TokenService();
-    public static TokenService getInstance(){
-        return instance;
-    }
-
     public TokenService() {
         broker = new TokenBroker(this);
     }
 
-
     public static void main(String[] args) {
         TokenService service = TokenService.getInstance();
         Quarkus.run();
+    }
+
+    public static TokenService getInstance(){
+        return instance;
     }
 
 
@@ -58,15 +52,13 @@ public class TokenService {
 
 
     public boolean useToken(UUID tokenID) throws TokenException {
-        if (tokenRepository.containsToken(tokenID)) {
-            if (!tokenRepository.getToken(tokenID).isUsed()){
-                tokenRepository.getToken(tokenID).setUsed(true);
-                return true;
-            } else {
-                throw new TokenException("Token has already been used");
-            }
+        Token token = getToken(tokenID);
+        if (!token.isUsed()){
+            token.setUsed(true);
+            return true;
+        } else {
+            throw new TokenException("Token has already been used");
         }
-        throw new TokenException("Token doesn't exist");
     }
 
     public Token getToken(UUID tokenID) throws TokenException {
@@ -87,7 +79,4 @@ public class TokenService {
         }
         throw new TokenException("Token doesn't exist");
     }
-
-
-
 }
