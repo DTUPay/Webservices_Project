@@ -62,16 +62,13 @@ public class CustomerService {
 
     public UUID getUnusedToken(String customerID) throws CustomerException {
         if (customerRepository.hasCustomer(customerID)) {
-            Customer customer = customerRepository.getCustomer(customerID);
-            UUID tokenID = customer.getTokenIDs().get(customer.getTokenIDs().size() - 1);
-            if (tokenID != null) {
-                return tokenID;
-            } else {
+            try {
+                return customerRepository.getCustomer(customerID).getTokenIDs().remove(0);
+            } catch (IndexOutOfBoundsException e) {
                 throw new CustomerException("No more tokens left");
             }
         } else {
             throw new CustomerException("Customer with CPR: " + customerID + " doesn't exist");
         }
-
     }
 }

@@ -11,17 +11,21 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import models.Customer;
-import models.Merchant;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 public class CustomerSteps {
     private CustomerService service;
     private Customer customer;
     private CustomerException exception;
+    private UUID tokenID;
 
     @Before
     public void initialize_repository(){
@@ -81,5 +85,27 @@ public class CustomerSteps {
         } catch (CustomerException e) {
             exception = e;
         }
+    }
+
+    @And("has a unused token")
+    public void hasAUnusedToken() {
+        List<UUID> mocked_tokenIDs = new ArrayList<>();
+        mocked_tokenIDs.add(UUID.randomUUID());
+        this.customer.setTokenIDs(mocked_tokenIDs);
+    }
+
+    @And("the customer request a unused token")
+    public void theCustomerRequestAUnusedToken() {
+        try {
+            this.tokenID = service.getUnusedToken(customer.getCustomerID());
+        } catch (CustomerException e) {
+            this.exception = e;
+        }
+    }
+
+    @Then("the token is removed from the customers token")
+    public void theTokenIsRemovedFromTheCustomersToken() throws CustomerException {
+        assertNull(this.exception);
+        assertFalse(service.getCustomer(customer.getCustomerID()).getTokenIDs().contains(this.tokenID));
     }
 }
