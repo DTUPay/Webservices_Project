@@ -12,31 +12,31 @@ import io.quarkus.runtime.Quarkus;
 import io.quarkus.runtime.annotations.QuarkusMain;
 import models.Customer;
 
+import java.util.List;
 import java.util.UUID;
 
 
 /**
- * @author Mikkel & Benjamin
+ * @author Mikkel Rosenfeldt Anderson & Benjamin
  */
 @QuarkusMain
 public class CustomerService {
+    private static CustomerService instance = new CustomerService();
     CustomerBroker broker;
     ICustomerRepository customerRepository = new CustomerRepository();
-    private static CustomerService instance = new CustomerService();
-
     Gson gson = new Gson();
 
     public CustomerService() {
         broker = new CustomerBroker(this);
     }
 
-    public static CustomerService getInstance(){
-        return instance;
-    }
-
     public static void main(String[] args) {
         CustomerService service = CustomerService.getInstance();
         Quarkus.run();
+    }
+
+    public static CustomerService getInstance(){
+        return instance;
     }
 
     public UUID registerCustomer(Customer customer) throws CustomerException {
@@ -82,5 +82,25 @@ public class CustomerService {
         } else {
             throw new CustomerException("Customer with given customerID doesn't exist");
         }
+    }
+
+    /**
+     * The customer can request 1 to 5 tokens if he either has spent all tokens
+     * (or it is the first time he requests tokens)
+     * or has only one unused token left.
+     * Overall, a customer can only have at most 6 unused tokens.
+     * If the user has more than 1 unused token and he requests again a set of tokens, his request will be denied.
+     *
+     * @param customerID The customer ID
+     *
+     * @return true if customer can request tokens
+     *
+     * @throws CustomerException
+     */
+    public boolean canRequestTokens(String customerID) throws CustomerException {
+        List<UUID> tokens = customerRepository.getCustomer(customerID).getTokenIDs();
+        int numTokens = tokens.size();
+        if (numTokens > 1) throw new CustomerException("Customer with ID: " + customerID + " still has " + numTokens + " left.");; // Should have spent all tokens
+        return true;
     }
 }

@@ -7,14 +7,10 @@ import dto.MerchantDTO;
 import io.quarkus.runtime.Quarkus;
 import io.quarkus.runtime.annotations.QuarkusMain;
 import models.Callback;
-import models.Customer;
 import models.Message;
 
-import javax.json.Json;
-import javax.json.JsonObject;
 import javax.ws.rs.container.AsyncResponse;
 import javax.ws.rs.core.Response;
-import java.io.StringReader;
 import java.util.UUID;
 
 // @author: Rubatharisan Thirumathyam

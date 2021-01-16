@@ -2,7 +2,6 @@ package brokers;
 
 import com.rabbitmq.client.DeliverCallback;
 import models.Message;
-import models.Payload;
 
 import java.io.IOException;
 

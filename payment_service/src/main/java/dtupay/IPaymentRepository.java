@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * @author Mikkel & Laura & Benjamin
+ * @author Mikkel Rosenfeldt Anderson & Laura & Benjamin
  */
 public interface IPaymentRepository {
 

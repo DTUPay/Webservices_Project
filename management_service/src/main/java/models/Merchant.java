@@ -1,19 +1,18 @@
 package models;
 
 public class Merchant {
-    private int MerchantID;
+    private String MerchantID;
     private String Name;
-    private String CVR;
 
     public Merchant(){
 
     }
 
-    public int getMerchantID() {
+    public String getMerchantID() {
         return MerchantID;
     }
 
-    public void setMerchantID(int merchantID) {
+    public void setMerchantID(String merchantID) {
         MerchantID = merchantID;
     }
 
@@ -23,13 +22,5 @@ public class Merchant {
 
     public void setName(String name) {
         Name = name;
-    }
-
-    public String getCVR() {
-        return CVR;
-    }
-
-    public void setCVR(String CVR) {
-        this.CVR = CVR;
     }
 }

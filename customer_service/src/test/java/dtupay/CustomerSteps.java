@@ -26,6 +26,7 @@ public class CustomerSteps {
     private Customer customer;
     private CustomerException exception;
     private UUID tokenID;
+    private boolean canRequestTokens;
 
 
     @Before
@@ -118,5 +119,32 @@ public class CustomerSteps {
             exception = e;
         }
     }
+    @Then("the token is removed from the customers token")
+    public void theTokenIsRemovedFromTheCustomersToken() throws CustomerException {
+        assertNull(this.exception);
+        assertFalse(service.getCustomer(customer.getCustomerID()).getTokenIDs().contains(this.tokenID));
+    }
 
+    @When("he requests more tokens")
+    public void heRequestsMoreTokens() {
+        try {
+            canRequestTokens = service.canRequestTokens(customer.getCustomerID());
+        } catch (CustomerException e) {
+            this.exception = e;
+        }
+    }
+
+    @And("has {int} unused token")
+    public void hasUnusedToken(int arg0) {
+        List<UUID> mocked_tokenIDs = new ArrayList<>();
+        for (int i = 0; i < arg0; i++) {
+            mocked_tokenIDs.add(UUID.randomUUID());
+        }
+        this.customer.setTokenIDs(mocked_tokenIDs);
+    }
+
+    @Then("his request is successful")
+    public void hisRequestIsSuccessful() {
+        assertTrue(canRequestTokens);
+    }
 }
