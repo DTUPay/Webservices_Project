@@ -108,17 +108,6 @@ public class MerchantBroker implements IMessageBroker {
                 System.out.println("getMerchant event caught");
                 merchantService.getMerchant(message, payload);
                 break;
-
-            // requestPayment receivers
-            case "requestPaymentTokenValidation":
-                System.out.println("request payment got token validation back");
-                merchantService.requestPaymentAtPaymentService(message, payload);
-                break;
-            case "requestPaymentComplete":
-                System.out.println("request payment complete function called");
-                merchantService.requestPaymentComplete(message, payload);
-                break;
-
             // generate report receivers
             case "returnMerchantSummary":
                 System.out.println("Merchant report reveiced");
