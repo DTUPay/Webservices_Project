@@ -5,7 +5,7 @@ import models.Payload;
 import java.util.UUID;
 
 public class PaymentDTO extends Payload {
-    private String mechantID;
+    private String merchantID;
     private UUID paymentID;
     private UUID tokenID;
 
@@ -13,17 +13,18 @@ public class PaymentDTO extends Payload {
         return tokenID;
     }
 
+    public String getMerchantID() {
+        return merchantID;
+    }
+
+    public void setMerchantID(String merchantID) {
+        this.merchantID = merchantID;
+    }
+
     public void setTokenID(UUID tokenID) {
         this.tokenID = tokenID;
     }
 
-    public String getMechantID() {
-        return mechantID;
-    }
-
-    public void setMechantID(String mechantID) {
-        this.mechantID = mechantID;
-    }
 
     public UUID getPaymentID() {
         return paymentID;
