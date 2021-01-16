@@ -5,16 +5,28 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.DeliverCallback;
+import dto.CustomerDTO;
+import dto.PaymentDTO;
+import dto.TokensDTO;
 import dtupay.CustomerService;
 import dtupay.RestResponseHandler;
+import exceptions.CustomerException;
+import models.Callback;
+import models.Customer;
 import models.Message;
 
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.ws.rs.container.AsyncResponse;
+import javax.ws.rs.core.Response;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 
+
+/**
+ * @author Mikkel & Benjamin
+ */
 public class CustomerBroker implements IMessageBroker {
     ConnectionFactory factory = new ConnectionFactory();
     Connection connection;
@@ -28,7 +40,7 @@ public class CustomerBroker implements IMessageBroker {
 
     public CustomerBroker(CustomerService customerService) {
         this.customerService = customerService;
-        RestResponseHandler responseHandler = RestResponseHandler.getInstance();
+        this.responseHandler = RestResponseHandler.getInstance();
 
         try {
 
@@ -117,10 +129,10 @@ public class CustomerBroker implements IMessageBroker {
     private void processMessage(Message message, JsonObject payload) {
         switch(message.getEvent()) {
             case "registerCustomer":
-                customerService.registerCustomer(message, payload);
+                registerCustomer(message, payload);
                 break;
             case "removeCustomer":
-                customerService.removeCustomer(message, payload);
+                removeCustomer(message, payload);
                 break;
             default:
                 System.out.println("Event not handled: " + message.getEvent());
@@ -141,5 +153,104 @@ public class CustomerBroker implements IMessageBroker {
     }
 
 
+    // Customer Specific Functions
 
+    // @Status: implemented
+    public void registerCustomer(Message message, JsonObject payload) {
+        Message reply = this.createReply(message);
+
+        try {
+            CustomerDTO dto = gson.fromJson(payload.toString(), CustomerDTO.class);
+
+            Customer customer = new Customer();
+            customer.setCustomerID(dto.getCustomerID());
+            customer.setFirstName(dto.getFirstName());
+            customer.setLastName(dto.getLastName());
+
+            customerService.registerCustomer(customer);
+
+        } catch(CustomerException e){
+            reply.setStatus(400);
+            reply.setStatusMessage(e.toString());
+            this.sendMessage(reply);
+            return;
+        }
+
+        this.sendMessage(reply);
+    }
+
+    // @Status: implemented
+    public void removeCustomer(Message message, JsonObject payload) {
+        Message reply = this.createReply(message);
+        CustomerDTO customer = gson.fromJson(payload.toString(), CustomerDTO.class);
+
+        try {
+            customerService.removeCustomer(customer.getCustomerID());
+        } catch(CustomerException e){
+            reply.setStatus(400);
+            reply.setStatusMessage(e.toString());
+            this.sendMessage(reply);
+            return;
+        }
+
+        this.sendMessage(reply);
+
+    }
+
+    // @TODO: Missing in UML
+    // @Status: Implemented
+    public void requestRefund(PaymentDTO payment, AsyncResponse response){
+
+        Message message = new Message();
+        message.setEvent("requestRefund");
+        message.setService("payment_service");
+        message.setPayload(payment);
+        message.setCallback(new Callback("customer_service", "requestRefundResponse"));
+
+        UUID requestId = responseHandler.saveRestResponseObject(response);
+        message.setRequestId(requestId);
+
+        this.sendMessage(message);
+    }
+
+    // @TODO: Missing in UML
+    // @Status: implemented
+    public void requestTokens(TokensDTO token, AsyncResponse response) {
+        UUID requestId = UUID.randomUUID();
+
+        Message message = new Message();
+        message.setEvent("requestTokens");
+        message.setService("token_service");
+        message.setRequestId(requestId);
+        message.setPayload(token);
+        message.setCallback(new Callback("customer_service", "requestTokensResponse"));
+
+        this.sendMessage(message);
+        this.responseHandler.saveRestResponseObject(response);
+    }
+
+    // @TODO: Missing in UML
+    // @Status: Implemented
+    public void requestRefundResponse(Message message, JsonObject payload){
+        AsyncResponse response = this.responseHandler.getRestResponseObject(message.getRequestId());
+        response.resume(Response.status(message.getStatus()).entity(message.getStatusMessage()));
+    }
+
+    // @TODO: Missing in UML
+    // @Status: Implemented
+    public void requestTokensResponse(Message message, JsonObject payload){
+        AsyncResponse response = responseHandler.getRestResponseObject(message.getRequestId());
+        response.resume(Response.status(message.getStatus()).entity(message.getStatusMessage()));
+    }
+
+    // @Status: In dispute / in partial implemented
+    public void getUnusedToken(String customerID, AsyncResponse response) {
+        try {
+            UUID tokenID = customerService.getUnusedToken(customerID);
+            response.resume(Response.status(200).entity(gson.toJson(tokenID)));
+        } catch (CustomerException ce) {
+            response.resume(Response.status(400).entity(ce.getMessage()));
+        }
+
+    }
 }

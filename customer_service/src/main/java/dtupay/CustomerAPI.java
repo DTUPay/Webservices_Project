@@ -21,17 +21,19 @@ public class CustomerAPI {
     // @Status: Implemented
     @PUT
     @Path("/refund")
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public void requestRefund(@Suspended AsyncResponse response, PaymentDTO payment) throws Exception {
-        service.requestRefund(payment, response);
+        service.broker.requestRefund(payment, response);
     }
 
     // @Status: Implemented
     @POST
     @Path("/tokens")
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public void requestTokens(@Suspended AsyncResponse response, TokensDTO token) throws Exception {
-        service.requestTokens(token, response);
+        service.broker.requestTokens(token, response);
     }
 
     // @Status: In dispute / in partial

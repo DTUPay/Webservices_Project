@@ -10,23 +10,23 @@
 * Rubatharisan Thirumathyam (s205904)
 
 ## Web-service (debug) endpoints
-| Name                 | Production                                                                                               |
-|----------------------|----------------------------------------------------------------------------------------------------------|
-| Management Service   | [http://g-20.compute.dtu.dk:8080/management_service](http://g-20.compute.dtu.dk:8080/management_service) |
-| Customer Service     | [http://g-20.compute.dtu.dk:8081/customer_service](http://g-20.compute.dtu.dk:8081/customer_service)     |
-| Merchant Service     | [http://g-20.compute.dtu.dk:8082/merchant_service](http://g-20.compute.dtu.dk:8082/merchant_service)     |
+| Production                                                               | Localhost |
+|--------------------------------------------------------------------------|-----------|
+| [Management Service](http://g-20.compute.dtu.dk:8080/management_service) | [Management Service](http://localhost:8080/management_service) |
+| [Customer service](http://g-20.compute.dtu.dk:8081/customer_service)     | [Customer service](http://localhost:8081/customer_service)     |
+| [Merchant service](http://g-20.compute.dtu.dk:8082/merchant_service)     | [Merchant service](http://localhost:8082/merchant_service)     |
 
 ## Useful links
-| Name                 | Link                                                                                                     |
-|----------------------|----------------------------------------------------------------------------------------------------------|
-| Rabbit MQ Management | [http://g-20.compute.dtu.dk:15672](http://g-20.compute.dtu.dk:15672)                                     |
-| Jenkins.             | [http://g-20.compute.dtu.dk:8282/](http://g-20.compute.dtu.dk:8282/)                                     |
+| Production                                                               | Localhost                      |
+|----------------------|------------------------------------------------------------------------------------|
+| [Rabbit MQ Management](http://g-20.compute.dtu.dk:15672) | [Rabbit MQ Management](http://localhost:15672) |
+| [Jenkins](http://g-20.compute.dtu.dk:8282/)              |          |
 
 ## Implemented services
 | Name                 | Status                                                                                                     |
 |----------------------|----------------------------------------------------------------------------------------------------------|
 | management_service   | Implemented                                                                                              |
-| merchant_service     | In progress                                                                                              |
+| merchant_service     | Implemented                                                                                             |
 | customer_service     | Implemented                                                                                              |
 | token_service        | Drafting                                                                                              |
 | payment_service      | In progress                                                                                              |

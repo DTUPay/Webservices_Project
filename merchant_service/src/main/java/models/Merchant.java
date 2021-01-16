@@ -2,10 +2,10 @@ package models;
 
 public class Merchant extends Payload{
     private String name;
-    private String cvr;
+    private String merchantID;
 
-    public Merchant(String name, String cvr){
-        this.cvr = cvr;
+    public Merchant(String name, String merchantID){
+        this.merchantID = merchantID;
         this.name = name;
     }
 
@@ -13,8 +13,8 @@ public class Merchant extends Payload{
         return name;
     }
 
-    public String getCVR() {
-        return cvr;
+    public String getMerchantID() {
+        return merchantID;
     }
 
 }

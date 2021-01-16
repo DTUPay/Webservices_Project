@@ -26,15 +26,16 @@ public class MerchantAPI {
     @Consumes(MediaType.APPLICATION_JSON)
     //Should return boolean
     public void requestPayment(@Suspended AsyncResponse response, PaymentDTO paymentDTO) {
-        service.requestPayment(paymentDTO, response);
+        service.broker.requestPayment(paymentDTO, response);
     }
 
     @POST
     @Path("/report")
     @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     //Should return boolean
     public void generateReport(@Suspended AsyncResponse response, ReportRequestDTO reportRequestDTO) {
-        service.generateReport(reportRequestDTO, response);
+        service.broker.generateReport(reportRequestDTO, response);
     }
 
 }

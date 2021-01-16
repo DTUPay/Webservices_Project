@@ -6,7 +6,7 @@ import java.util.UUID;
 
 public class PaymentDTO extends Payload {
     private String merchantID;
-    private UUID paymentID;
+    private float amount;
     private UUID tokenID;
 
     public UUID getTokenID() {
@@ -26,11 +26,11 @@ public class PaymentDTO extends Payload {
     }
 
 
-    public UUID getPaymentID() {
-        return paymentID;
+    public float getAmount() {
+        return amount;
     }
 
-    public void setPaymentID(UUID paymentID) {
-        this.paymentID = paymentID;
+    public void setAmount(float amount) {
+        this.amount = amount;
     }
 }

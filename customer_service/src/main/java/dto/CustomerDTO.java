@@ -21,7 +21,7 @@ public class CustomerDTO {
         this.lastName = lastName;
     }
 
-    public String getCpr() {
+    public String getCustomerID() {
         return cpr;
     }
 
