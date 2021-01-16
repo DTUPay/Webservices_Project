@@ -8,6 +8,13 @@ import java.util.HashMap;
 public class MerchantRepository implements IMerchantRepository {
 
     HashMap<String, Merchant> merchants = new HashMap<>();
+    private static MerchantRepository instance = new MerchantRepository();
+    private MerchantRepository(){}
+
+    //Get the only object available
+    public static MerchantRepository getInstance(){
+        return instance;
+    }
 
 
     @Override
@@ -27,6 +34,7 @@ public class MerchantRepository implements IMerchantRepository {
 
     @Override
     public boolean hasMerchant(String cvr) {
+        System.out.println(merchants.toString());
         return merchants.containsKey(cvr);
     }
 }
