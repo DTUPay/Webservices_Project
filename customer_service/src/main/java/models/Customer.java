@@ -11,7 +11,7 @@ import java.util.UUID;
 public class Customer {
     private String firstName;
     private String lastName;
-    private String cpr;
+    private String customerID;
     private List<UUID> tokenIDs;
 
     public Customer(){
@@ -20,16 +20,16 @@ public class Customer {
     public Customer(String firstName, String lastName, String CPR){
         this.firstName = firstName;
         this.lastName = lastName;
-        this.cpr = CPR;
+        this.customerID = CPR;
         this.tokenIDs = new ArrayList<UUID>();
     }
 
-    public String getCpr() {
-        return cpr;
+    public String getCustomerID() {
+        return customerID;
     }
 
-    public void setCpr(String cpr) {
-        this.cpr = cpr;
+    public void setCustomerID(String customerID) {
+        this.customerID = customerID;
     }
 
     public String getFirstName() {
