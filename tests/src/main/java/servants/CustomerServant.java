@@ -59,6 +59,7 @@ public class CustomerServant {
 
     }
 
+    //TODO: Change message signature to have customerID, merchantID and paymentID
     public void requestRefund(String paymentID) throws Exception {
         RestCommunicator communicator = new RestCommunicator(Service.CUSTOMER.port);
         String path = Service.CUSTOMER.port + "/" + Service.CUSTOMER.location + "refund";

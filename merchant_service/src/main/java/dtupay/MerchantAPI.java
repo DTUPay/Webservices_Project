@@ -32,6 +32,7 @@ public class MerchantAPI {
     @POST
     @Path("/report")
     @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     //Should return boolean
     public void generateReport(@Suspended AsyncResponse response, ReportRequestDTO reportRequestDTO) {
         service.generateReport(reportRequestDTO, response);
