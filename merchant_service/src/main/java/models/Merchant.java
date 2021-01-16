@@ -1,6 +1,6 @@
 package models;
 
-public class Merchant {
+public class Merchant extends Payload{
     private String name;
     private String cvr;
 

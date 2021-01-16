@@ -1,6 +1,8 @@
 package dto;
 
-public class CustomerDTO {
+import models.Payload;
+
+public class CustomerDTO extends Payload {
     private String firstName;
     private String lastName;
     private String cpr;

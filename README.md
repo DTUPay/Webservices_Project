@@ -22,6 +22,16 @@
 | Rabbit MQ Management | [http://g-20.compute.dtu.dk:15672](http://g-20.compute.dtu.dk:15672)                                     |
 | Jenkins.             | [http://g-20.compute.dtu.dk:8282/](http://g-20.compute.dtu.dk:8282/)                                     |
 
+## Implemented services
+| Name                 | Status                                                                                                     |
+|----------------------|----------------------------------------------------------------------------------------------------------|
+| management_service   | Implemented                                                                                              |
+| merchant_service     | In progress                                                                                              |
+| customer_service     | Implemented                                                                                              |
+| token_service        | Drafting                                                                                              |
+| payment_service      | In progress                                                                                              |
+| reporting_service    | Drafting                                                                                                 |
+
 ## How to run
 Build and test all services
 ```

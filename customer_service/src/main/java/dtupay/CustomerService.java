@@ -7,6 +7,7 @@ package dtupay;
 
 import brokers.CustomerBroker;
 import com.google.gson.Gson;
+import dto.CustomerDTO;
 import dto.PaymentDTO;
 import dto.TokensDTO;
 import exceptions.CustomerException;
@@ -49,8 +50,28 @@ public class CustomerService {
         else throw new CustomerException("Customer with CPR: " + customer.getCpr() + " already exists");
     }
 
+    // @Status: implemented
     public void registerCustomer(Message message, JsonObject payload) {
+        Message reply = this.broker.createReply(message);
 
+        try {
+            CustomerDTO dto = gson.fromJson(payload.toString(), CustomerDTO.class);
+
+            Customer customer = new Customer();
+            customer.setCpr(dto.getCpr());
+            customer.setFirstName(dto.getFirstName());
+            customer.setLastName(dto.getLastName());
+
+            registerCustomer(customer);
+
+        } catch(CustomerException e){
+            reply.setStatus(400);
+            reply.setStatusMessage(e.toString());
+            this.broker.sendMessage(reply);
+            return;
+        }
+
+        this.broker.sendMessage(reply);
     }
 
     public void removeCustomer(String cpr) throws CustomerException {
@@ -59,6 +80,25 @@ public class CustomerService {
         }
         else throw new CustomerException("Customer with CPR: " + cpr + " doesn't exist");
     }
+
+    // @Status: implemented
+    public void removeCustomer(Message message, JsonObject payload) {
+        Message reply = this.broker.createReply(message);
+        CustomerDTO customer = gson.fromJson(payload.toString(), CustomerDTO.class);
+
+        try {
+            removeCustomer(customer.getCpr());
+        } catch(CustomerException e){
+            reply.setStatus(400);
+            reply.setStatusMessage(e.toString());
+            this.broker.sendMessage(reply);
+            return;
+        }
+
+        this.broker.sendMessage(reply);
+
+    }
+
 
 
     public Customer getCustomer(String cpr) throws CustomerException {
@@ -75,17 +115,17 @@ public class CustomerService {
     // @TODO: Missing in UML
     // @Status: Implemented
     public void requestRefund(PaymentDTO payment, AsyncResponse response){
-        UUID requestId = UUID.randomUUID();
 
         Message message = new Message();
         message.setEvent("requestRefund");
         message.setService("payment_service");
-        message.setRequestId(requestId);
         message.setPayload(payment);
         message.setCallback(new Callback("customer_service", "requestRefundResponse"));
 
+        UUID requestId = RestfulHandler.saveRestResponseObject(response);
+        message.setRequestId(requestId);
+
         this.broker.sendMessage(message);
-        RestfulHandler.saveRestResponseObject(response);
     }
 
     // @TODO: Missing in UML
@@ -135,8 +175,6 @@ public class CustomerService {
 
         response.resume(Response.status(400).entity("Customer ID could not be found"));
     }
-
-
 
     // @Status: In dispute / in partial implemented
     // public void getNumberOfTokens(String customerID, AsyncResponse response) {

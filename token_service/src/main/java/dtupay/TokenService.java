@@ -109,6 +109,7 @@ public class TokenService {
         } catch (TokenException e) {
             reply.setStatus(400);
             broker.sendMessage(reply);
+            return;
         }
 
         System.out.println("Sending response");
