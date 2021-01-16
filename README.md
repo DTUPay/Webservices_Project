@@ -26,7 +26,7 @@
 | Name                 | Status                                                                                                     |
 |----------------------|----------------------------------------------------------------------------------------------------------|
 | management_service   | Implemented                                                                                              |
-| merchant_service     | In progress                                                                                              |
+| merchant_service     | Implemented                                                                                             |
 | customer_service     | Implemented                                                                                              |
 | token_service        | Drafting                                                                                              |
 | payment_service      | In progress                                                                                              |
