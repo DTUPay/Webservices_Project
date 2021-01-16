@@ -27,9 +27,26 @@ public class CustomerSteps {
     private CustomerException exception;
     private UUID tokenID;
 
+
     @Before
     public void initialize_repository(){
         service = new CustomerService();
+    }
+
+    @And("has a unused token")
+    public void hasAUnusedToken() {
+        List<UUID> mocked_tokenIDs = new ArrayList<>();
+        mocked_tokenIDs.add(UUID.randomUUID());
+        this.customer.setTokenIDs(mocked_tokenIDs);
+    }
+
+    @And("the customer request a unused token")
+    public void theCustomerRequestAUnusedToken() {
+        try {
+            this.tokenID = service.getUnusedToken(customer.getCustomerID());
+        } catch (CustomerException e) {
+            this.exception = e;
+        }
     }
 
     @Given("a new customer with name {string} {string} and accountID {string} that does not exist in the repository")
@@ -60,6 +77,21 @@ public class CustomerSteps {
         assertEquals(msg, this.exception.getMessage());
     }
 
+    @Then("the token is removed from the customers token")
+    public void theTokenIsRemovedFromTheCustomersToken() throws CustomerException {
+        assertNull(this.exception);
+        assertFalse(service.getCustomer(customer.getCustomerID()).getTokenIDs().contains(this.tokenID));
+    }
+
+    @Then("the customer exists in the repository")
+    public void theCustomerExistsInTheRepository() {
+        try {
+            assertEquals(service.getCustomer(customer.getCustomerID()), customer);
+        } catch (CustomerException e) {
+            fail();
+        }
+    }
+
     @When("a customer with accountID {string} is removed from the repository")
     public void a_customer_with_customerID_is_removed_from_the_repository(String accountID) {
         try {
@@ -75,37 +107,6 @@ public class CustomerSteps {
             service.registerCustomer(customer);
         } catch (CustomerException e) {
             exception = e;
-        }
-    }
-
-    @And("has a unused token")
-    public void hasAUnusedToken() {
-        List<UUID> mocked_tokenIDs = new ArrayList<>();
-        mocked_tokenIDs.add(UUID.randomUUID());
-        this.customer.setTokenIDs(mocked_tokenIDs);
-    }
-
-    @And("the customer request a unused token")
-    public void theCustomerRequestAUnusedToken() {
-        try {
-            this.tokenID = service.getUnusedToken(customer.getCustomerID());
-        } catch (CustomerException e) {
-            this.exception = e;
-        }
-    }
-
-    @Then("the token is removed from the customers token")
-    public void theTokenIsRemovedFromTheCustomersToken() throws CustomerException {
-        assertNull(this.exception);
-        assertFalse(service.getCustomer(customer.getCustomerID()).getTokenIDs().contains(this.tokenID));
-    }
-
-    @Then("the customer exists in the repository")
-    public void theCustomerExistsInTheRepository() {
-        try {
-            assertEquals(service.getCustomer(customer.getCustomerID()), customer);
-        } catch (CustomerException e) {
-            fail();
         }
     }
 }

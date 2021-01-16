@@ -58,7 +58,7 @@ public class CustomerService {
         if (customerRepository.hasCustomer(customerID)) {
             customerRepository.removeCustomer(customerID);
         }
-        else throw new CustomerException("Customer with UUID: " + customerID + " doesn't exist");
+        else throw new CustomerException("Customer with given customerID doesn't exist");
     }
 
     public Customer getCustomer(UUID customerID) throws CustomerException {
@@ -80,7 +80,7 @@ public class CustomerService {
                 throw new CustomerException("No more tokens left");
             }
         } else {
-            throw new CustomerException("Customer with CustomerID: " + customerID + " doesn't exist");
+            throw new CustomerException("Customer with given customerID doesn't exist");
         }
     }
 }

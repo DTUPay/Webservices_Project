@@ -14,7 +14,6 @@ public class Customer {
     private String accountID;
     private UUID customerID;
     private List<UUID> tokenIDs;
-    private String accountID;
 
     public Customer(){
 
@@ -44,19 +43,13 @@ public class Customer {
         this.lastName = lastName;
     }
 
-    public String getAccountID() {
-        return accountID;
-    }
-
-    public void setAccountID(String accountID) {
-        this.accountID = accountID;
-    }
-
     public UUID getCustomerID() {
         return customerID;
     }
 
     public void setCustomerID(UUID customerID) {
+        if(this.customerID != null)
+            return;
         this.customerID = customerID;
     }
 
