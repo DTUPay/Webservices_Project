@@ -4,10 +4,11 @@ package dtupay;
 import models.Merchant;
 
 import java.util.HashMap;
+import java.util.UUID;
 
 public class MerchantRepository implements IMerchantRepository {
 
-    HashMap<String, Merchant> merchants = new HashMap<>();
+    HashMap<UUID, Merchant> merchants = new HashMap<>();
     private static MerchantRepository instance = new MerchantRepository();
     private MerchantRepository(){}
 
@@ -23,18 +24,18 @@ public class MerchantRepository implements IMerchantRepository {
     }
 
     @Override
-    public void removeMerchant(String cvr) {
-        merchants.remove(cvr);
+    public void removeMerchant(UUID merchantID) {
+        merchants.remove(merchantID);
     }
 
     @Override
-    public Merchant getMerchant(String cvr) {
-        return merchants.get(cvr);
+    public Merchant getMerchant(UUID merchantID) {
+        return merchants.get(merchantID);
     }
 
     @Override
-    public boolean hasMerchant(String cvr) {
+    public boolean hasMerchant(UUID merchantID) {
         System.out.println(merchants.toString());
-        return merchants.containsKey(cvr);
+        return merchants.containsKey(merchantID);
     }
 }

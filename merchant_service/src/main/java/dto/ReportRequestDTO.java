@@ -1,18 +1,19 @@
 package dto;
 
 import java.util.Date;
+import java.util.UUID;
 
 public class ReportRequestDTO extends PaymentDTO{
-    private String MerchantID;
+    private UUID merchantID;
     private Date startDate;
     private Date endDate;
 
-    public String getMerchantID() {
-        return MerchantID;
+    public UUID getMerchantID() {
+        return this.merchantID;
     }
 
-    public void setMerchantID(String merchantID) {
-        MerchantID = merchantID;
+    public void setMerchantID(UUID merchantID) {
+        this.merchantID = merchantID;
     }
 
     public Date getStartDate() {
