@@ -6,10 +6,9 @@ package dtupay;
 
 
 import com.google.gson.Gson;
-import com.google.gson.JsonParser;
 import com.rabbitmq.client.DeliverCallback;
-import dto.AddTokensDTO;
-import dto.CustomerIDDTO;
+import dto.RequestTokensDTO;
+import dto.TokenDTO;
 import dto.TokenIDDTO;
 import dto.TokenIdListDTO;
 import exceptions.TokenException;
@@ -18,9 +17,7 @@ import models.Token;
 import io.quarkus.runtime.Quarkus;
 import io.quarkus.runtime.annotations.QuarkusMain;
 
-import javax.json.Json;
 import javax.json.JsonObject;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -28,24 +25,23 @@ import brokers.*;
 
 @QuarkusMain
 public class TokenService {
-    ITokenRepository tokenRepository;
+    ITokenRepository tokenRepository = TokenRepository.getInstance();
     TokenBroker broker;
     Gson gson = new Gson();
     DeliverCallback deliverCallback;
     String queue = "token_service";
+    private static TokenService instance = new TokenService();
+    public static TokenService getInstance(){
+        return instance;
+    }
 
     public TokenService() {
-        try {
-            if(System.getenv("ENVIRONMENT") != null){
-                this.broker = new TokenBroker(this);
-            }
-        } catch (Exception e) { e.printStackTrace(); }
-        this.tokenRepository = new TokenRepository();
+        broker = new TokenBroker(this);
     }
 
 
     public static void main(String[] args) {
-        TokenService service = new TokenService();
+        TokenService service = TokenService.getInstance();
         Quarkus.run();
     }
 
@@ -55,7 +51,6 @@ public class TokenService {
      */
 
     public ArrayList<UUID> addTokens(String customerID, int amount) {
-        //TODO: Verify amount of tokens! -> Do in CustomerService
         ArrayList<UUID> tokenIDs = new ArrayList<>();
         for (int i = 0; i< amount; i++) {
             Token token = new Token(customerID);
@@ -66,10 +61,11 @@ public class TokenService {
     }
 
 
-    public void useToken(UUID tokenID) throws TokenException {
+    public boolean useToken(UUID tokenID) throws TokenException {
         if (tokenRepository.containsToken(tokenID)) {
             if (!tokenRepository.getToken(tokenID).isUsed()){
                 tokenRepository.getToken(tokenID).setUsed(true);
+                return true;
             } else {
                 throw new TokenException("Token has already been used");
             }
@@ -77,15 +73,11 @@ public class TokenService {
         throw new TokenException("Token doesn't exist");
     }
 
-    public void useToken(Message message, JsonObject payload){
-        System.out.println(payload);
-        Message reply = broker.createReply(message);
-        TokenIDDTO dto = gson.fromJson(payload.toString(), TokenIDDTO.class);
-        try {
-            useToken(dto.getTokenID());
-        } catch (TokenException e) {
-            e.printStackTrace();
+    public Token getToken(UUID tokenID) throws TokenException {
+        if (tokenRepository.containsToken(tokenID)) {
+            return tokenRepository.getToken(tokenID);
         }
+        throw new TokenException("Token doesn't exist");
     }
 
     public String isTokenValid(UUID tokenID) throws TokenException {
@@ -100,30 +92,29 @@ public class TokenService {
         throw new TokenException("Token doesn't exist");
     }
 
-    public void isTokenValid(Message message, JsonObject payload){
-        System.out.println(payload);
+
+    public void useToken(Message message, JsonObject payload){
         Message reply = broker.createReply(message);
         TokenIDDTO dto = gson.fromJson(payload.toString(), TokenIDDTO.class);
-        try {
-            String customerId = isTokenValid(dto.getTokenID());
-            CustomerIDDTO replyPayload = new CustomerIDDTO();
-            replyPayload.setCustomerID(customerId);
-            reply.payload = replyPayload;
-        } catch (TokenException e) {
-            reply.setStatus(400);
-            broker.sendMessage(reply);
-            return;
-        }
 
-        System.out.println("Sending response");
-        broker.sendMessage(reply);
+        try {
+            if(this.useToken(dto.getTokenID())){
+                TokenDTO tokenDTO = new TokenDTO(getToken(dto.getTokenID()));
+                reply.setPayload(tokenDTO);
+                this.broker.sendMessage(reply);
+            }
+        } catch(Exception e){
+            reply.setStatus(400);
+            reply.setStatusMessage(e.toString());
+            this.broker.sendMessage(reply);
+        }
     }
 
 
-    public void addTokens(Message message, JsonObject payload){
+    public void requestTokens(Message message, JsonObject payload){
 
         System.out.println(payload);
-        AddTokensDTO dto = gson.fromJson(payload.toString(), AddTokensDTO.class);
+        RequestTokensDTO dto = gson.fromJson(payload.toString(), RequestTokensDTO.class);
 
         //Call actual function with data from
         List<UUID> tokenIds = addTokens(
