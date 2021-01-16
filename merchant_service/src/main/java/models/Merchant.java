@@ -19,4 +19,12 @@ public class Merchant extends Payload{
         return merchantID;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setMerchantID(UUID merchantID) {
+        this.merchantID = merchantID;
+    }
+
 }

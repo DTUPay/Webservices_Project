@@ -33,11 +33,20 @@ public class MerchantService {
         Quarkus.run();
     }
 
-    public void registerMerchant(Merchant merchant) throws MerchantException {
-        if (!merchantRepository.hasMerchant(merchant.getMerchantID())) {
-            merchantRepository.addMerchant(merchant);
+
+    public UUID registerMerchant(Merchant merchant) throws MerchantException {
+        UUID merchantID;
+
+        while(true) {
+            merchantID = UUID.randomUUID();
+            if(!merchantRepository.hasMerchant(merchantID)){
+                break;
+            }
         }
-        else throw new MerchantException("Merchant with CVR: " + merchant.getMerchantID() + " already exists");
+
+        merchant.setMerchantID(merchantID);
+        merchantRepository.addMerchant(merchant);
+        return merchant.getCustomerID();
     }
 
     // @Status: Implemented
