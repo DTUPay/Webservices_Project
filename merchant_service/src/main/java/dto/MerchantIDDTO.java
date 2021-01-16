@@ -2,14 +2,16 @@ package dto;
 
 import models.Payload;
 
-public class MerchantIDDTO extends Payload {
-    public String cvr;
+import java.util.UUID;
 
-    public String getMerchantID() {
-        return cvr;
+public class MerchantIDDTO extends Payload {
+    private UUID merchantID;
+
+    public UUID getMerchantID() {
+        return merchantID;
     }
 
-    public void setMerchantID(String merchantID) {
-        this.cvr = merchantID;
+    public void setMerchantID(UUID merchantID) {
+        this.merchantID = merchantID;
     }
 }

@@ -7,6 +7,8 @@ import io.quarkus.runtime.Quarkus;
 import io.quarkus.runtime.annotations.QuarkusMain;
 import models.Merchant;
 
+import java.util.UUID;
+
 
 /**
  * @author Mikkel & Benjamin
@@ -39,7 +41,7 @@ public class MerchantService {
     }
 
     // @Status: Implemented
-    public void removeMerchant(String merchantID) throws MerchantException {
+    public void removeMerchant(UUID merchantID) throws MerchantException {
         System.out.println(merchantID);
         if (merchantRepository.hasMerchant(merchantID)) {
             merchantRepository.removeMerchant(merchantID);
@@ -47,7 +49,7 @@ public class MerchantService {
         else throw new MerchantException("Merchant with CVR: " + merchantID + " doesn't exist");
     }
 
-    public Merchant getMerchant(String merchantID) throws MerchantException {
+    public Merchant getMerchant(UUID merchantID) throws MerchantException {
         if (merchantRepository.hasMerchant(merchantID)) {
             return merchantRepository.getMerchant(merchantID);
         }
