@@ -1,15 +1,15 @@
 package dto;
 
-public class AddTokensDTO {
-    private String customerId;
+public class RequestTokensDTO {
+    private String customerID;
     private int amount;
 
     public String getCustomerId() {
-        return customerId;
+        return customerID;
     }
 
     public void setCustomerId(String customerId) {
-        this.customerId = customerId;
+        this.customerID = customerId;
     }
 
     public int getAmount() {
