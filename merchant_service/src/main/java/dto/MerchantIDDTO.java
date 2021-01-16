@@ -3,13 +3,13 @@ package dto;
 import models.Payload;
 
 public class MerchantIDDTO extends Payload {
-    public String merchantID;
+    public String cvr;
 
     public String getMerchantID() {
-        return merchantID;
+        return cvr;
     }
 
     public void setMerchantID(String merchantID) {
-        this.merchantID = merchantID;
+        this.cvr = merchantID;
     }
 }
