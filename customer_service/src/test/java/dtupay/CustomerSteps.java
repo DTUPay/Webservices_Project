@@ -25,7 +25,7 @@ public class CustomerSteps {
     private CustomerService service;
     private Customer customer;
     private CustomerException exception;
-    private String tokenID;
+    private UUID tokenID;
 
     @Before
     public void initialize_repository(){
@@ -34,21 +34,17 @@ public class CustomerSteps {
 
     @Given("a new customer with name {string} {string} and accountID {string} that does not exist in the repository")
     public void aNewCustomerWithNameAndAccountIDThatDoesNotExistInTheRepository(String firstName, String lastName, String accountID) {
-        customer = new Customer(firstName, lastName, accountID);
-        try {
-            service.getCustomer(accountID);
-            fail();
-        } catch (CustomerException e) {
-            assertTrue(true);
-        }
+        customer = new Customer(firstName, lastName, accountID,null);
     }
 
     @Given("a new customer with name {string} {string} and accountID {string} that does exist in the repository")
     public void aNewCustomerWithNameAndAccountIDThatDoesExistInTheRepository(String firstName, String lastName, String accountID) {
-        customer = new Customer(firstName, lastName, accountID);
+        customer = new Customer(firstName, lastName, accountID, null);
         try {
             service.registerCustomer(customer);
-            assertEquals(service.getCustomer(accountID), customer);
+            UUID customerID = customer.getCustomerID();
+            assertNotNull(customerID);
+            assertEquals(service.getCustomer(customerID), customer);
         } catch (CustomerException e) {
             fail();
         }
@@ -56,7 +52,7 @@ public class CustomerSteps {
 
     @Then("a customer with accountID {string} does not exist in the repository")
     public void a_customer_with_accountID_does_not_exist_in_the_repository(String accountID)  {
-        assertFalse(service.hasCustomer(accountID));
+        assertFalse(service.hasCustomer(customer.getCustomerID()));
     }
 
     @Then("an error message with {string} is thrown")
@@ -64,15 +60,10 @@ public class CustomerSteps {
         assertEquals(msg, this.exception.getMessage());
     }
 
-    @Then("a customer with name {string} {string} and accountID {string} exists in the repository")
-    public void a_customer_with_name_and_accountID_exists_in_the_repository(String firstname, String lastname, String accountID) throws CustomerException {
-        assertEquals(service.getCustomer(accountID), customer);
-    }
-
-    @When("a customer with customerID {string} is removed from the repository")
+    @When("a customer with accountID {string} is removed from the repository")
     public void a_customer_with_customerID_is_removed_from_the_repository(String accountID) {
         try {
-            service.removeCustomer(accountID);
+            service.removeCustomer(customer.getCustomerID());
         } catch (CustomerException e) {
             exception = e;
         }
@@ -107,5 +98,14 @@ public class CustomerSteps {
     public void theTokenIsRemovedFromTheCustomersToken() throws CustomerException {
         assertNull(this.exception);
         assertFalse(service.getCustomer(customer.getCustomerID()).getTokenIDs().contains(this.tokenID));
+    }
+
+    @Then("the customer exists in the repository")
+    public void theCustomerExistsInTheRepository() {
+        try {
+            assertEquals(service.getCustomer(customer.getCustomerID()), customer);
+        } catch (CustomerException e) {
+            fail();
+        }
     }
 }
