@@ -4,7 +4,6 @@ import brokers.MerchantBroker;
 import com.google.gson.Gson;
 import dto.MerchantIDDTO;
 import dto.PaymentDTO;
-import dto.TokenIDDTO;
 import exceptions.MerchantException;
 import io.quarkus.runtime.Quarkus;
 import io.quarkus.runtime.annotations.QuarkusMain;
@@ -15,16 +14,14 @@ import models.Message;
 import javax.json.JsonObject;
 import javax.ws.rs.container.AsyncResponse;
 import javax.ws.rs.core.Response;
-import java.util.HashMap;
 import java.util.UUID;
 
 @QuarkusMain
 public class MerchantService {
     MerchantBroker broker;
-    IMerchantRepository merchantRepository = new MerchantRepository();
+    IMerchantRepository merchantRepository = MerchantRepository.getInstance();
     RestResponseHandler RestfulHandler = RestResponseHandler.getInstance();
     private static MerchantService instance = new MerchantService();
-    PayloadHandler payloadHandler = PayloadHandler.getInstance();
     Gson gson = new Gson();
 
     public MerchantService() {
@@ -65,7 +62,7 @@ public class MerchantService {
 
     // @Status: Implemented
     public void removeMerchant(String cvr) throws MerchantException {
-
+        System.out.println(cvr);
         if (merchantRepository.hasMerchant(cvr)) {
             merchantRepository.removeMerchant(cvr);
         }
@@ -77,6 +74,7 @@ public class MerchantService {
         Message reply = broker.createReply(message);
         try{
             MerchantIDDTO dto = gson.fromJson(payload.toString(), MerchantIDDTO.class);
+            System.out.println(dto.getMerchantID());
             removeMerchant(dto.getMerchantID());
         } catch (Exception e) {
             reply.setStatus(400);
@@ -108,59 +106,30 @@ public class MerchantService {
         broker.sendMessage(reply);
     }
 
+    // @Status: Implemented
     // Request payment functions
     public void requestPayment(PaymentDTO payment, AsyncResponse response){
-        requestPaymentValidateToken(payment, response);
-    }
-
-    public void requestPaymentValidateToken(PaymentDTO payment, AsyncResponse response){
-        UUID requestId = RestfulHandler.saveRestResponseObject(response);
-        //Add payload to local memory
-        payloadHandler.savePayloadsObject(requestId, payment);
-        Message message = new Message();
-        message.setEvent("isTokenValid");
-        message.setService("token_service");
-        message.setRequestId(requestId);
-
-        TokenIDDTO payload = new TokenIDDTO();
-        payload.setTokenID(payment.getTokenID());
-        message.setPayload(payload);
-        message.setCallback(new Callback("merchant_service", "requestPaymentTokenValidation"));
-        broker.sendMessage(message);
-    }
-
-    public void requestPaymentAtPaymentService(Message messageFromTokenService, JsonObject payload){
-        //If token is not valid, do not continue
-        if(messageFromTokenService.getStatus() != 200){
-            AsyncResponse request = RestfulHandler.getRestResponseObject(messageFromTokenService.getRequestId());
-            RestfulHandler.removeRestResponseObject(messageFromTokenService.getRequestId());
-            request.resume(Response.status(400));
+        System.out.println(payment.getMerchantID());
+        if(!this.merchantRepository.hasMerchant(payment.getMerchantID())){
+            response.resume(Response.status(400).entity("Merchant does not exist").build());
             return;
         }
 
-        //If token is valid, send message to payment service
         Message message = new Message();
         message.setEvent("requestPayment");
         message.setService("payment_service");
-        message.setRequestId(messageFromTokenService.getRequestId());
+        message.setPayload(payment);
+        UUID requestId = RestfulHandler.saveRestResponseObject(response);
+        message.setRequestId(requestId);
 
-        //TODO set payload according to merchangService interface when defined
-        //Get and remove payload from local memory
-        PaymentDTO payloadDTO = (PaymentDTO) payloadHandler.getPayloadsObject(message.getRequestId());
-        payloadHandler.removePayloadsObject(message.getRequestId());
-        message.setPayload(payloadDTO);
-
-        message.setCallback(new Callback("merchant_service", "requestPaymentComplete"));
-        broker.sendMessage(message);
+        this.broker.sendMessage(message);
     }
 
-    public void requestPaymentComplete(Message message, JsonObject payload) {
-        //Return status of rabbitMQ request
-        AsyncResponse request = RestfulHandler.getRestResponseObject(message.getRequestId());
-        RestfulHandler.removeRestResponseObject(message.getRequestId());
-        request.resume(Response.status(message.getStatus()));
+    // Request payment functions
+    public void requestPaymentResponse(Message message){
+        AsyncResponse response = RestfulHandler.getRestResponseObject(message.getRequestId());
+        response.resume(Response.status(message.getStatus()).entity(message.getStatusMessage()).build());
     }
-
 
     /*
     Generate report functions
