@@ -119,11 +119,6 @@ public class CustomerSteps {
             exception = e;
         }
     }
-    @Then("the token is removed from the customers token")
-    public void theTokenIsRemovedFromTheCustomersToken() throws CustomerException {
-        assertNull(this.exception);
-        assertFalse(service.getCustomer(customer.getCustomerID()).getTokenIDs().contains(this.tokenID));
-    }
 
     @When("he requests more tokens")
     public void heRequestsMoreTokens() {
