@@ -46,7 +46,7 @@ public class MerchantService {
 
         merchant.setMerchantID(merchantID);
         merchantRepository.addMerchant(merchant);
-        return merchant.getCustomerID();
+        return merchant.getMerchantID();
     }
 
     // @Status: Implemented
@@ -55,13 +55,13 @@ public class MerchantService {
         if (merchantRepository.hasMerchant(merchantID)) {
             merchantRepository.removeMerchant(merchantID);
         }
-        else throw new MerchantException("Merchant with CVR: " + merchantID + " doesn't exist");
+        else throw new MerchantException("Merchant with given merchantID doesn't exist");
     }
 
     public Merchant getMerchant(UUID merchantID) throws MerchantException {
         if (merchantRepository.hasMerchant(merchantID)) {
             return merchantRepository.getMerchant(merchantID);
         }
-        else throw new MerchantException("Merchant with CVR: " + merchantID + " doesn't exist");
+        else throw new MerchantException("Merchant with given merchantID doesn't exist");
     }
 }

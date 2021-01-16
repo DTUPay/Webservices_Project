@@ -20,48 +20,35 @@ public class MerchantServiceSteps {
         service = new MerchantService();
     }
 
-    @Given("a merchant with name {string} and CVR {string} that does not exist in the repository")
-    public void aMerchantWithNameAndCVRThatDoesNotExistInTheRepository(String name, String cvr) throws Throwable {
-        merchant = new Merchant(name, cvr);
-        try {
-            service.getMerchant(cvr);
-            fail();
-        }
-        catch (MerchantException e) {
-            assertTrue(true);
-        }
+    @Given("a merchant with name {string} and accountNumber {string} that does not exist in the repository")
+    public void aMerchantWithNameAndAccountNumberThatDoesNotExistInTheRepository(String name, String accountNumber) throws Throwable {
+        merchant = new Merchant(name, accountNumber, null);
     }
 
-    @Given("a new merchant with name {string} and CVR {string}")
-    public void aNewMerchantWithNameAndCVR(String name, String cvr) throws Throwable {
-        // Write code here that turns the phrase above into concrete actions
-        merchant = new Merchant(name, cvr);
-    }
-
-    @Given("a merchant with name {string} and CVR {string} that does exist in the repository")
-    public void aMerchantWithNameAndCVRThatDoesExistInTheRepository(String name, String cvr) {
-        merchant = new Merchant(name, cvr);
+    @Given("a merchant with name {string} and accountNumber {string} that does exist in the repository")
+    public void aMerchantWithNameAndAccountNumberThatDoesExistInTheRepository(String name, String accountNumber) {
+        merchant = new Merchant(name, accountNumber, null);
         try {
             service.registerMerchant(merchant);
-            assertEquals(service.getMerchant(cvr), merchant);
+            assertEquals(service.getMerchant(merchant.getMerchantID()), merchant);
         } catch (MerchantException e) {
             fail();
         }
     }
 
-    @Then("a merchant with name {string} and CVR {string} exists in the repository")
-    public void aMerchantWithNameAndCVRExistsInTheRepository(String name, String cvr) throws Throwable {
-        // Write code here that turns the phrase above into concrete actions
-        Merchant merchant1 = service.getMerchant(cvr);
-        assertEquals(service.getMerchant(cvr), merchant);
-        assertEquals(service.getMerchant(cvr).getName(),name);
+    @Then("a merchant with name {string} and accountNumber {string} exists in the repository")
+    public void aMerchantWithNameAndAccountNumberExistsInTheRepository(String name, String accountNumber) throws Throwable {
+        Merchant merchant1 = service.getMerchant(merchant.getMerchantID());
+        assertEquals(merchant1, merchant);
+        assertEquals(merchant1.getName(),name);
+        assertEquals(merchant1.getAccountNumber(), accountNumber);
     }
 
-    @Then("a merchant with CVR {string} does not exist in the repository")
-    public void aMerchantWithCVRDoesNotExistInTheRepository(String cvr) throws Throwable {
+    @Then("the merchant does not exist in the repository")
+    public void aMerchantDoesNotExistInTheRepository() throws Throwable {
         // Write code here that turns the phrase above into concrete actions
         try {
-            service.getMerchant(cvr);
+            service.getMerchant(merchant.getMerchantID());
             fail();
         }
         catch (MerchantException e) {
@@ -75,20 +62,19 @@ public class MerchantServiceSteps {
         Assertions.assertEquals(msg, this.exception.getMessage());
     }
 
-    @When("a merchant with CVR {string} is removed from the repository")
-    public void aMerchantWithCVRIsRemovedFromTheRepository(String cvr) throws Throwable {
-        // Write code here that turns the phrase above into concrete actions
+    @When("the new merchant is added to the repository")
+    public void theNewMerchantIsAddedToTheRepository() {
         try {
-            service.removeMerchant(cvr);
+            service.registerMerchant(merchant);
         } catch (MerchantException e) {
             exception = e;
         }
     }
 
-    @When("the new merchant is added to the repository")
-    public void theNewMerchantIsAddedToTheRepository() {
+    @When("the merchant is removed from the repository")
+    public void theMerchantIsRemovedFromTheRepository() {
         try {
-            service.registerMerchant(merchant);
+            service.removeMerchant(merchant.getMerchantID());
         } catch (MerchantException e) {
             exception = e;
         }

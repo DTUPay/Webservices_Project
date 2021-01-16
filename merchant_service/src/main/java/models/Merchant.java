@@ -5,14 +5,20 @@ import java.util.UUID;
 public class Merchant extends Payload{
     private String name;
     private UUID merchantID;
+    private String accountNumber;
 
-    public Merchant(String name, UUID merchantID){
+    public Merchant(String name, String accountNumber, UUID merchantID){
         this.merchantID = merchantID;
         this.name = name;
+        this.accountNumber = accountNumber;
     }
 
     public String getName() {
         return name;
+    }
+
+    public String getAccountNumber() {
+        return accountNumber;
     }
 
     public UUID getMerchantID() {
@@ -27,4 +33,9 @@ public class Merchant extends Payload{
         this.merchantID = merchantID;
     }
 
+    public void setAccountNumber(String accountNumber) {
+        if(this.accountNumber != null)
+            return;
+        this.accountNumber = accountNumber;
+    }
 }
