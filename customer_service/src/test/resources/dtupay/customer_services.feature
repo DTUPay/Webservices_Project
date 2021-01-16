@@ -30,3 +30,7 @@ Feature: Manage customers
     Given a new customer with name "What" "Kid" and accountID "111111????" that does not exist in the repository
     And the customer request a unused token
     Then an error message with "Customer with given customerID doesn't exist" is thrown
+
+  Scenario: Invalid customerID should throw a exception
+    Given a random customerID that does not exist
+    Then an error message with "Customer with given customerID doesn't exist" is thrown
