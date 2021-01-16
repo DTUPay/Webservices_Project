@@ -28,7 +28,7 @@
 | management_service   | Implemented                                                                                              |
 | merchant_service     | In progress                                                                                              |
 | customer_service     | Implemented                                                                                              |
-| token_service        | Implemented                                                                                              |
+| token_service        | Drafting                                                                                              |
 | payment_service      | In progress                                                                                              |
 | reporting_service    | Drafting                                                                                                 |
 
