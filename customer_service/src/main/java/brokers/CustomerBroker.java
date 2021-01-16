@@ -218,6 +218,13 @@ public class CustomerBroker implements IMessageBroker {
     public void requestTokens(TokensDTO token, AsyncResponse response) {
         UUID requestId = UUID.randomUUID();
 
+        try {
+            customerService.canRequestTokens(token.getCustomerID());
+        } catch (CustomerException ce) {
+            response.resume(Response.status(400).entity(ce.getMessage()).build());
+            return;
+        }
+
         Message message = new Message();
         message.setEvent("requestTokens");
         message.setService("token_service");

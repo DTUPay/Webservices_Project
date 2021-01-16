@@ -35,3 +35,25 @@ Feature: Manage customers
     Given a new customer with name "What" "Kid" and CPR "111111????" that does not exist in the repository
     And the customer request a unused token
     Then an error message with "Customer with CPR: 111111???? doesn't exist" is thrown
+
+  Scenario Outline: Requests tokens - fail
+    Given a new customer with name <firstName> <lastName> and CPR <cpr> that does exist in the repository
+    And has <arg0> unused token
+    When he requests more tokens
+    Then an error message with <msg> is thrown
+    Examples:
+      | firstName | lastName | cpr          | arg0 | msg                                              |
+      | "Poor"    | "Kid"    | "111111xxxx" | 2    | "Customer with ID: 111111xxxx still has 2 left." |
+      | "Poor"    | "Kid"    | "111111xxxx" | 3    | "Customer with ID: 111111xxxx still has 3 left." |
+      | "Poor"    | "Kid"    | "111111xxxx" | 4    | "Customer with ID: 111111xxxx still has 4 left." |
+      | "Poor"    | "Kid"    | "111111xxxx" | 5    | "Customer with ID: 111111xxxx still has 5 left." |
+
+  Scenario Outline: Requests tokens - success
+    Given a new customer with name <firstName> <lastName> and CPR <cpr> that does exist in the repository
+    And has <arg0> unused token
+    When he requests more tokens
+    Then his request is successful
+    Examples:
+      | firstName | lastName | cpr          | arg0 |
+      | "Poor"    | "Kid"    | "111111xxxx" | 0    |
+      | "Poor"    | "Kid"    | "111111xxxx" | 1    |
