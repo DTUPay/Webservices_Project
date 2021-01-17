@@ -56,7 +56,7 @@ public class ManagementService {
     // @Status: Implemented
     public void registerCustomerResponse(Message message, JsonObject payload){
         AsyncResponse response = RestfulHandler.getRestResponseObject(message.getRequestId());
-        if(message.getStatus() == 200){
+        if(message.getStatus() == 201){
             response.resume(Response.status(message.getStatus()).entity(payload).build());
         } else {
             response.resume(Response.status(message.getStatus()).entity(message.getStatusMessage()).build());

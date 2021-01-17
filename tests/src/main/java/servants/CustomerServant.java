@@ -13,15 +13,15 @@ import java.util.UUID;
  */
 public class CustomerServant {
     private Customer customer;
-    private String id;
+    private UUID id;
     private List<UUID> customerTokens;
 
-    public CustomerServant(String id) {
+    public CustomerServant(UUID id) {
         this.id = id;
         this.customerTokens = new ArrayList<>();
     }
 
-    public String getID() {
+    public UUID getID() {
         return this.id;
     }
 
@@ -34,25 +34,25 @@ public class CustomerServant {
     }
 
     public void acceptPayment(int amount, String merchantID, UUID tokenID) throws Exception {
-        RestCommunicator communicator = new RestCommunicator(Service.CUSTOMER.port);
+        RestCommunicator communicator = new RestCommunicator(Service.CUSTOMER);
         JsonObject payment = Json.createObjectBuilder()
                 .add("amount", amount)
                 .add("merchantID", merchantID)
                 .add("uuid", tokenID.toString())
                 .build();
-        communicator.post(payment,Service.CUSTOMER.port + "/" + Service.CUSTOMER.location + "`/merchant");
+        communicator.post(payment,"`/merchant", 200);
 
     }
 
-    public void requestTokens(String customerID, Integer requestedTokens) throws Exception {
+    public void requestTokens(UUID customerID, Integer requestedTokens) throws Exception {
         if(requestedTokens == 0) return;
-        RestCommunicator communicator = new RestCommunicator(Service.CUSTOMER.port);
-        String path = Service.CUSTOMER.port + "/" + Service.CUSTOMER.location + "/tokens";
+        RestCommunicator communicator = new RestCommunicator(Service.CUSTOMER);
+        String path = "/tokens";
         JsonObject tokenRequest = Json.createObjectBuilder()
-                .add("customerID", customerID)
+                .add("customerID", customerID.toString())
                 .add("amount", requestedTokens)
                 .build();
-            Object responseEntity = communicator.post(tokenRequest,path);
+            Object responseEntity = communicator.post(tokenRequest,path, 200);
             if(verifyList(responseEntity, UUID.class))
                 addTokens((List<?>)responseEntity);
             else throw new Exception("The returned entity type did not match List<String>!");
@@ -61,8 +61,8 @@ public class CustomerServant {
 
     //TODO: Change message signature to have customerID, merchantID and paymentID
     public void requestRefund(String paymentID) throws Exception {
-        RestCommunicator communicator = new RestCommunicator(Service.CUSTOMER.port);
-        String path = Service.CUSTOMER.port + "/" + Service.CUSTOMER.location + "refund";
+        RestCommunicator communicator = new RestCommunicator(Service.CUSTOMER);
+        String path = "/refund";
         boolean success = communicator.put(paymentID, path);
         if(success)
             return;

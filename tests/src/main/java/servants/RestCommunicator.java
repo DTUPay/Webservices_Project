@@ -17,9 +17,9 @@ public class RestCommunicator {
     private Client client;
     private WebTarget target;
 
-    public RestCommunicator(String port) {
+    public RestCommunicator(Service service) {
         this.client = ClientBuilder.newClient();
-        this.target = client.target("http://localhost:"+port+"/");
+        this.target = client.target("http://localhost:"+service.port+"/" + service.location);
     }
 
     /**
@@ -30,9 +30,9 @@ public class RestCommunicator {
      * @return the response Entity (as an Object type) or a boolean inicating success
      * @throws Exception with the error code returned by the post-call in case of failure
      */
-    public <T> Object post(T item, String path) throws Exception {
+    public <T> Object post(T item, String path, int expectedStatusCode) throws Exception {
         Response response = target.path(path).request().post(Entity.entity(item, MediaType.APPLICATION_JSON));
-        if(response.getStatus() == 201) {
+        if(response.getStatus() == expectedStatusCode) {
             if(response.hasEntity())
                 return response.readEntity(Object.class);
             else return true;
@@ -60,8 +60,8 @@ public class RestCommunicator {
      * Service enum containing the information required to connect to the REST endpoints
      */
     public enum Service {
-        CUSTOMER ("8080", "customer_service"),
-        MANAGEMENT ("8081", "management_service"),
+        MANAGEMENT ("8080", "management_service"),
+        CUSTOMER ("8081", "customer_service"),
         MERCHANT ("8082", "merchant_service");
 
         protected final String port;
