@@ -22,8 +22,8 @@
 | [Rabbit MQ Management](http://g-20.compute.dtu.dk:15672) | [Rabbit MQ Management](http://localhost:15672) |
 | [Jenkins](http://g-20.compute.dtu.dk:8282/)              |          |
 
-## Jekins info
-| User | Password | Associated email |
+## Jekins login info
+| Username | Password | Associated email |
 |----------------------|---------------------------------------------|--------------------------------------|
 | Hubert | Hubert | huba@dtu.dk             |
 | Ragnar | Ragnar | s111975@student.dtu.dk  |
