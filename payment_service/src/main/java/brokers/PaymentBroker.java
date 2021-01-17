@@ -8,12 +8,10 @@ import com.rabbitmq.client.DeliverCallback;
 import dto.*;
 import dtu.ws.fastmoney.BankServiceException_Exception;
 import dtupay.MessageRepository;
+import dtupay.PaymentRepository;
 import dtupay.PaymentService;
 import dtupay.TokenRepository;
-import models.Callback;
-import models.Message;
-import models.Payload;
-import models.Token;
+import models.*;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -34,11 +32,13 @@ public class PaymentBroker implements IMessageBroker {
     PaymentService paymentService;
     MessageRepository messageRepository;
     TokenRepository tokenRepository;
+    PaymentRepository paymentRepository;
 
     public PaymentBroker(PaymentService service) {
         this.paymentService = service;
         this.messageRepository = MessageRepository.getInstance();
         this.tokenRepository = TokenRepository.getInstance();
+        this.paymentRepository = PaymentRepository.getInstance();
 
         try {
 
@@ -207,6 +207,9 @@ public class PaymentBroker implements IMessageBroker {
         reply = createReply(originalMessage);
         reply.payload = new PaymentIDDTO(paymentID);
         sendMessage(reply);
+
+        //Report transaction to reporting service
+        reportTransactionUpdate(paymentRepository.getPayment(paymentID));
     }
 
     private void getRefund(Message message, JsonObject payload){
@@ -246,6 +249,9 @@ public class PaymentBroker implements IMessageBroker {
 
         reply = createReply(originalMessage);
         sendMessage(reply);
+
+        //Send transaction update to reporting service
+        reportTransactionUpdate(paymentRepository.getPayment(refundDTO.getPaymentID()));
     }
 
     public void useToken(UUID tokenID, String callbackEvent, UUID reguestID){
@@ -258,6 +264,14 @@ public class PaymentBroker implements IMessageBroker {
         payload.setTokenID(tokenID);
         message.setPayload(payload);
         message.setCallback(new Callback("payment_service", callbackEvent));
+        sendMessage(message);
+    }
+
+    public void reportTransactionUpdate(Payment payment){
+        Message message = new Message();
+        message.setEvent("transactionUpdate");
+        message.setService("reporting_service");
+        message.setPayload(payment);
         sendMessage(message);
     }
 

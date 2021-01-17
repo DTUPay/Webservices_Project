@@ -142,22 +142,6 @@ public class PaymentService {
     }
     //</editor-fold>
 
-    public void getRefund(RefundDTO refund, String customerAccountID, String merchantAccountID) throws PaymentException, BankServiceException_Exception {
-        Payment payment = paymentRepository.getPayment(refund.getPaymentID());
-        if(payment == null)
-            throw new PaymentException("Payment with id " + refund.getPaymentID() + " not found.");
-
-        //Get customer account number from customer service
-        //Get merchant account number from merchant service
-
-        bankService.transferMoneyFromTo(
-                payment.getMerchantID().toString(),
-                payment.getCustomerID().toString(),
-                BigDecimal.valueOf(payment.getAmount()),
-                "Refund of payment: " + payment.getPaymentID());
-
-        payment.setStatus(PaymentStatus.REFUNDED);
-    }
 
     public UUID createPayment(PaymentDTO paymentDTO, CustomerDTO customerDTO, TokenDTO tokenDTO) throws BankServiceException_Exception {
         Payment payment = new Payment(paymentDTO.getMerchantID(), paymentDTO.getAmount());
@@ -172,7 +156,7 @@ public class PaymentService {
                 BigDecimal.valueOf(payment.getAmount()),
                 "New payment: " + payment.getPaymentID());
 
-        payment.setStatus(PaymentStatus.PENDING);
+        payment.setStatus(PaymentStatus.COMPLETED);
         paymentRepository.addPayment(payment);
         return payment.getPaymentID();
     }
