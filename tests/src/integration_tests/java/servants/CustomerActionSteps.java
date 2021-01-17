@@ -1,10 +1,12 @@
 package servants;
 
-import io.cucumber.java.en.*;
+import io.cucumber.java.en.And;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
 import org.junit.Assert;
-import org.junit.jupiter.api.Assertions;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.Assert.fail;
 
 /**
  * @author Björn Wilting s184214
@@ -14,9 +16,6 @@ public class CustomerActionSteps {
     CustomerServant customer;
     Exception exception;
 
-    @And("the payment succeeds")
-    public void thePaymentSucceeds() {
-    }
 
     @And("a pending payment with the payment id {string} exists")
     public void aPendingPaymentWithThePaymentIdExists(String arg0) {
@@ -40,18 +39,6 @@ public class CustomerActionSteps {
          */
     }
 
-    @Then("the token is consumed")
-    public void theTokenIsConsumed() {
-    }
-
-
-    @Then("the payment fails")
-    public void thePaymentFails() {
-    }
-
-    @Then("the token request is denied")
-    public void theTokenRequestIsDenied() {
-    }
 
     @Then("the customer has been given {int} tokens")
     public void theCustomerHasBeenGivenTokens(int arg0) {

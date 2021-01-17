@@ -6,6 +6,7 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.DeliverCallback;
 import dto.CustomerDTO;
+import dto.CustomerIDDTO;
 import dto.PaymentDTO;
 import dto.TokensDTO;
 import dtupay.CustomerService;
@@ -27,7 +28,7 @@ import java.util.UUID;
 
 
 /**
- * @author Mikkel & Benjamin & Rubatharisan & Oliver
+ * @author Mikkel & Benjamin & Rubatharisan & Oliver O. Nielsen
  */
 
 public class CustomerBroker implements IMessageBroker {
@@ -140,6 +141,8 @@ public class CustomerBroker implements IMessageBroker {
             case "requestTokensResponse":
                 requestTokensResponse(message, payload);
                 break;
+            case "getCustomerByID":
+                getCustomerById(message, payload);
             default:
                 System.out.println("Event not handled: " + message.getEvent());
         }
@@ -280,6 +283,23 @@ public class CustomerBroker implements IMessageBroker {
         } catch (CustomerException ce) {
             response.resume(Response.status(400).entity(ce.getMessage()));
         }
+    }
 
+    public void getCustomerById(Message message, JsonObject payload){
+        Message reply = createReply(message);
+        try {
+            CustomerIDDTO dto = gson.fromJson(payload.toString(), CustomerIDDTO.class);
+            Customer customer = customerService.getCustomer(dto.getCustomerID());
+            CustomerDTO customerDTO = new CustomerDTO(customer);
+
+            reply.payload = customerDTO;
+        } catch(CustomerException e){
+            reply.setStatus(400);
+            reply.setStatusMessage(e.toString());
+            this.sendMessage(reply);
+            return;
+        }
+
+        this.sendMessage(reply);
     }
 }

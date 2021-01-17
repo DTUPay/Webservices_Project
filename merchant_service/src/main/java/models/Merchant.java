@@ -2,6 +2,9 @@ package models;
 
 import java.util.UUID;
 
+/*
+@author Oliver O. Nielsen
+ */
 public class Merchant extends Payload{
     private String name;
     private UUID merchantID;

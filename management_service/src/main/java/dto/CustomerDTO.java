@@ -7,6 +7,7 @@ public class CustomerDTO extends Payload {
     private String lastName;
     private String accountNumber;
     private String customerID;
+    private String cpr;
 
     public String getFirstName() {
         return firstName;
@@ -38,5 +39,13 @@ public class CustomerDTO extends Payload {
 
     public void setCustomerID(String customerID) {
         this.customerID = customerID;
+    }
+
+    public String getCpr() {
+        return cpr;
+    }
+
+    public void setCpr(String cpr) {
+        this.cpr = cpr;
     }
 }

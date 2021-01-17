@@ -16,5 +16,5 @@ public interface IPaymentRepository {
 
     List<Payment> getPayments();
 
-    List<Payment> getPayments(String cpr);
+    List<Payment> getPayments(UUID merchantID);
 }

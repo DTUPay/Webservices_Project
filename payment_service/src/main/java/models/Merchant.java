@@ -1,26 +1,41 @@
 package models;
 
-public class Merchant {
-    private String Name;
-    private String MerchantID;
+import java.util.UUID;
 
-    public Merchant(){
+public class Merchant extends Payload{
+    private String name;
+    private UUID merchantID;
+    private String accountNumber;
 
+    public Merchant(String name, String accountNumber, UUID merchantID){
+        this.merchantID = merchantID;
+        this.name = name;
+        this.accountNumber = accountNumber;
     }
 
     public String getName() {
-        return Name;
+        return name;
+    }
+
+    public String getAccountNumber() {
+        return accountNumber;
+    }
+
+    public UUID getMerchantID() {
+        return merchantID;
     }
 
     public void setName(String name) {
-        Name = name;
+        this.name = name;
     }
 
-    public String getMerchantID() {
-        return MerchantID;
+    public void setMerchantID(UUID merchantID) {
+        this.merchantID = merchantID;
     }
 
-    public void setMerchantID(String merchantID) {
-        this.MerchantID = merchantID;
+    public void setAccountNumber(String accountNumber) {
+        if(this.accountNumber != null)
+            return;
+        this.accountNumber = accountNumber;
     }
 }
