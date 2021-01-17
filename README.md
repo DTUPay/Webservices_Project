@@ -22,6 +22,13 @@
 | [Rabbit MQ Management](http://g-20.compute.dtu.dk:15672) | [Rabbit MQ Management](http://localhost:15672) |
 | [Jenkins](http://g-20.compute.dtu.dk:8282/)              |          |
 
+## Jekins info
+| User                                                                     | Password                       |
+|----------------------|------------------------------------------------------------------------------------|
+| [Hubert] | [Hubert] |
+| [Ragnar] | [Ragnar] |
+| [Georg]  | [Georg]  |
+
 ## Implemented services
 | Name                 | Status                                                                                                     |
 |----------------------|----------------------------------------------------------------------------------------------------------|
