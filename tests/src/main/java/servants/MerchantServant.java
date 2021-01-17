@@ -37,8 +37,8 @@ public class MerchantServant {
 
 
     public void requestPayment(int amount) {
-        RestCommunicator communicator = new RestCommunicator(RestCommunicator.Service.MERCHANT.port);
-        String path = RestCommunicator.Service.MERCHANT.port + "/Payment";
+        RestCommunicator communicator = new RestCommunicator(RestCommunicator.Service.MERCHANT);
+        String path = "/payment";
         // paymentrequest object m. merchant ID and payment amount
 //        String url = communicator.post(amount, path);
     }

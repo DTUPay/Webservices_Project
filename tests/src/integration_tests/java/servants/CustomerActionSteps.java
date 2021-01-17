@@ -18,10 +18,6 @@ public class CustomerActionSteps {
     public void thePaymentSucceeds() {
     }
 
-    @And("the customer has {int} tokens")
-    public void theCustomerHasTokens(int arg0) {
-    }
-
     @And("a pending payment with the payment id {string} exists")
     public void aPendingPaymentWithThePaymentIdExists(String arg0) {
     }
@@ -32,6 +28,7 @@ public class CustomerActionSteps {
 
     @Given("a customer with {int} token\\(s)")
     public void aCustomerWithTokens(int arg0) {
+        /*
         customer = new CustomerServant("TestID");
         try {
             customer.requestTokens(customer.getID(), arg0);
@@ -39,6 +36,8 @@ public class CustomerActionSteps {
         } catch (Exception e) {
             fail();
         }
+
+         */
     }
 
     @Then("the token is consumed")
@@ -61,11 +60,14 @@ public class CustomerActionSteps {
 
     @When("the customer requests {int} new tokens")
     public void theCustomerRequestsNewTokens(int arg0) {
+        /*
         try {
             customer.requestTokens(customer.getID(), arg0);
         } catch (Exception e) {
             exception = e;
         }
+
+         */
     }
 
     @When("the customer accepts the payment with id {string}")

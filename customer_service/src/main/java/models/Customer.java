@@ -4,6 +4,7 @@
 
 package models;
 
+import javax.json.bind.annotation.JsonbCreator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -16,15 +17,15 @@ public class Customer {
     private List<UUID> tokenIDs;
 
     public Customer(){
-
+        this.tokenIDs = new ArrayList<>();
     }
+
     public Customer(String firstName, String lastName, String accountID, UUID customerID){
         this.firstName = firstName;
         this.lastName = lastName;
         this.accountID = accountID;
         this.customerID = customerID;
         this.accountID = accountID;
-        this.tokenIDs = new ArrayList<UUID>();
     }
 
     public String getFirstName() {

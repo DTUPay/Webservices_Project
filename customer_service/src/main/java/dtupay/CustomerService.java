@@ -98,7 +98,9 @@ public class CustomerService {
      * @throws CustomerException
      */
     public boolean canRequestTokens(UUID customerID) throws CustomerException {
+        System.out.println(customerID.toString());
         List<UUID> tokens = customerRepository.getCustomer(customerID).getTokenIDs();
+        System.out.println(tokens);
         int numTokens = tokens.size();
         if (numTokens > 1) throw new CustomerException("Customer with ID: " + customerID + " still has " + numTokens + " left.");; // Should have spent all tokens
         return true;
