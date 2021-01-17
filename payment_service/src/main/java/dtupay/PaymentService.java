@@ -1,5 +1,6 @@
 package dtupay;
 
+import brokers.PaymentBroker;
 import dtu.ws.fastmoney.*;
 import exceptions.BankException;
 import exceptions.PaymentException;
@@ -23,10 +24,24 @@ import java.util.*;
  */
 @QuarkusMain
 public class PaymentService {
+    private static PaymentService instance = new PaymentService();
     public HashMap<UUID, AsyncResponse> pendingRequests = new HashMap<>();
     IPaymentRepository paymentRepository;
     BankService bankService = new BankServiceService().getBankServicePort();
-    RabbitMq rabbitMq;
+    PaymentBroker broker;
+
+    public PaymentService() {
+        broker = new PaymentBroker(this);
+    }
+
+    public static void main(String[] args) {
+        PaymentService service = new PaymentService().getInstance();
+        Quarkus.run();
+    }
+
+    public static PaymentService getInstance(){
+        return instance;
+    }
 
     // <editor-fold desc="Repository Interactions">
     public Payment getPayment(UUID PaymentID) throws PaymentException {
@@ -125,52 +140,6 @@ public class PaymentService {
     private String validateToken(UUID tokenID) {
         // TODO validate in token service
         return "";
-    }
-
-    // </editor-fold>
-
-    //<editor-fold desc="Rabbit MQ">
-    public PaymentService() {
-        try {
-            String serviceName = System.getenv("SERVICE_NAME"); //payment_service
-            System.out.println(serviceName + " started");
-            this.rabbitMq = new RabbitMq(serviceName, this);
-        } catch (Exception e) { e.printStackTrace(); }
-        this.paymentRepository = new PaymentRepository();
-    }
-
-    public static void main(String[] args) {
-        PaymentService service = new PaymentService();
-        Quarkus.run();
-    }
-
-    public void acceptPayment(JsonObject jsonObject){
-        JsonObject payload = (JsonObject) jsonObject.get("payload");
-        JsonObject callback = (JsonObject) jsonObject.get("callback");
-        String callbackService = callback.get("service").toString().replaceAll("\"", "");
-        String callbackEvent = callback.get("event").toString().replaceAll("\"", "");
-
-        //Call actual function with data from
-        PaymentStatus paymentStatus = acceptPayment(
-                UUID.fromString(payload.get("paymentID").toString().replaceAll("\"", "")),
-                UUID.fromString(payload.get("tokenID").toString().replaceAll("\"", "")),
-                payload.get("cpr").toString().replaceAll("\"", "")
-        );
-
-        //Create payload JSON
-        JsonObject responsePayload = Json.createObjectBuilder()
-                .add("paymentStatus", new Gson().toJson(paymentStatus)).build();
-
-        String uuid = jsonObject.get("requestId").toString();
-        JsonObject response = Json.createObjectBuilder()
-                .add("requestId", uuid)
-                .add("messageId", UUID.randomUUID().toString())
-                .add("event", callbackEvent)
-                .add("payload", responsePayload)
-                .build();
-
-        System.out.println("Response created");
-        rabbitMq.sendMessage(callbackService, response, null);
     }
     //</editor-fold>
 }
