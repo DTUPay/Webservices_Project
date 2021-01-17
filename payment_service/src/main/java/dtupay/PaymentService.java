@@ -24,7 +24,7 @@ import java.util.*;
 public class PaymentService {
     private static PaymentService instance = new PaymentService();
     public HashMap<UUID, AsyncResponse> pendingRequests = new HashMap<>();
-    IPaymentRepository paymentRepository;
+    IPaymentRepository paymentRepository = PaymentRepository.getInstance();
     BankService bankService = new BankServiceService().getBankServicePort();
     PaymentBroker broker;
     Gson gson = new Gson();
@@ -86,22 +86,6 @@ public class PaymentService {
     }
 
 
-    public void getRefund(RefundDTO refund, String customerAccountID, String merchantAccountID) throws PaymentException, BankServiceException_Exception {
-        Payment payment = paymentRepository.getPayment(refund.getPaymentID());
-        if(payment == null)
-            throw new PaymentException("Payment with id " + refund.getPaymentID() + " not found.");
-
-        //Get customer account number from customer service
-        //Get merchant account number from merchant service
-
-        bankService.transferMoneyFromTo(
-                payment.getMerchantID().toString(),
-                payment.getCustomerID().toString(),
-                BigDecimal.valueOf(payment.getAmount()),
-                "Refund of payment: " + payment.getPaymentID());
-
-        payment.setStatus(PaymentStatus.REFUNDED);
-    }
 
     public UUID createPayment(PaymentDTO paymentDTO, CustomerDTO customerDTO, TokenDTO tokenDTO) throws BankServiceException_Exception {
         Payment payment = new Payment(paymentDTO.getMerchantID(), paymentDTO.getAmount());
@@ -116,13 +100,17 @@ public class PaymentService {
                 BigDecimal.valueOf(payment.getAmount()),
                 "New payment: " + payment.getPaymentID());
 
-        payment.setStatus(PaymentStatus.PENDING);
+        payment.setStatus(PaymentStatus.COMPLETED);
         paymentRepository.addPayment(payment);
         return payment.getPaymentID();
     }
 
-    public void refundPayment(RefundDTO refundDTO, TokenDTO tokenDTO) throws BankServiceException_Exception {
+    public void refundPayment(RefundDTO refundDTO, TokenDTO tokenDTO) throws BankServiceException_Exception, BankException {
         Payment payment = paymentRepository.getPayment(refundDTO.getPaymentID());
+        if(payment.getStatus() != PaymentStatus.COMPLETED){
+            throw new BankException("Payment already refunded");
+        }
+
         bankService.transferMoneyFromTo(
                 payment.getMerchantAccountID(), // Money from
                 payment.getCustomerAccountID(), // Money to
