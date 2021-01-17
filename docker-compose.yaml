@@ -25,12 +25,12 @@ services:
       - 8082:8080
     depends_on:
       - rabbitmq
-#  payment_service:
-#    image: payment_service:${BUILD}
-#    environment:
-#      - ENVIRONMENT=PRODUCTION
-#    depends_on:
-#      - rabbitmq
+  payment_service:
+    image: payment_service:${BUILD}
+    environment:
+      - ENVIRONMENT=PRODUCTION
+    depends_on:
+      - rabbitmq
   token_service:
     image: token_service:${BUILD}
     environment:
