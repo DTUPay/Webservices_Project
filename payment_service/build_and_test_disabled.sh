@@ -12,4 +12,4 @@ SERVICE_NAME=$(basename $(pwd))
 echo "# Building service: ${SERVICE_NAME}"
 
 # Build Docker image using BuildKit
-#DOCKER_BUILDKIT=1 BUILDKIT_PROGRESS=plain docker build --build-arg SERVICE_NAME_ARG=$SERVICE_NAME -t $SERVICE_NAME:${BUILD} .
+DOCKER_BUILDKIT=1 BUILDKIT_PROGRESS=plain docker build --build-arg SERVICE_NAME_ARG=$SERVICE_NAME -t $SERVICE_NAME:${BUILD} .
