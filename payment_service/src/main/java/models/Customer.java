@@ -1,65 +1,90 @@
+/*
+@author Oliver O. Nielsen & Bjørn Wilting & Benjamin Eriksen
+ */
+
 package models;
 
 import dtu.ws.fastmoney.User;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class Customer {
-    private int CustomerID;
-    private String FirstName;
-    private String LastName;
-    private String CPRNumber;
-    private List<Token> Tokens;
+    private String firstName;
+    private String lastName;
+    private String accountID;
+    private UUID customerID;
+    private List<UUID> tokenIDs;
+    private String cpr;
 
     public Customer(){
 
     }
-
-    public User customerToUser() {
-        User newUser = new User();
-        newUser.setLastName(this.LastName);
-        newUser.setFirstName(this.FirstName);
-        newUser.setCprNumber(this.CPRNumber);
-        return newUser;
-    }
-
-    public int getCustomerID() {
-        return CustomerID;
-    }
-
-    public void setCustomerID(int customerID) {
-        CustomerID = customerID;
+    public Customer(String firstName, String lastName, String accountID, UUID customerID){
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.accountID = accountID;
+        this.customerID = customerID;
+        this.accountID = accountID;
+        this.tokenIDs = new ArrayList<UUID>();
     }
 
     public String getFirstName() {
-        return FirstName;
+        return firstName;
     }
 
     public void setFirstName(String firstName) {
-        FirstName = firstName;
+        this.firstName = firstName;
     }
 
     public String getLastName() {
-        return LastName;
+        return lastName;
     }
 
     public void setLastName(String lastName) {
-        LastName = lastName;
+        this.lastName = lastName;
     }
 
-    public String getCPRNumber() {
-        return CPRNumber;
+    public UUID getCustomerID() {
+        return customerID;
     }
 
-    public void setCPRNumber(String CPRNumber) {
-        this.CPRNumber = CPRNumber;
+    public void setCustomerID(UUID customerID) {
+        if(this.customerID != null)
+            return;
+        this.customerID = customerID;
     }
 
-    public List<Token> getTokens() {
-        return Tokens;
+    public List<UUID> getTokenIDs() {
+        return tokenIDs;
     }
 
-    public void setTokens(List<Token> tokens) {
-        Tokens = tokens;
+    public void setTokenIDs(List<UUID> tokenIDs) {
+        this.tokenIDs = tokenIDs;
+    }
+
+    public String getAccountID() {
+        return accountID;
+    }
+
+    public void setAccountID(String accountID) {
+        this.accountID = accountID;
+    }
+
+    public String getCpr() {
+        return cpr;
+    }
+
+    public void setCpr(String cpr) {
+        this.cpr = cpr;
+    }
+
+    public User customerToUser(){
+        User user = new User();
+        user.setCprNumber(this.getCpr());
+        user.setFirstName(this.getFirstName());
+        user.setLastName(this.getLastName());
+        return user;
     }
 }

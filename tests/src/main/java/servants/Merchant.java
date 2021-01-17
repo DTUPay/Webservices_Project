@@ -4,6 +4,7 @@ public class Merchant {
     private String name;
     private String cpr;
     private int balance;
+    private String accountNumber;
 
     public Merchant(String name, String cpr, int balance) {
         this.name = name;
@@ -33,5 +34,13 @@ public class Merchant {
 
     public void setBalance(int balance) {
         this.balance = balance;
+    }
+
+    public String getAccountNumber() {
+        return accountNumber;
+    }
+
+    public void setAccountNumber(String accountNumber) {
+        this.accountNumber = accountNumber;
     }
 }

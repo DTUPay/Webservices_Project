@@ -1,12 +1,15 @@
 package dtuPay;
 
-import io.cucumber.java.en.Given;
-import io.cucumber.java.en.Then;
-import io.cucumber.java.en.When;
-import org.junit.After;
-import org.junit.Before;
-import servants.*;
+import io.cucumber.java.After;
+import io.cucumber.java.Before;
+import io.cucumber.java.en.*;
 
+import servants.*;
+import dtu.ws.fastmoney.*;
+
+import java.math.BigDecimal;
+
+import static java.lang.System.exit;
 import static org.junit.Assert.*;
 
 public class SuccessfulPaymentSteps {
@@ -18,26 +21,68 @@ public class SuccessfulPaymentSteps {
     private Exception exception;
     private boolean success;
     private int tokenCount;
+    private BankServiceService service;
+    private BankService bank;
 
     @Before
-    public void CreateUsersInBank() {
+    public void CreateUsersInBank() throws BankServiceException_Exception {
+        service  = new dtu.ws.fastmoney.BankServiceService();
+        bank = service.getBankServicePort();
+
+        System.out.println("Hello world?");
+
         //TODO: Create customer and merchant bank accounts
         //Customer: Jens Jensen, 121012-xxxx, 100 DKK
-        customer = new Customer("Jens Jensen", "121012-xxxx",100);
+        customer = new Customer("Jens", "Jensen", "121012-xxxx", 100);
+        User bankCustomer = new User();
+        bankCustomer.setFirstName("Jens");
+        bankCustomer.setLastName("Jensen");
+        bankCustomer.setCprNumber("121514-0001");
+
+        try {
+            Account customerAccount = bank.getAccountByCprNumber(bankCustomer.getCprNumber());
+            bank.retireAccount(customerAccount.getId());
+        } catch(Exception e) {
+            System.out.println(e.toString());
+        }
+
+        String customerBankAccount = bank.createAccountWithBalance(bankCustomer, new BigDecimal(100));
+        customer.setAccountNumber(customerBankAccount);
+
         //Merchant: Mads Madsen, 140467-xxxx, 1000 DKK
         merchant = new Merchant("Mads Madsen", "140467", 1000);
+        User bankMerchant = new User();
+        bankMerchant.setFirstName("Mads");
+        bankMerchant.setLastName("Madsen");
+        bankMerchant.setCprNumber("140567-0001");
+
+
+        try {
+            Account merchantAccount = bank.getAccountByCprNumber(bankMerchant.getCprNumber());
+            bank.retireAccount(merchantAccount.getId());
+        } catch(Exception e) {
+            System.out.println(e.toString());
+        }
+
+        String merchantBankAccount = bank.createAccountWithBalance(bankMerchant, new BigDecimal(1000));
+
+        merchant.setAccountNumber(merchantBankAccount);
+
         //TODO: Store account numbers
         accountManagement = new ManagementServant();
+
     }
 
-    @Given("the customer has 5 tokens")
+    @Given("the customer has {int} tokens")
     public void theCustomerHasTokens(int arg0) {
         assertEquals(customerAccount.getCustomerTokens().size(), 0);
         try {
-            customerAccount.requestTokens(customerAccount.getID(),5);
+            customerAccount.requestTokens(customerAccount.getID(),arg0);
             tokenCount = customerAccount.getCustomerTokens().size();
-            assertEquals(tokenCount, 5);
+            System.out.println(customerAccount.getCustomerTokens().size());
+            assertEquals(tokenCount, arg0);
         } catch (Exception e) {
+            e.printStackTrace();
             fail();
         }
     }
@@ -48,7 +93,7 @@ public class SuccessfulPaymentSteps {
     }
 
     @Given("the customer is registered with DTU Pay")
-    public void theCustomerIsRegisteredWithDTUPay() {
+    public void theCustomerIsRegisteredWithDTUPay() throws Exception {
         //TODO: Register the customer with DTU pay using management servant
         //TODO: Set customer id from returned accountID
         customerAccount = new CustomerServant(accountManagement.registerCustomer(customer));
@@ -109,7 +154,9 @@ public class SuccessfulPaymentSteps {
     }
 
     @After
-    public void removeUserBankAccounts() {
+    public void removeUserBankAccounts() throws BankServiceException_Exception {
         //TODO: Remove customer and merchant bank accounts
+        bank.retireAccount(customer.getAccountNumber());
+        bank.retireAccount(merchant.getAccountNumber());
     }
 }

@@ -6,6 +6,7 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.DeliverCallback;
 import dto.CustomerDTO;
+import dto.CustomerIDDTO;
 import dto.PaymentDTO;
 import dto.TokensDTO;
 import dtupay.CustomerService;
@@ -25,7 +26,7 @@ import java.util.UUID;
 
 
 /**
- * @author Mikkel & Benjamin & Rubatharisan & Oliver
+ * @author Mikkel & Benjamin & Rubatharisan & Oliver O. Nielsen
  */
 
 public class CustomerBroker implements IMessageBroker {
@@ -135,6 +136,11 @@ public class CustomerBroker implements IMessageBroker {
             case "removeCustomer":
                 removeCustomer(message, payload);
                 break;
+            case "requestTokensResponse":
+                requestTokensResponse(message, payload);
+                break;
+            case "getCustomerByID":
+                getCustomerById(message, payload);
             default:
                 System.out.println("Event not handled: " + message.getEvent());
         }
@@ -171,6 +177,7 @@ public class CustomerBroker implements IMessageBroker {
             UUID customerID = customerService.registerCustomer(customer);
             dto.setCustomerID(customerID);
             reply.setPayload(dto);
+            reply.setStatus(201);
 
         } catch(CustomerException e){
             reply.setStatus(400);
@@ -219,7 +226,6 @@ public class CustomerBroker implements IMessageBroker {
     // @TODO: Missing in UML
     // @Status: implemented
     public void requestTokens(TokensDTO token, AsyncResponse response) {
-        UUID requestId = UUID.randomUUID();
 
         try {
             customerService.canRequestTokens(token.getCustomerID());
@@ -231,12 +237,11 @@ public class CustomerBroker implements IMessageBroker {
         Message message = new Message();
         message.setEvent("requestTokens");
         message.setService("token_service");
-        message.setRequestId(requestId);
         message.setPayload(token);
         message.setCallback(new Callback("customer_service", "requestTokensResponse"));
-
+        message.setRequestId(responseHandler.saveRestResponseObject(response));
         this.sendMessage(message);
-        this.responseHandler.saveRestResponseObject(response);
+
     }
 
     // @TODO: Missing in UML
@@ -250,7 +255,8 @@ public class CustomerBroker implements IMessageBroker {
     // @Status: Implemented
     public void requestTokensResponse(Message message, JsonObject payload){
         AsyncResponse response = responseHandler.getRestResponseObject(message.getRequestId());
-        response.resume(Response.status(message.getStatus()).entity(message.getStatusMessage()));
+        System.out.println(message.getRequestId());
+        response.resume(Response.status(message.getStatus()).entity(payload));
     }
 
     // @Status: In dispute / in partial implemented
@@ -261,6 +267,23 @@ public class CustomerBroker implements IMessageBroker {
         } catch (CustomerException ce) {
             response.resume(Response.status(400).entity(ce.getMessage()));
         }
+    }
 
+    public void getCustomerById(Message message, JsonObject payload){
+        Message reply = createReply(message);
+        try {
+            CustomerIDDTO dto = gson.fromJson(payload.toString(), CustomerIDDTO.class);
+            Customer customer = customerService.getCustomer(dto.getCustomerID());
+            CustomerDTO customerDTO = new CustomerDTO(customer);
+
+            reply.payload = customerDTO;
+        } catch(CustomerException e){
+            reply.setStatus(400);
+            reply.setStatusMessage(e.toString());
+            this.sendMessage(reply);
+            return;
+        }
+
+        this.sendMessage(reply);
     }
 }

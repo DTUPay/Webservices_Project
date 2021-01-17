@@ -31,7 +31,7 @@ public class PaymentRepository implements IPaymentRepository {
     }
 
     @Override
-    public List<Payment> getPayments(String cpr) {
-        return payments.values().stream().filter(payment -> payment.getCpr().equals(cpr)).collect(Collectors.toList());
+    public List<Payment> getPayments(UUID merchantID) {
+        return payments.values().stream().filter(payment -> payment.getMerchantID().equals(merchantID)).collect(Collectors.toList());
     }
 }
