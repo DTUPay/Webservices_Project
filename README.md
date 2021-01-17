@@ -23,11 +23,11 @@
 | [Jenkins](http://g-20.compute.dtu.dk:8282/)              |          |
 
 ## Jekins info
-| User                                                                     | Password                       |
-|----------------------|------------------------------------------------------------------------------------|
-| [Hubert] | [Hubert] |
-| [Ragnar] | [Ragnar] |
-| [Georg]  | [Georg]  |
+| User | Password | Associated email |
+|----------------------|---------------------------------------------|--------------------------------------|
+| Hubert | Hubert | huba@dtu.dk             |
+| Ragnar | Ragnar | s111975@student.dtu.dk  |
+| Georg  | Georg  | s134545@student.dtu.dk  |
 
 ## Implemented services
 | Name                 | Status                                                                                                     |
