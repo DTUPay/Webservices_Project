@@ -20,14 +20,15 @@ public class TokenSteps {
     TokenService tokenService = new TokenService();
     ArrayList<UUID> tokenIDs;
     UUID tokenID;
-    String customerID;
-    String tokenBelongsTo;
+    UUID customerID;
+    UUID tokenBelongsTo;
     private String errorMsg;
 
     @Given("a request for {int} tokens for a customer with id {string}")
     public void aRequestForTokensForACustomerWithId(int amount, String id) {
-        this.customerID = id;
-        this.tokenIDs = this.tokenService.addTokens(id, amount);
+        UUID customerID = UUID.fromString(id);
+        this.customerID = customerID;
+        this.tokenIDs = this.tokenService.addTokens(customerID, amount);
     }
 
     @Then("those tokens are created for the customer")
@@ -39,7 +40,8 @@ public class TokenSteps {
 
 
     @Given("a tokenID and a customerID {string}")
-    public void aTokenIDAndACustomerID(String customerID) {
+    public void aTokenIDAndACustomerID(String id) {
+        UUID customerID = UUID.fromString(id);
         this.customerID = customerID;
         this.tokenID = this.tokenService.addTokens(customerID, 1).get(0);
 
@@ -108,7 +110,8 @@ public class TokenSteps {
 
     @Then("the response is the customerID {string}")
     public void theResponseIsTheCustomerID(String customerID) throws TokenException {
-        assertEquals(customerID,this.tokenService.isTokenValid(this.tokenID));
+        UUID customerIdInUUID = UUID.fromString(customerID);
+        assertEquals(customerIdInUUID,this.tokenService.isTokenValid(this.tokenID));
     }
 }
 

@@ -4,10 +4,10 @@ import java.util.UUID;
 
 public class Token {
     private final UUID tokenID;
-    private UUID customerID;
+    private String customerID;
     private boolean isUsed;
 
-    public Token(UUID customerID) {
+    public Token(String customerID) {
         this.tokenID = UUID.randomUUID();
         this.customerID = customerID;
         this.isUsed = false;
@@ -17,7 +17,7 @@ public class Token {
         return this.tokenID;
     }
 
-    public UUID getCustomerID() {
+    public String getCustomerID() {
         return this.customerID;
     }
 

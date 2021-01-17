@@ -5,6 +5,7 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.DeliverCallback;
+import dto.MerchantDTO;
 import dto.MerchantIDDTO;
 import dto.PaymentDTO;
 import dtupay.MerchantService;
@@ -43,7 +44,7 @@ public class MerchantBroker implements IMessageBroker {
 
             factory.setHost("rabbitmq");
 
-            if(System.getenv("ENVIRONMENT") != null){
+            if(System.getenv("ENVIRONMENT") != null && System.getenv("CONTINUOUS_INTEGRATION") == null){
                 int attempts = 0;
                 while (true){
                     try{
@@ -143,6 +144,14 @@ public class MerchantBroker implements IMessageBroker {
         try{
             Merchant merchant = gson.fromJson(payload.toString(), Merchant.class);
             merchantService.registerMerchant(merchant);
+
+            MerchantDTO dto = new MerchantDTO();
+            dto.setMerchantID(merchant.getMerchantID());
+            dto.setName(merchant.getName());
+
+            reply.setPayload(dto);
+            reply.setStatus(201);
+
         } catch (Exception e) {
 
             reply.setStatus(400);

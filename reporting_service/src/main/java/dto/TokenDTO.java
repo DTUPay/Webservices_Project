@@ -6,7 +6,7 @@ import models.Token;
 import java.util.UUID;
 
 public class TokenDTO extends Payload {
-    private UUID customerID;
+    private String customerID;
     private UUID tokenID;
 
     public TokenDTO(Token token){
@@ -14,11 +14,11 @@ public class TokenDTO extends Payload {
         this.tokenID = token.getTokenID();
     }
 
-    public UUID getCustomerID() {
+    public String getCustomerID() {
         return customerID;
     }
 
-    public void setCustomerID(UUID customerID) {
+    public void setCustomerID(String customerID) {
         this.customerID = customerID;
     }
 

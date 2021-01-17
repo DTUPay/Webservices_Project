@@ -11,6 +11,9 @@ ARG SERVICE_NAME_ARG=application_service
 # Setting the service name argument as a environment variable
 ENV SERVICE_NAME=$SERVICE_NAME_ARG
 
+# Let build know, that it is CI environment.
+ENV CONTINUOUS_INTEGRATION=true
+
 # Lets copy our source code to the image
 COPY . /app-code
 

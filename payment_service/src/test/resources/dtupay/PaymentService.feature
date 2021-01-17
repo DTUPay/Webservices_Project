@@ -1,34 +1,24 @@
 Feature: Testing Payment Service standalone
 
-  Scenario Outline: Request payment
-    Given a merchant with ID <merchantID> who wants a payment for <amount> kroners
-    When he request the payment in the app
-    Then he receives a paymentID with the type UUID
-    Examples:
-      | merchantID | amount |
-      | 10         | 20     |
-      | 12         | 1      |
-      | 1000       | 9999   |
 
   Scenario: Get payment
-    Given a merchant with ID 10 who wants a payment for 20 kroners
-    When he request the payment in the app
-    Then he receives a paymentID with the type UUID
-    And the payment can be found using paymentID
+    Given a merchant with a bank account
+    Given a token to authorize a payment by a customer
+    Given a payment of 20 DDK to be paid
+    When the merchant requests the payment in the app
+    Then he receives a paymentID of type UUID
+    And the payment can be found using the paymentID
 
   Scenario Outline: Negative or zero payment
-    Given a merchant with ID <merchantID> who wants a payment for <amount> kroners
-    When he request the payment in the app
+    Given a merchant with a bank account
+    Given a token to authorize a payment by a customer
+    Given a payment of <amount> to be paid
+    When the merchant requests the payment in the app
     Then an exception is made with the message <arg0>
     Examples:
       | merchantID | amount | arg0                          |
       | 10         | -1     | "Non positive payment amount" |
       | 10         | 0      | "Non positive payment amount" |
-
-  Scenario: Invalid merchant ID
-    Given a merchant with ID -10 who wants a payment for 10 kroners
-    When he request the payment in the app
-    Then an exception is made with the message "Non positive merchant ID"
 
   Scenario Outline: Get manager summary
     Given there are <arg0> payments made

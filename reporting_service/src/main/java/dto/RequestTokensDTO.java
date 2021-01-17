@@ -1,16 +1,14 @@
 package dto;
 
-import java.util.UUID;
-
 public class RequestTokensDTO {
-    private UUID customerID;
+    private String customerID;
     private int amount;
 
-    public UUID getCustomerId() {
+    public String getCustomerId() {
         return customerID;
     }
 
-    public void setCustomerId(UUID customerId) {
+    public void setCustomerId(String customerId) {
         this.customerID = customerId;
     }
 

@@ -8,6 +8,7 @@ import servants.*;
 import dtu.ws.fastmoney.*;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 import static java.lang.System.exit;
 import static org.junit.Assert.*;
@@ -23,6 +24,7 @@ public class SuccessfulPaymentSteps {
     private int tokenCount;
     private BankServiceService service;
     private BankService bank;
+    private UUID usableToken;
 
     @Before
     public void CreateUsersInBank() throws BankServiceException_Exception {
@@ -87,9 +89,10 @@ public class SuccessfulPaymentSteps {
         }
     }
 
-    @Given("a customer with name {string} {string} and cpr number {string} and balance {int} DKK has a bank account")
-    public void aCustomerWithNameAndCprNumberAndBalanceDKKHasABankAccount(String arg0, String arg1, String arg2, int arg3) {
+    @Given("a customer has a bank account provided by the bank")
+    public void aCustomerWithNameAndCprNumberAndBalanceDKKHasABankAccount() {
         //TODO: Assert that customer is registered with the bank
+        assertNotNull(customer.getAccountNumber());
     }
 
     @Given("the customer is registered with DTU Pay")
@@ -99,26 +102,14 @@ public class SuccessfulPaymentSteps {
         customerAccount = new CustomerServant(accountManagement.registerCustomer(customer));
     }
 
-    @Given("a merchant with name {string} {string} and cpr number {string} and balance {int} DKK has a bank account")
-    public void aMerchantWithNameAndCprNumberAndBalanceDKKHasABankAccount(String arg0, String arg1, String arg2, int arg3) {
-        merchantAccount = new MerchantServant(arg0 + " " + arg1, arg2, arg3);
-        //TODO: Assert that the merchant is registered with the bank
+    @Given("a merchant has a bank account provided by the bank")
+    public void aMerchantWithNameAndCprNumberAndBalanceDKKHasABankAccount() {
+        assertNotNull(merchant.getAccountNumber());
     }
 
     @Given("the merchant is registered with DTU Pay")
-    public void theMerchantIsRegisteredWithDTUPay() {
-        //TODO: Register the merchant with DTU Pay using management servant
-        //TODO: merchant.setID(merchantID);
-    }
-
-    @When("the customer authorizes a payment of {int} to the merchant")
-    public void theCustomerAuthorizesAPaymentOfToTheMerchant(int arg0) {
-        try {
-            customerAccount.acceptPayment(arg0, merchantAccount.getID(), customerAccount.selectToken());
-            success = true;
-        } catch (Exception e) {
-            exception = e;
-        }
+    public void theMerchantIsRegisteredWithDTUPay() throws Exception {
+        merchantAccount = new MerchantServant(accountManagement.registerMerchant(merchant));
     }
 
     @When("the customer request to see his account balance")
@@ -145,7 +136,7 @@ public class SuccessfulPaymentSteps {
 
     @Then("the merchant has {int} DKK in his account")
     public void theMerchantHasDKKInHisAccount(int arg0) {
-        assertEquals(merchantAccount.getBalance(), arg0);
+        assertEquals(merchant.getBalance(), arg0);
     }
 
     @Then("the token is consumed")
@@ -158,5 +149,24 @@ public class SuccessfulPaymentSteps {
         //TODO: Remove customer and merchant bank accounts
         bank.retireAccount(customer.getAccountNumber());
         bank.retireAccount(merchant.getAccountNumber());
+    }
+
+    @When("the customer selects a token")
+    public void theCustomerSelectsAToken() {
+        try {
+            usableToken = customerAccount.selectToken();
+        } catch (Exception e) {
+            exception = e;
+        }
+    }
+
+
+    @When("the merchant authorizes a payment with the customers token and an amount of {int} DKK")
+    public void theMerchantAuthorizesAPaymentWithTheCustomersTokenAndAnAmountOfDKK(int arg0) {
+        try {
+            this.success = merchantAccount.requestPayment(arg0, merchantAccount.getId(), this.usableToken);
+        } catch (Exception e) {
+            exception = e;
+        }
     }
 }

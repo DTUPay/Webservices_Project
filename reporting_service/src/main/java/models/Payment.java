@@ -45,7 +45,7 @@ public class Payment extends Payload{
         this.tokenID = tokenID;
     }
 
-    public java.util.Date getDate() {
+    public Date getDate() {
         return date;
     }
 

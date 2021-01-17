@@ -8,12 +8,11 @@ import com.rabbitmq.client.DeliverCallback;
 import dto.*;
 import dtu.ws.fastmoney.BankServiceException_Exception;
 import dtupay.MessageRepository;
+import dtupay.PaymentRepository;
 import dtupay.PaymentService;
 import dtupay.TokenRepository;
-import models.Callback;
-import models.Message;
-import models.Payload;
-import models.Token;
+import exceptions.BankException;
+import models.*;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -34,17 +33,19 @@ public class PaymentBroker implements IMessageBroker {
     PaymentService paymentService;
     MessageRepository messageRepository;
     TokenRepository tokenRepository;
+    PaymentRepository paymentRepository;
 
     public PaymentBroker(PaymentService service) {
         this.paymentService = service;
         this.messageRepository = MessageRepository.getInstance();
         this.tokenRepository = TokenRepository.getInstance();
+        this.paymentRepository = PaymentRepository.getInstance();
 
         try {
 
             factory.setHost("rabbitmq");
 
-            if(System.getenv("ENVIRONMENT") != null){
+            if(System.getenv("ENVIRONMENT") != null && System.getenv("CONTINUOUS_INTEGRATION") == null){
                 int attempts = 0;
                 while (true){
                     try{
@@ -67,7 +68,7 @@ public class PaymentBroker implements IMessageBroker {
             }
 
         } catch(Exception e){
-            e.printStackTrace();;
+            e.printStackTrace();
         }
     }
 
@@ -125,9 +126,10 @@ public class PaymentBroker implements IMessageBroker {
                 System.out.println("requestTokens event caught");
                 getRefund(message, payload);
                 break;
-            case "getRefundCustomerID":
-                System.out.println("refund ");
-
+            case "refundPaymentTokenUsed":
+                System.out.println("refundPaymentTokenUsed event caught ");
+                getRefundTokenUsed(message, payload);
+                break;
             case "useToken":
                 System.out.println("useToken event caught");
                 //useToken(message, payload);
@@ -180,6 +182,7 @@ public class PaymentBroker implements IMessageBroker {
         tokenRepository.removeMessageObject(message.getRequestId());
         PaymentDTO paymentDTO = gson.fromJson(originalMessage.payload.toString(), PaymentDTO.class);
         CustomerDTO customerDTO = null;
+        UUID paymentID;
         try{
             customerDTO = gson.fromJson(payload.toString(), CustomerDTO.class);
         } catch (Exception e) {
@@ -194,7 +197,7 @@ public class PaymentBroker implements IMessageBroker {
         }
 
         try{
-            paymentService.createPayment(paymentDTO, customerDTO, tokenDTO);
+            paymentID = paymentService.createPayment(paymentDTO, customerDTO, tokenDTO);
         } catch (BankServiceException_Exception e) {
             reply = createReply(originalMessage);
             reply.setStatus(404); //TODO set correct error code
@@ -202,41 +205,54 @@ public class PaymentBroker implements IMessageBroker {
             sendMessage(reply);
             return;
         }
+        reply = createReply(originalMessage);
+        reply.payload = new PaymentIDDTO(paymentID);
+        sendMessage(reply);
+
+        //Report transaction to reporting service
+        reportTransactionUpdate(paymentRepository.getPayment(paymentID));
     }
 
     private void getRefund(Message message, JsonObject payload){
-        Message reply = createReply(message);
+        RefundDTO dto = gson.fromJson(payload.toString(), RefundDTO.class);
+        messageRepository.saveMessageObject(message);
+        useToken(dto.getTokenID(), "refundPaymentTokenUsed", message.getRequestId());
+    }
+
+    private void getRefundTokenUsed(Message message, JsonObject payload){
+        Message reply;
+        Message originalMessage = messageRepository.getMessageObject(message.getRequestId());
+        messageRepository.removeMessageObject(message.getRequestId());
+        RefundDTO refundDTO = gson.fromJson(originalMessage.payload.toString(), RefundDTO.class);
+        TokenDTO tokenDTO = null;
         try{
-            RefundDTO dto = gson.fromJson(payload.toString(), RefundDTO.class);
-            getCustomerByID(UUID.fromString(dto.getCustomerID()), "getRefundCustomerID");
-            //paymentService.getRefund(dto);
+            tokenDTO = gson.fromJson(payload.toString(), TokenDTO.class);
         } catch (Exception e) {
-            reply.setStatus(400);
-            reply.setStatusMessage(e.toString());
+            message.setStatus(400);
+        }
+        if(message.getStatus() != 200 || tokenDTO == null){
+            reply = createReply(originalMessage);
+            reply.setStatus(404); //TODO set correct error code
+            reply.setStatusMessage("The token could not be validated");
             sendMessage(reply);
             return;
         }
+
+        try{
+            paymentService.refundPayment(refundDTO, tokenDTO);
+        } catch (Exception e) {
+            reply = createReply(originalMessage);
+            reply.setStatus(404); //TODO set correct error code
+            reply.setStatusMessage("Error while refunding payment: " + e.getMessage());
+            sendMessage(reply);
+            return;
+        }
+
+        reply = createReply(originalMessage);
         sendMessage(reply);
-    }
 
-    public void getCustomerByID(UUID customerID, String callbackEvent){
-        Message message = new Message("customer_service", "getCustomerById");
-        CustomerIDDTO dto = new CustomerIDDTO();
-        dto.setCustomerID(customerID);
-        message.payload = dto;
-        Callback callback = new Callback("payment_service", callbackEvent);
-        message.setCallback(callback);
-        sendMessage(message);
-    }
-
-    public void getMerchantByID(UUID merchantID, String callbackEvent){
-        Message message = new Message("merchant_service", "getMerchantById");
-        MerchantIDDTO dto = new MerchantIDDTO();
-        dto.setMerchantID(merchantID);
-        message.payload = dto;
-        Callback callback = new Callback("payment_service", callbackEvent);
-        message.setCallback(callback);
-        sendMessage(message);
+        //Send transaction update to reporting service
+        reportTransactionUpdate(paymentRepository.getPayment(refundDTO.getPaymentID()));
     }
 
     public void useToken(UUID tokenID, String callbackEvent, UUID reguestID){
@@ -249,6 +265,14 @@ public class PaymentBroker implements IMessageBroker {
         payload.setTokenID(tokenID);
         message.setPayload(payload);
         message.setCallback(new Callback("payment_service", callbackEvent));
+        sendMessage(message);
+    }
+
+    public void reportTransactionUpdate(Payment payment){
+        Message message = new Message();
+        message.setEvent("transactionUpdate");
+        message.setService("reporting_service");
+        message.setPayload(payment);
         sendMessage(message);
     }
 

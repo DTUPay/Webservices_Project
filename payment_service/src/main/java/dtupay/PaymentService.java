@@ -24,7 +24,7 @@ import java.util.*;
 public class PaymentService {
     private static PaymentService instance = new PaymentService();
     public HashMap<UUID, AsyncResponse> pendingRequests = new HashMap<>();
-    IPaymentRepository paymentRepository;
+    IPaymentRepository paymentRepository = PaymentRepository.getInstance();
     BankService bankService = new BankServiceService().getBankServicePort();
     PaymentBroker broker;
     Gson gson = new Gson();
@@ -42,7 +42,6 @@ public class PaymentService {
         return instance;
     }
 
-    // <editor-fold desc="Repository Interactions">
     public Payment getPayment(UUID PaymentID) throws PaymentException {
         Payment payment = paymentRepository.getPayment(PaymentID);
         if (payment == null) {
@@ -66,66 +65,11 @@ public class PaymentService {
     public List<Payment> getManagerSummary() {
         return paymentRepository.getPayments();
     }
-    //</editor-fold>
 
-    // <editor-fold desc="Bank Interactions">
-    /*
-     *  Bank Interactions
-     */
-    public String createAccountWithBalance(Customer customer, int amount) throws BankException {
-        User user = customer.customerToUser();
-        String accountNumber;
-        try {
-            accountNumber = bankService.createAccountWithBalance(user, BigDecimal.valueOf(amount));
-        } catch (BankServiceException_Exception e) {
-            throw new BankException(e.getMessage());
-        }
-        return accountNumber;
-    }
-
-    public Account getAccount(String accountNumber) throws BankException {
-        Account account = new Account();
-        try {
-            account = bankService.getAccount(accountNumber);
-        } catch (BankServiceException_Exception e) {
-            throw new BankException(e.getMessage());
-        }
-        return account;
-    }
-
-    /**
-     * Gets all accounts
-     * @return List with accounts
-     * @throws BankException
-     */
-    public List<Account> getAccounts() throws BankException {
-        List<Account> accounts = new ArrayList<>();
-        List<AccountInfo> accountInfos = bankService.getAccounts();
-        for (AccountInfo accountInfo : accountInfos) {
-            try {
-                Account account = bankService.getAccount(accountInfo.getAccountId());
-                accounts.add(account);
-            } catch (BankServiceException_Exception e) {
-                throw new BankException(e.getMessage());
-            }
-        }
-        return accounts;
-    }
-
-    public void deleteAccount(String cpr) throws PaymentException {
-        try {
-            Account account = bankService.getAccountByCprNumber(cpr);
-            bankService.retireAccount(account.getId());
-        } catch (BankServiceException_Exception e) {
-            throw new PaymentException(e.getMessage());
-        }
-    }
-
-    public PaymentStatus acceptPayment(UUID paymentID, UUID tokenID, String cpr) {
+    public PaymentStatus acceptPayment(UUID paymentID, UUID tokenID) {
         System.out.println("Start");
         System.out.println(paymentID);
         System.out.println(tokenID);
-        System.out.println(cpr);
         System.out.println("End");
         /* TODO Communicate with TokenService to validate*/
         /* Token_service.isTokenValid(tokenId,cpr)*/
@@ -134,35 +78,21 @@ public class PaymentService {
 
         return PaymentStatus.PENDING;
     }
-    // </editor-fold>
+
 
     private String validateToken(UUID tokenID) {
         // TODO validate in token service
         return "";
     }
-    //</editor-fold>
 
-    public void getRefund(RefundDTO refund, String customerAccountID, String merchantAccountID) throws PaymentException, BankServiceException_Exception {
-        Payment payment = paymentRepository.getPayment(refund.getPaymentID());
-        if(payment == null)
-            throw new PaymentException("Payment with id " + refund.getPaymentID() + " not found.");
 
-        //Get customer account number from customer service
-        //Get merchant account number from merchant service
 
-        bankService.transferMoneyFromTo(
-                payment.getMerchantID().toString(),
-                payment.getCustomerID().toString(),
-                BigDecimal.valueOf(payment.getAmount()),
-                "Refund of payment: " + payment.getPaymentID());
-
-        payment.setStatus(PaymentStatus.REFUNDED);
-    }
-
-    public void createPayment(PaymentDTO paymentDTO, CustomerDTO customerDTO, TokenDTO tokenDTO) throws BankServiceException_Exception {
+    public UUID createPayment(PaymentDTO paymentDTO, CustomerDTO customerDTO, TokenDTO tokenDTO) throws BankServiceException_Exception {
         Payment payment = new Payment(paymentDTO.getMerchantID(), paymentDTO.getAmount());
         payment.setCustomerID(customerDTO.getCustomerID());
         payment.setTokenID(tokenDTO.getTokenID());
+        payment.setCustomerAccountID(customerDTO.getAccountNumber());
+        payment.setMerchantAccountID(paymentDTO.getMerchantAccountID());
 
         bankService.transferMoneyFromTo(
                 customerDTO.getAccountNumber(), // Money from
@@ -170,44 +100,24 @@ public class PaymentService {
                 BigDecimal.valueOf(payment.getAmount()),
                 "New payment: " + payment.getPaymentID());
 
-        payment.setStatus(PaymentStatus.PENDING);
+        payment.setStatus(PaymentStatus.COMPLETED);
         paymentRepository.addPayment(payment);
+        return payment.getPaymentID();
     }
 
+    public void refundPayment(RefundDTO refundDTO, TokenDTO tokenDTO) throws BankServiceException_Exception, BankException {
+        Payment payment = paymentRepository.getPayment(refundDTO.getPaymentID());
+        if(payment.getStatus() != PaymentStatus.COMPLETED){
+            throw new BankException("Payment already refunded");
+        }
 
+        bankService.transferMoneyFromTo(
+                payment.getMerchantAccountID(), // Money from
+                payment.getCustomerAccountID(), // Money to
+                BigDecimal.valueOf(payment.getAmount()),
+                "Refund payment: " + payment.getPaymentID());
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        payment.setStatus(PaymentStatus.REFUNDED);
+        payment.setRefundTokenID(tokenDTO.getTokenID());
+    }
 }
