@@ -129,6 +129,9 @@ public class MerchantBroker implements IMessageBroker {
                 break;
             case "requestPaymentComplete":
                 System.out.println("requestPaymentComplete reveiced");
+            case "getMerchantById":
+                System.out.println("getMerchantById received");
+                getMerchantById(message, payload);
             default:
                 System.out.println("Event not handled: " + message.getEvent());
         }
@@ -241,5 +244,22 @@ public class MerchantBroker implements IMessageBroker {
     public void requestPaymentResponse(Message message){
         AsyncResponse response = responsehandler.getRestResponseObject(message.getRequestId());
         response.resume(Response.status(message.getStatus()).entity(message.getStatusMessage()).build());
+    }
+
+    public void getMerchantById(Message message, JsonObject payload) {
+        Message reply = createReply(message);
+        try {
+            MerchantIDDTO dto = gson.fromJson(payload.toString(), MerchantIDDTO.class);
+            Merchant merchant = merchantService.getMerchant(dto.getMerchantID());
+
+            reply.payload = merchant;
+        } catch(Exception e){
+            reply.setStatus(400);
+            reply.setStatusMessage(e.toString());
+            this.sendMessage(reply);
+            return;
+        }
+
+        this.sendMessage(reply);
     }
 }

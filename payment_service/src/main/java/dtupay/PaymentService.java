@@ -1,16 +1,14 @@
 package dtupay;
 
 import brokers.PaymentBroker;
+import dto.*;
 import dtu.ws.fastmoney.*;
 import exceptions.BankException;
 import exceptions.PaymentException;
 import io.cucumber.messages.internal.com.google.gson.Gson;
 import io.quarkus.runtime.Quarkus;
 import io.quarkus.runtime.annotations.QuarkusMain;
-import models.Customer;
-import models.Payment;
-import models.PaymentStatus;
-import models.Token;
+import models.*;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -29,6 +27,7 @@ public class PaymentService {
     IPaymentRepository paymentRepository;
     BankService bankService = new BankServiceService().getBankServicePort();
     PaymentBroker broker;
+    Gson gson = new Gson();
 
     public PaymentService() {
         broker = new PaymentBroker(this);
@@ -52,14 +51,14 @@ public class PaymentService {
         return payment;
     }
 
-    public UUID requestPayment(int amount, int merchantID) throws PaymentException{
-        if (merchantID < 0) {
+    public UUID requestPayment(int amount, UUID merchantID) throws PaymentException{
+        if (merchantID == null) {
             throw new PaymentException("Non positive merchant ID");
         }
         if (amount <= 0) {
             throw new PaymentException("Non positive payment amount");
         }
-        Payment newPayment = new Payment(amount,merchantID);
+        Payment newPayment = new Payment(merchantID, amount);
         paymentRepository.addPayment(newPayment);
         return newPayment.getPaymentID();
     }
@@ -142,4 +141,73 @@ public class PaymentService {
         return "";
     }
     //</editor-fold>
+
+    public void getRefund(RefundDTO refund, String customerAccountID, String merchantAccountID) throws PaymentException, BankServiceException_Exception {
+        Payment payment = paymentRepository.getPayment(refund.getPaymentID());
+        if(payment == null)
+            throw new PaymentException("Payment with id " + refund.getPaymentID() + " not found.");
+
+        //Get customer account number from customer service
+        //Get merchant account number from merchant service
+
+        bankService.transferMoneyFromTo(
+                payment.getMerchantID().toString(),
+                payment.getCustomerID().toString(),
+                BigDecimal.valueOf(payment.getAmount()),
+                "Refund of payment: " + payment.getPaymentID());
+
+        payment.setStatus(PaymentStatus.REFUNDED);
+    }
+
+    public void createPayment(PaymentDTO paymentDTO, CustomerDTO customerDTO, TokenDTO tokenDTO) throws BankServiceException_Exception {
+        Payment payment = new Payment(paymentDTO.getMerchantID(), paymentDTO.getAmount());
+        payment.setCustomerID(customerDTO.getCustomerID());
+        payment.setTokenID(tokenDTO.getTokenID());
+
+        bankService.transferMoneyFromTo(
+                customerDTO.getAccountNumber(), // Money from
+                paymentDTO.getMerchantAccountID(), // Money to
+                BigDecimal.valueOf(payment.getAmount()),
+                "New payment: " + payment.getPaymentID());
+
+        payment.setStatus(PaymentStatus.PENDING);
+        paymentRepository.addPayment(payment);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

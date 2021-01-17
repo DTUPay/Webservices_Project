@@ -4,13 +4,13 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
 
-public class Payment {
+public class Payment extends Payload{
     private final UUID paymentID;
-    private final int merchantID;
-    private String cpr;
-    private int tokenID;
+    private final UUID merchantID;
+    private UUID tokenID;
+    private UUID customerID;
     private final Date date;
-    private final int amount;
+    private final float amount;
     private PaymentStatus paymentStatus;
 
     /**
@@ -18,7 +18,7 @@ public class Payment {
      * @param merchantID 
      * @param amount 
      */
-    public Payment(int merchantID, int amount) {
+    public Payment(UUID merchantID, float amount) {
         this.merchantID = merchantID;
         this.amount = amount;
         this.paymentStatus = PaymentStatus.PENDING;
@@ -30,23 +30,23 @@ public class Payment {
         return paymentID;
     }
 
-    public int getMerchantID() {
+    public UUID getMerchantID() {
         return merchantID;
     }
 
-    public int getTokenID() {
+    public UUID getTokenID() {
         return tokenID;
     }
 
-    public void setTokenID(int tokenID) {
-        tokenID = tokenID;
+    public void setTokenID(UUID tokenID) {
+        this.tokenID = tokenID;
     }
 
     public java.util.Date getDate() {
         return date;
     }
 
-    public int getAmount() {
+    public float getAmount() {
         return amount;
     }
 
@@ -58,11 +58,11 @@ public class Payment {
         paymentStatus = paymentStatus;
     }
 
-    public String getCpr() {
-        return cpr;
+    public UUID getCustomerID() {
+        return customerID;
     }
 
-    public void setCpr(String cpr) {
-        this.cpr = cpr;
+    public void setCustomerID(UUID uuid) {
+        this.customerID = uuid;
     }
 }
