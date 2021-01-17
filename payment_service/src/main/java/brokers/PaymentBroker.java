@@ -200,7 +200,7 @@ public class PaymentBroker implements IMessageBroker {
             paymentID = paymentService.createPayment(paymentDTO, customerDTO, tokenDTO);
         } catch (BankServiceException_Exception e) {
             reply = createReply(originalMessage);
-            reply.setStatus(404); //TODO set correct error code
+            reply.setStatus(400); //TODO set correct error code
             reply.setStatusMessage("Error while making payment: " + e.getMessage());
             sendMessage(reply);
             return;

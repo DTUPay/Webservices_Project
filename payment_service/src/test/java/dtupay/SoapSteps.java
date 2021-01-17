@@ -22,10 +22,11 @@ import static org.junit.Assert.assertEquals;
  */
 public class SoapSteps {
     PaymentService service = new PaymentService();
-    User bankCustomer;
+    //User bankCustomer;
     User bankMerchant;
-    String customerBankAccount;
+    //String customerBankAccount;
     String merchantBankAccount;
+
 
     Account account;
     String accountNumber = "";

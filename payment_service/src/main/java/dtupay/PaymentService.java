@@ -50,43 +50,6 @@ public class PaymentService {
         return payment;
     }
 
-    public UUID requestPayment(int amount, UUID merchantID) throws PaymentException{
-        if (merchantID == null) {
-            throw new PaymentException("Non positive merchant ID");
-        }
-        if (amount <= 0) {
-            throw new PaymentException("Non positive payment amount");
-        }
-        Payment newPayment = new Payment(merchantID, amount);
-        paymentRepository.addPayment(newPayment);
-        return newPayment.getPaymentID();
-    }
-
-    public List<Payment> getManagerSummary() {
-        return paymentRepository.getPayments();
-    }
-
-    public PaymentStatus acceptPayment(UUID paymentID, UUID tokenID) {
-        System.out.println("Start");
-        System.out.println(paymentID);
-        System.out.println(tokenID);
-        System.out.println("End");
-        /* TODO Communicate with TokenService to validate*/
-        /* Token_service.isTokenValid(tokenId,cpr)*/
-        /* remove token */
-        /* Set payment to valid */
-
-        return PaymentStatus.PENDING;
-    }
-
-
-    private String validateToken(UUID tokenID) {
-        // TODO validate in token service
-        return "";
-    }
-
-
-
     public UUID createPayment(PaymentDTO paymentDTO, CustomerDTO customerDTO, TokenDTO tokenDTO) throws BankServiceException_Exception {
         Payment payment = new Payment(paymentDTO.getMerchantID(), paymentDTO.getAmount());
         payment.setCustomerID(customerDTO.getCustomerID());
