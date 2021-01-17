@@ -125,9 +125,10 @@ public class PaymentBroker implements IMessageBroker {
                 System.out.println("requestTokens event caught");
                 getRefund(message, payload);
                 break;
-            case "getRefundCustomerID":
-                System.out.println("refund ");
-
+            case "refundPaymentTokenUsed":
+                System.out.println("refundPaymentTokenUsed event caught ");
+                getRefundTokenUsed(message, payload);
+                break;
             case "useToken":
                 System.out.println("useToken event caught");
                 //useToken(message, payload);
@@ -180,6 +181,7 @@ public class PaymentBroker implements IMessageBroker {
         tokenRepository.removeMessageObject(message.getRequestId());
         PaymentDTO paymentDTO = gson.fromJson(originalMessage.payload.toString(), PaymentDTO.class);
         CustomerDTO customerDTO = null;
+        UUID paymentID;
         try{
             customerDTO = gson.fromJson(payload.toString(), CustomerDTO.class);
         } catch (Exception e) {
@@ -194,7 +196,7 @@ public class PaymentBroker implements IMessageBroker {
         }
 
         try{
-            paymentService.createPayment(paymentDTO, customerDTO, tokenDTO);
+            paymentID = paymentService.createPayment(paymentDTO, customerDTO, tokenDTO);
         } catch (BankServiceException_Exception e) {
             reply = createReply(originalMessage);
             reply.setStatus(404); //TODO set correct error code
@@ -202,41 +204,48 @@ public class PaymentBroker implements IMessageBroker {
             sendMessage(reply);
             return;
         }
-    }
-
-    private void getRefund(Message message, JsonObject payload){
-        Message reply = createReply(message);
-        try{
-            RefundDTO dto = gson.fromJson(payload.toString(), RefundDTO.class);
-            getCustomerByID(UUID.fromString(dto.getCustomerID()), "getRefundCustomerID");
-            //paymentService.getRefund(dto);
-        } catch (Exception e) {
-            reply.setStatus(400);
-            reply.setStatusMessage(e.toString());
-            sendMessage(reply);
-            return;
-        }
+        reply = createReply(originalMessage);
+        reply.payload = new PaymentIDDTO(paymentID);
         sendMessage(reply);
     }
 
-    public void getCustomerByID(UUID customerID, String callbackEvent){
-        Message message = new Message("customer_service", "getCustomerById");
-        CustomerIDDTO dto = new CustomerIDDTO();
-        dto.setCustomerID(customerID);
-        message.payload = dto;
-        Callback callback = new Callback("payment_service", callbackEvent);
-        message.setCallback(callback);
-        sendMessage(message);
+    private void getRefund(Message message, JsonObject payload){
+        RefundDTO dto = gson.fromJson(payload.toString(), RefundDTO.class);
+        messageRepository.saveMessageObject(message);
+        useToken(dto.getTokenID(), "refundPaymentTokenUsed", message.getRequestId());
     }
 
-    public void getMerchantByID(UUID merchantID, String callbackEvent){
-        Message message = new Message("merchant_service", "getMerchantById");
-        MerchantIDDTO dto = new MerchantIDDTO();
-        dto.setMerchantID(merchantID);
-        message.payload = dto;
-        Callback callback = new Callback("payment_service", callbackEvent);
-        message.setCallback(callback);
-        sendMessage(message);
+    private void getRefundTokenUsed(Message message, JsonObject payload){
+        Message reply;
+        Message originalMessage = messageRepository.getMessageObject(message.getRequestId());
+        messageRepository.removeMessageObject(message.getRequestId());
+        RefundDTO refundDTO = gson.fromJson(originalMessage.payload.toString(), RefundDTO.class);
+        TokenDTO tokenDTO = null;
+        try{
+            tokenDTO = gson.fromJson(payload.toString(), TokenDTO.class);
+        } catch (Exception e) {
+            message.setStatus(400);
+        }
+        if(message.getStatus() != 200 || tokenDTO == null){
+            reply = createReply(originalMessage);
+            reply.setStatus(404); //TODO set correct error code
+            reply.setStatusMessage("The token could not be validated");
+            sendMessage(reply);
+            return;
+        }
+
+        try{
+            paymentService.refundPayment(refundDTO, tokenDTO);
+        } catch (BankServiceException_Exception e) {
+            reply = createReply(originalMessage);
+            reply.setStatus(404); //TODO set correct error code
+            reply.setStatusMessage("Error while refunding payment: " + e.getMessage());
+            sendMessage(reply);
+            return;
+        }
+
+        reply = createReply(originalMessage);
+        sendMessage(reply);
     }
 
     public void useToken(UUID tokenID, String callbackEvent, UUID reguestID){

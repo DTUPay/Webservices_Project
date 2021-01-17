@@ -8,7 +8,10 @@ public class Payment extends Payload{
     private final UUID paymentID;
     private final UUID merchantID;
     private UUID tokenID;
+    private UUID refundTokenID;
     private UUID customerID;
+    private String customerAccountID;
+    private String merchantAccountID;
     private final Date date;
     private final float amount;
     private PaymentStatus paymentStatus;
@@ -64,5 +67,29 @@ public class Payment extends Payload{
 
     public void setCustomerID(UUID uuid) {
         this.customerID = uuid;
+    }
+
+    public String getCustomerAccountID() {
+        return customerAccountID;
+    }
+
+    public void setCustomerAccountID(String customerAccountID) {
+        this.customerAccountID = customerAccountID;
+    }
+
+    public String getMerchantAccountID() {
+        return merchantAccountID;
+    }
+
+    public void setMerchantAccountID(String merchantAccountID) {
+        this.merchantAccountID = merchantAccountID;
+    }
+
+    public UUID getRefundTokenID() {
+        return refundTokenID;
+    }
+
+    public void setRefundTokenID(UUID refundTokenID) {
+        this.refundTokenID = refundTokenID;
     }
 }

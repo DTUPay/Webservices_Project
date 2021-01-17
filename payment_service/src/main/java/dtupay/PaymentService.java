@@ -159,10 +159,12 @@ public class PaymentService {
         payment.setStatus(PaymentStatus.REFUNDED);
     }
 
-    public void createPayment(PaymentDTO paymentDTO, CustomerDTO customerDTO, TokenDTO tokenDTO) throws BankServiceException_Exception {
+    public UUID createPayment(PaymentDTO paymentDTO, CustomerDTO customerDTO, TokenDTO tokenDTO) throws BankServiceException_Exception {
         Payment payment = new Payment(paymentDTO.getMerchantID(), paymentDTO.getAmount());
         payment.setCustomerID(customerDTO.getCustomerID());
         payment.setTokenID(tokenDTO.getTokenID());
+        payment.setCustomerAccountID(customerDTO.getAccountNumber());
+        payment.setMerchantAccountID(paymentDTO.getMerchantAccountID());
 
         bankService.transferMoneyFromTo(
                 customerDTO.getAccountNumber(), // Money from
@@ -172,6 +174,19 @@ public class PaymentService {
 
         payment.setStatus(PaymentStatus.PENDING);
         paymentRepository.addPayment(payment);
+        return payment.getPaymentID();
+    }
+
+    public void refundPayment(RefundDTO refundDTO, TokenDTO tokenDTO) throws BankServiceException_Exception {
+        Payment payment = paymentRepository.getPayment(refundDTO.getPaymentID());
+        bankService.transferMoneyFromTo(
+                payment.getMerchantAccountID(), // Money from
+                payment.getCustomerAccountID(), // Money to
+                BigDecimal.valueOf(payment.getAmount()),
+                "Refund payment: " + payment.getPaymentID());
+
+        payment.setStatus(PaymentStatus.REFUNDED);
+        payment.setRefundTokenID(tokenDTO.getTokenID());
     }
 
 

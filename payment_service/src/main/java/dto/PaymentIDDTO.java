@@ -1,10 +1,15 @@
 package dto;
 
+import models.Payload;
+
 import java.util.UUID;
 
-public class RefundDTO {
-    private UUID tokenID;
+public class PaymentIDDTO extends Payload {
     private UUID paymentID;
+
+    public PaymentIDDTO(UUID uuid){
+        setPaymentID(uuid);
+    }
 
     public UUID getPaymentID() {
         return paymentID;
@@ -12,13 +17,5 @@ public class RefundDTO {
 
     public void setPaymentID(UUID paymentID) {
         this.paymentID = paymentID;
-    }
-
-    public UUID getTokenID() {
-        return tokenID;
-    }
-
-    public void setTokenID(UUID tokenID) {
-        this.tokenID = tokenID;
     }
 }
