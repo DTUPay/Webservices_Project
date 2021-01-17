@@ -70,4 +70,10 @@ public class Customer {
     public void setAccountID(String accountID) {
         this.accountID = accountID;
     }
+
+    public void addTokens(List<UUID> tokens){
+        tokens.forEach((token) -> {
+            this.tokenIDs.add(token);
+        });
+    }
 }

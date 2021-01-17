@@ -33,14 +33,15 @@ public class PaymentSteps {
 
     @Before()
     public void init(){
-        merchantID = UUID.randomUUID();
+        merchantID = null;
         amount = 0;
         paymentID = null;
     }
 
-    @Given("a merchant with ID {int} who wants a payment for {int} kroners")
-    public void aMerchantWithIDWhoWantsAPaymentForKroners(UUID merchantID, int amount) {
-        this.merchantID = merchantID;
+    @Given("a merchant with ID {string} who wants a payment for {int} kroners")
+    public void aMerchantWithIDWhoWantsAPaymentForKroners(String merchantID, int amount) {
+        UUID merchantIdAsUUID = UUID.fromString(merchantID);
+        this.merchantID = merchantIdAsUUID;
         this.amount = amount;
     }
 
@@ -86,7 +87,7 @@ public class PaymentSteps {
     @Given("there are {int} payments made")
     public void thereArePaymentsMade(int arg0) {
         int randomAmount = random.nextInt(Integer.SIZE - 1); // ensure positive number
-        UUID randomMerchantId = UUID.randomUUID(); // ensure positive number
+        UUID randomMerchantId = UUID.randomUUID();
         for (int i = 0; i < arg0; i++) {
             try {
                 service.requestPayment(randomAmount,randomMerchantId);

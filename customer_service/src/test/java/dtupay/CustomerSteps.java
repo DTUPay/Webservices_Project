@@ -123,7 +123,7 @@ public class CustomerSteps {
     @When("he requests more tokens")
     public void heRequestsMoreTokens() {
         try {
-            canRequestTokens = service.canRequestTokens(customer.getCustomerID());
+            canRequestTokens = service.canRequestTokens(customer.getCustomerID(), 1);
         } catch (CustomerException e) {
             this.exception = e;
         }

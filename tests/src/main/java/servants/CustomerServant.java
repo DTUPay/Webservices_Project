@@ -33,17 +33,6 @@ public class CustomerServant {
         this.customer = customer;
     }
 
-    public void acceptPayment(int amount, String merchantID, UUID tokenID) throws Exception {
-        RestCommunicator communicator = new RestCommunicator(Service.CUSTOMER);
-        JsonObject payment = Json.createObjectBuilder()
-                .add("amount", amount)
-                .add("merchantID", merchantID)
-                .add("uuid", tokenID.toString())
-                .build();
-        communicator.post(payment,"`/merchant", 200);
-
-    }
-
     public void requestTokens(UUID customerID, Integer requestedTokens) throws Exception {
         if(requestedTokens == 0) return;
         RestCommunicator communicator = new RestCommunicator(Service.CUSTOMER);
@@ -52,11 +41,8 @@ public class CustomerServant {
                 .add("customerID", customerID.toString())
                 .add("amount", requestedTokens)
                 .build();
-            Object responseEntity = communicator.post(tokenRequest,path, 200);
-            if(verifyList(responseEntity, UUID.class))
-                addTokens((List<?>)responseEntity);
-            else throw new Exception("The returned entity type did not match List<String>!");
-
+        Object responseEntity = communicator.post(tokenRequest,path, 200);
+        addTokens(convertListToUUID(responseEntity));
     }
 
     //TODO: Change message signature to have customerID, merchantID and paymentID
@@ -84,6 +70,20 @@ public class CustomerServant {
             return true;
         }
         return false;
+    }
+
+    private <T> List<UUID> convertListToUUID(Object responseEntity) throws Exception {
+        if (responseEntity instanceof List<?>) {
+            List<?> arrayList = (List<?>) responseEntity;
+            ArrayList<UUID> uuids = new ArrayList<>();
+            for (Object obj : arrayList) {
+                if (!String.class.isInstance(obj))
+                    throw new Exception("The list data did not match type " + String.class.toString());
+                uuids.add(UUID.fromString((String) obj));
+            }
+            return uuids;
+        }
+        throw new Exception("Input object is not an instance of List<?>!");
     }
 
     public List<UUID> getCustomerTokens() {

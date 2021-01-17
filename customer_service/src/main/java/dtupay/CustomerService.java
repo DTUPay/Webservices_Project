@@ -12,6 +12,7 @@ import io.quarkus.runtime.Quarkus;
 import io.quarkus.runtime.annotations.QuarkusMain;
 import models.Customer;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -84,6 +85,16 @@ public class CustomerService {
         }
     }
 
+    // Adds tokens to Customer
+    public void addTokens(UUID customerID, List<UUID> tokens) throws CustomerException {
+        if(customerRepository.hasCustomer(customerID)){
+            Customer customer = customerRepository.getCustomer(customerID);
+            customer.addTokens(tokens);
+        } else {
+            throw new CustomerException("Customer with given customerID doesn't exist");
+        }
+    }
+
     /**
      * The customer can request 1 to 5 tokens if he either has spent all tokens
      * (or it is the first time he requests tokens)
@@ -97,12 +108,18 @@ public class CustomerService {
      *
      * @throws CustomerException
      */
-    public boolean canRequestTokens(UUID customerID) throws CustomerException {
+    public boolean canRequestTokens(UUID customerID, float amount) throws CustomerException {
+
+        if (!customerRepository.hasCustomer(customerID)){
+            throw new CustomerException("Customer does not exist");
+        }
+
         System.out.println(customerID.toString());
         List<UUID> tokens = customerRepository.getCustomer(customerID).getTokenIDs();
         System.out.println(tokens);
         int numTokens = tokens.size();
         if (numTokens > 1) throw new CustomerException("Customer with ID: " + customerID + " still has " + numTokens + " left."); // Should have spent all tokens
+        if (tokens.size() + amount > 6) throw new CustomerException("Customer token request would exceed more than 6 tokens");
         return true;
     }
 }

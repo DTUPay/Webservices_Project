@@ -1,47 +1,54 @@
 package servants;
 
+import javax.json.Json;
+import javax.json.JsonObject;
+import java.util.UUID;
+
 /**
  * @author Laura Hansen s184234
  */
 public class MerchantServant {
-    private String name;
-    private String cpr;
-    private int balance;
-    private String id;
+    private Merchant merchant;
+    private UUID id;
 
-    public MerchantServant(String id) {
+
+    public MerchantServant(UUID id) {
         this.id = id;
     }
 
-    public MerchantServant(String name, String cpr, int balance) {
-        this.name = name;
-        this.cpr = cpr;
-        this.balance = balance;
+    public Merchant getMerchant() {
+        return merchant;
     }
 
-    public String getID() {
+    public void setMerchant(Merchant merchant) {
+        this.merchant = merchant;
+    }
+
+    public UUID getId() {
         return id;
     }
 
-    public int getBalance() {
-        return balance;
-    }
-
-    public void setID(String id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
-    public void setBalance(int balance) {
-        this.balance = balance;
-    }
+    public boolean requestPayment(int amount, UUID merchantID, UUID tokenID) throws Exception {
+        RestCommunicator communicator = new RestCommunicator(RestCommunicator.Service.CUSTOMER);
+        JsonObject payment = Json.createObjectBuilder()
+                .add("amount", amount)
+                .add("merchantID", merchantID.toString())
+                .add("tokenID", tokenID.toString())
+                .build();
+        try {
+            communicator.post(payment,"`/merchant", 200);
+        } catch (Exception e){
+            return false;
+        }
 
-
-    public void requestPayment(int amount) {
-        RestCommunicator communicator = new RestCommunicator(RestCommunicator.Service.MERCHANT);
-        String path = "/payment";
-        // paymentrequest object m. merchant ID and payment amount
-//        String url = communicator.post(amount, path);
+        return true;
     }
+    
+    
 
     public void generateReport() {
 

@@ -6,13 +6,22 @@ import java.util.List;
 import java.util.UUID;
 
 public class TokenIdListDTO extends Payload {
-    List<UUID> tokenIds;
+    List<UUID> tokenIDs;
+    UUID customerID;
 
-    public List<UUID> getTokenIds() {
-        return tokenIds;
+    public List<UUID> getTokenIDs() {
+        return tokenIDs;
     }
 
-    public void setTokenIds(List<UUID> tokenIds) {
-        this.tokenIds = tokenIds;
+    public void setTokenIDs(List<UUID> tokenIDs) {
+        this.tokenIDs = tokenIDs;
+    }
+
+    public UUID getCustomerID() {
+        return customerID;
+    }
+
+    public void setCustomerID(UUID customerID) {
+        this.customerID = customerID;
     }
 }

@@ -42,7 +42,6 @@ public class PaymentService {
         return instance;
     }
 
-    // <editor-fold desc="Repository Interactions">
     public Payment getPayment(UUID PaymentID) throws PaymentException {
         Payment payment = paymentRepository.getPayment(PaymentID);
         if (payment == null) {
@@ -66,66 +65,11 @@ public class PaymentService {
     public List<Payment> getManagerSummary() {
         return paymentRepository.getPayments();
     }
-    //</editor-fold>
 
-    // <editor-fold desc="Bank Interactions">
-    /*
-     *  Bank Interactions
-     */
-    public String createAccountWithBalance(Customer customer, int amount) throws BankException {
-        User user = customer.customerToUser();
-        String accountNumber;
-        try {
-            accountNumber = bankService.createAccountWithBalance(user, BigDecimal.valueOf(amount));
-        } catch (BankServiceException_Exception e) {
-            throw new BankException(e.getMessage());
-        }
-        return accountNumber;
-    }
-
-    public Account getAccount(String accountNumber) throws BankException {
-        Account account = new Account();
-        try {
-            account = bankService.getAccount(accountNumber);
-        } catch (BankServiceException_Exception e) {
-            throw new BankException(e.getMessage());
-        }
-        return account;
-    }
-
-    /**
-     * Gets all accounts
-     * @return List with accounts
-     * @throws BankException
-     */
-    public List<Account> getAccounts() throws BankException {
-        List<Account> accounts = new ArrayList<>();
-        List<AccountInfo> accountInfos = bankService.getAccounts();
-        for (AccountInfo accountInfo : accountInfos) {
-            try {
-                Account account = bankService.getAccount(accountInfo.getAccountId());
-                accounts.add(account);
-            } catch (BankServiceException_Exception e) {
-                throw new BankException(e.getMessage());
-            }
-        }
-        return accounts;
-    }
-
-    public void deleteAccount(String cpr) throws PaymentException {
-        try {
-            Account account = bankService.getAccountByCprNumber(cpr);
-            bankService.retireAccount(account.getId());
-        } catch (BankServiceException_Exception e) {
-            throw new PaymentException(e.getMessage());
-        }
-    }
-
-    public PaymentStatus acceptPayment(UUID paymentID, UUID tokenID, String cpr) {
+    public PaymentStatus acceptPayment(UUID paymentID, UUID tokenID) {
         System.out.println("Start");
         System.out.println(paymentID);
         System.out.println(tokenID);
-        System.out.println(cpr);
         System.out.println("End");
         /* TODO Communicate with TokenService to validate*/
         /* Token_service.isTokenValid(tokenId,cpr)*/
@@ -134,13 +78,13 @@ public class PaymentService {
 
         return PaymentStatus.PENDING;
     }
-    // </editor-fold>
+
 
     private String validateToken(UUID tokenID) {
         // TODO validate in token service
         return "";
     }
-    //</editor-fold>
+
 
 
     public UUID createPayment(PaymentDTO paymentDTO, CustomerDTO customerDTO, TokenDTO tokenDTO) throws BankServiceException_Exception {
@@ -172,41 +116,4 @@ public class PaymentService {
         payment.setStatus(PaymentStatus.REFUNDED);
         payment.setRefundTokenID(tokenDTO.getTokenID());
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
