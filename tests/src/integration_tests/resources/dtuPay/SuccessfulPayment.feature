@@ -1,13 +1,14 @@
 Feature: Successful Payment
   Background: All users are set up
-    Given a customer with name "Jens" "Jensen" and cpr number "121012-xxxx" and balance 100 DKK has a bank account
+    Given a customer has a bank account provided by the bank
     * the customer is registered with DTU Pay
-    * a merchant with name "Mads" "Madsen" and cpr number "140467-xxxx" and balance 1000 DKK has a bank account
+    * a merchant has a bank account provided by the bank
     * the merchant is registered with DTU Pay
 
   Scenario: Successful payment
     Given the customer has 5 tokens
-    When the customer authorizes a payment of 20 to the merchant
+    When the customer selects a token
+    When the merchant authorizes a payment with the customers token and an amount of 20 DKK
     * the customer request to see his account balance
     * the merchant request to see his account balance
     Then the payment succeeds

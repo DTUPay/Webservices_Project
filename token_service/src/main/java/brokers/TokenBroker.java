@@ -41,7 +41,7 @@ public class TokenBroker implements IMessageBroker {
 
             factory.setHost("rabbitmq");
 
-            if(System.getenv("ENVIRONMENT") != null){
+            if(System.getenv("ENVIRONMENT") != null && System.getenv("CONTINUOUS_INTEGRATION") == null){
                 int attempts = 0;
                 while (true){
                     try{
@@ -111,8 +111,8 @@ public class TokenBroker implements IMessageBroker {
         System.out.println("Tokends added");
         //Create payload JSON
         TokenIdListDTO replyPayload = new TokenIdListDTO();
-        replyPayload.setTokenIds(tokenIds);
-
+        replyPayload.setTokenIDs(tokenIds);
+        replyPayload.setCustomerID(dto.getCustomerId());
         Message reply = createReply(message);
         reply.payload = replyPayload;
 

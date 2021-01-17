@@ -40,7 +40,7 @@ public class TokenService {
         TokenService Functionality
      */
 
-    public ArrayList<UUID> addTokens(String customerID, int amount) {
+    public ArrayList<UUID> addTokens(UUID customerID, int amount) {
         ArrayList<UUID> tokenIDs = new ArrayList<>();
         for (int i = 0; i< amount; i++) {
             Token token = new Token(customerID);
@@ -68,7 +68,7 @@ public class TokenService {
         throw new TokenException("Token doesn't exist");
     }
 
-    public String isTokenValid(UUID tokenID) throws TokenException {
+    public UUID isTokenValid(UUID tokenID) throws TokenException {
         if (this.tokenRepository.containsToken(tokenID)) {
             if (!this.tokenRepository.getToken(tokenID).isUsed()) {
                 return this.tokenRepository.getToken(tokenID).getCustomerID();

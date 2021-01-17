@@ -21,6 +21,8 @@ import javax.ws.rs.container.AsyncResponse;
 import javax.ws.rs.core.Response;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -47,7 +49,7 @@ public class CustomerBroker implements IMessageBroker {
 
             factory.setHost("rabbitmq");
 
-            if(System.getenv("ENVIRONMENT") != null){
+            if(System.getenv("ENVIRONMENT") != null && System.getenv("CONTINUOUS_INTEGRATION") == null){
                 int attempts = 0;
                 while (true){
                     try{
@@ -225,7 +227,7 @@ public class CustomerBroker implements IMessageBroker {
     public void requestTokens(TokensDTO token, AsyncResponse response) {
 
         try {
-            customerService.canRequestTokens(token.getCustomerID());
+            customerService.canRequestTokens(token.getCustomerID(), token.getAmount());
         } catch (CustomerException ce) {
             response.resume(Response.status(400).entity(ce.getMessage()).build());
             return;
@@ -252,8 +254,22 @@ public class CustomerBroker implements IMessageBroker {
     // @Status: Implemented
     public void requestTokensResponse(Message message, JsonObject payload){
         AsyncResponse response = responseHandler.getRestResponseObject(message.getRequestId());
-        System.out.println(message.getRequestId());
-        response.resume(Response.status(message.getStatus()).entity(payload));
+
+        UUID customerId = UUID.fromString(payload.get("customerID").toString().replace("\"", ""));
+        List<String> tokenIdsInString = gson.fromJson(payload.get("tokenIDs").toString(), List.class);
+        List<UUID> tokenIds = new ArrayList<>();
+
+        tokenIdsInString.forEach((tokenId) -> {
+            tokenIds.add(UUID.fromString(tokenId));
+        });
+
+        try {
+            customerService.addTokens(customerId, tokenIds);
+            response.resume(Response.status(message.getStatus()).entity(payload.get("tokenIDs")).build());
+        } catch (Exception e){
+            response.resume(Response.status(500).build());
+            e.printStackTrace();
+        }
     }
 
     // @Status: In dispute / in partial implemented

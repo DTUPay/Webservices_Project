@@ -37,7 +37,7 @@ public class PaymentBroker implements IMessageBroker {
 
             factory.setHost("rabbitmq");
 
-            if(System.getenv("ENVIRONMENT") != null){
+            if(System.getenv("ENVIRONMENT") != null && System.getenv("CONTINUOUS_INTEGRATION") == null){
                 int attempts = 0;
                 while (true){
                     try{
