@@ -67,7 +67,7 @@ public class PaymentBroker implements IMessageBroker {
             }
 
         } catch(Exception e){
-            e.printStackTrace();;
+            e.printStackTrace();
         }
     }
 

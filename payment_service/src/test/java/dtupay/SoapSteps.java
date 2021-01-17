@@ -1,14 +1,19 @@
 package dtupay;
 
-import dtu.ws.fastmoney.Account;
+import dtu.ws.fastmoney.*;
 import exceptions.BankException;
 import exceptions.PaymentException;
 import io.cucumber.java.After;
+import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import models.Customer;
+import models.Merchant;
+
+import java.math.BigDecimal;
+import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 
@@ -17,20 +22,34 @@ import static org.junit.Assert.assertEquals;
  */
 public class SoapSteps {
     PaymentService service = new PaymentService();
-    Customer customer = new Customer();
+    User bankCustomer;
+    User bankMerchant;
+    String customerBankAccount;
+    String merchantBankAccount;
+
     Account account;
     String accountNumber = "";
     int balance = 0;
     int fetchedBalance = 0;
     String errorMessage;
+    BankService bankService = new BankServiceService().getBankServicePort();
+    Exception exception;
+
+    @Before()
+    public void createAccounts() throws BankServiceException_Exception {
+        bankCustomer = new User();
+
+        bankMerchant = new User();
+        bankMerchant.setFirstName("Mads");
+        bankMerchant.setLastName("Madsen");
+        bankMerchant.setCprNumber("140567-0001");
+        merchantBankAccount = bankService.createAccountWithBalance(bankMerchant,new BigDecimal(1000));
+    }
 
     @After()
-    public void tearDown(){
-        try {
-            service.deleteAccount(customer.getCPRNumber());
-        } catch (PaymentException e) {
-            errorMessage = e.getMessage();
-        }
+    public void tearDown() throws BankServiceException_Exception {
+        bankService.retireAccount(customerBankAccount);
+        bankService.retireAccount(merchantBankAccount);
     }
 
     @Then("the balance should be {int} kroners")
@@ -41,25 +60,26 @@ public class SoapSteps {
     @When("the customer is created")
     public void theCustomerIsCreated() {
         try {
-            accountNumber = service.createAccountWithBalance(customer,balance);
-        } catch (BankException e) {
+            customerBankAccount = bankService.createAccountWithBalance(bankCustomer,new BigDecimal(balance));
+        } catch (BankServiceException_Exception e) {
             errorMessage = e.getMessage();
         }
     }
 
     @Given("a customer with name {string} {string} and CPR {string} with a balance of {int} kroners")
     public void aCustomerWithNameAndCPRWithABalanceOfKroners(String arg0, String arg1, String arg2, int arg3) {
-        customer.setFirstName(arg0);
-        customer.setLastName(arg1);
-        customer.setCPRNumber(arg2);
+        bankCustomer.setFirstName(arg0);
+        bankCustomer.setLastName(arg1);
+        bankCustomer.setCprNumber(arg2);
         balance = arg3;
     }
 
     @And("the account is fetched")
     public void theAccountIsFetched() {
         try {
-            account = service.getAccount(accountNumber);
-        } catch (BankException e) {
+            account = bankService.getAccount(customerBankAccount);
+        } catch (Exception e) {
+            exception = e;
             e.printStackTrace();
         }
         fetchedBalance = account.getBalance().intValue();

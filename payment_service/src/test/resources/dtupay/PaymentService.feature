@@ -1,17 +1,8 @@
 Feature: Testing Payment Service standalone
 
-  Scenario Outline: Request payment
-    Given a merchant with ID <merchantID> who wants a payment for <amount> kroners
-    When he request the payment in the app
-    Then he receives a paymentID with the type UUID
-    Examples:
-      | merchantID | amount |
-      | 10         | 20     |
-      | 12         | 1      |
-      | 1000       | 9999   |
 
   Scenario: Get payment
-    Given a merchant with ID 10 who wants a payment for 20 kroners
+    Given a merchant with a token initializes a payment for 20 kroners
     When he request the payment in the app
     Then he receives a paymentID with the type UUID
     And the payment can be found using paymentID
