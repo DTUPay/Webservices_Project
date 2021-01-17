@@ -12,7 +12,7 @@ public class Payment extends Payload{
     private UUID customerID;
     private String customerAccountID;
     private String merchantAccountID;
-    private final Date date;
+    protected Date date;
     private final float amount;
     private PaymentStatus paymentStatus;
 
@@ -24,7 +24,7 @@ public class Payment extends Payload{
     public Payment(UUID merchantID, float amount) {
         this.merchantID = merchantID;
         this.amount = amount;
-        this.paymentStatus = PaymentStatus.PENDING;
+        this.paymentStatus = PaymentStatus.COMPLETED;
         this.date = Calendar.getInstance().getTime();
         this.paymentID = UUID.randomUUID();
     }
@@ -58,7 +58,7 @@ public class Payment extends Payload{
     }
 
     public void setStatus(PaymentStatus paymentStatus) {
-        paymentStatus = paymentStatus;
+        this.paymentStatus = paymentStatus;
     }
 
     public UUID getCustomerID() {
