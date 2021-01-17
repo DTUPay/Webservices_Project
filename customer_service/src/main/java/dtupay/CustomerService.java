@@ -102,7 +102,7 @@ public class CustomerService {
         List<UUID> tokens = customerRepository.getCustomer(customerID).getTokenIDs();
         System.out.println(tokens);
         int numTokens = tokens.size();
-        if (numTokens > 1) throw new CustomerException("Customer with ID: " + customerID + " still has " + numTokens + " left.");; // Should have spent all tokens
+        if (numTokens > 1) throw new CustomerException("Customer with ID: " + customerID + " still has " + numTokens + " left."); // Should have spent all tokens
         return true;
     }
 }

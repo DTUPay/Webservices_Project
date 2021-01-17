@@ -1,9 +1,9 @@
 package servants;
 
 import servants.RestCommunicator.Service;
+
 import javax.json.Json;
 import javax.json.JsonObject;
-import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
