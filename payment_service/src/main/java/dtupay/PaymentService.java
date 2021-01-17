@@ -105,8 +105,12 @@ public class PaymentService {
         return payment.getPaymentID();
     }
 
-    public void refundPayment(RefundDTO refundDTO, TokenDTO tokenDTO) throws BankServiceException_Exception {
+    public void refundPayment(RefundDTO refundDTO, TokenDTO tokenDTO) throws BankServiceException_Exception, BankException {
         Payment payment = paymentRepository.getPayment(refundDTO.getPaymentID());
+        if(payment.getStatus() != PaymentStatus.COMPLETED){
+            throw new BankException("Payment already refunded");
+        }
+
         bankService.transferMoneyFromTo(
                 payment.getMerchantAccountID(), // Money from
                 payment.getCustomerAccountID(), // Money to

@@ -11,6 +11,7 @@ import dtupay.MessageRepository;
 import dtupay.PaymentRepository;
 import dtupay.PaymentService;
 import dtupay.TokenRepository;
+import exceptions.BankException;
 import models.*;
 
 import javax.json.Json;
@@ -239,7 +240,7 @@ public class PaymentBroker implements IMessageBroker {
 
         try{
             paymentService.refundPayment(refundDTO, tokenDTO);
-        } catch (BankServiceException_Exception e) {
+        } catch (Exception e) {
             reply = createReply(originalMessage);
             reply.setStatus(404); //TODO set correct error code
             reply.setStatusMessage("Error while refunding payment: " + e.getMessage());
