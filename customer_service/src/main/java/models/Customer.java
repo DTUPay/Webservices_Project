@@ -26,6 +26,7 @@ public class Customer {
         this.accountID = accountID;
         this.customerID = customerID;
         this.accountID = accountID;
+        this.tokenIDs = new ArrayList<>();
     }
 
     public String getFirstName() {
