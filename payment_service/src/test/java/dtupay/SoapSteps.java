@@ -20,6 +20,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * @author Mikkel Rosenfeldt Anderson & Laura
  */
+/*
 public class SoapSteps {
     PaymentService service = new PaymentService();
     //User bankCustomer;
@@ -86,3 +87,4 @@ public class SoapSteps {
         fetchedBalance = account.getBalance().intValue();
     }
 }
+*/
