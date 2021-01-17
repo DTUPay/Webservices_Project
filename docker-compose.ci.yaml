@@ -37,6 +37,12 @@ services:
       - ENVIRONMENT=CI
     depends_on:
       - rabbitmq
+  reporting_service:
+    image: reporting_service:${BUILD}
+    environment:
+      - ENVIRONMENT=CI
+    depends_on:
+      - rabbitmq
   rabbitmq:
     image: rabbitmq:3.8.9-management
     ports:

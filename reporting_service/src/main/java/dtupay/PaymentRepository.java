@@ -14,10 +14,6 @@ import java.util.stream.Collectors;
 public class PaymentRepository implements IPaymentRepository {
 
     HashMap<UUID, Payment> payments = new HashMap<>();
-    private static PaymentRepository instance = new PaymentRepository();
-    public static PaymentRepository getInstance(){
-        return instance;
-    }
 
     @Override
     public void addPayment(Payment payment) {

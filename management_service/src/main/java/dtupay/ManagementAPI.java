@@ -27,8 +27,8 @@ public class ManagementAPI {
     @GET
     @Produces(MediaType.TEXT_PLAIN)
     public String hello() {
-            return "Welcome to Management Service!";
-        }
+        return "Welcome to Management Service!";
+    }
 
     @POST
     @Path("/customer")

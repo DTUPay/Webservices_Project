@@ -24,7 +24,7 @@ import java.util.*;
 public class PaymentService {
     private static PaymentService instance = new PaymentService();
     public HashMap<UUID, AsyncResponse> pendingRequests = new HashMap<>();
-    IPaymentRepository paymentRepository;
+    IPaymentRepository paymentRepository = PaymentRepository.getInstance();
     BankService bankService = new BankServiceService().getBankServicePort();
     PaymentBroker broker;
     Gson gson = new Gson();
