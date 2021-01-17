@@ -74,10 +74,9 @@ public class ReportingService {
         List<Payment> payments = paymentRepository
                 .getPayments()
                 .stream()
-                .filter(p -> p.getDate().after(reportRequestDTO.getFromDate())
-                        && p.getDate().before(reportRequestDTO.getToDate())
-                        && p.getCustomerID().equals(reportRequestDTO.getCustomerID())
-                )
+                .filter(p -> p.getDate().after(reportRequestDTO.getFromDate()))
+                .filter(p -> p.getDate().before(reportRequestDTO.getToDate()))
+                .filter(p -> p.getMerchantID().equals(reportRequestDTO.getMerchantID()))
                 .collect(Collectors.toList());
         return new Report(payments, false);
     }

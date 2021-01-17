@@ -2,10 +2,7 @@ package dtupay;
 
 import models.Payment;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -37,5 +34,12 @@ public class PaymentRepository implements IPaymentRepository {
     @Override
     public List<Payment> getPayments(UUID merchantID) {
         return payments.values().stream().filter(payment -> payment.getMerchantID().equals(merchantID)).collect(Collectors.toList());
+    }
+
+    public void removeAllPayments(){
+        Iterator it = payments.entrySet().iterator();
+        while (it.hasNext()) {
+            it.remove(); // avoids a ConcurrentModificationException
+        }
     }
 }

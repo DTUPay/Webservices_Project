@@ -1,6 +1,5 @@
 Feature: Testing Payment Service standalone
 
-
   Scenario: Get payment
     Given a merchant with a bank account
     Given a token to authorize a payment by a customer
