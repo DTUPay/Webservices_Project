@@ -1,6 +1,8 @@
 package dtuPay;
 
-import io.cucumber.java.en.*;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
 import org.junit.After;
 import org.junit.Before;
 import servants.*;
