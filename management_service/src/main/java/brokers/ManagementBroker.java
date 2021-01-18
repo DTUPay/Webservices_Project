@@ -52,6 +52,7 @@ public class ManagementBroker implements IMessageBroker {
                         channel.queueDeclare(queue, false, false, false, null);
 
                         this.listenOnQueue(queue);
+                        System.out.println("Successfully connected to RabbitMQ queue " + queue + ".");
 
                         break;
                     }catch (Exception e){

@@ -38,6 +38,10 @@ public class CustomerService {
     }
 
     public UUID registerCustomer(Customer customer) throws CustomerException {
+        if(customer.getFirstName() == null || customer.getLastName() == null || customer.getAccountID() == null){
+            throw new CustomerException("Missing fields for creating a merchant");
+        }
+
         UUID customerID;
 
         while(true) {
