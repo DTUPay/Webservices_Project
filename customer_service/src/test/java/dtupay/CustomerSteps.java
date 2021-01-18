@@ -34,21 +34,6 @@ public class CustomerSteps {
         service = new CustomerService();
     }
 
-    @And("has a unused token")
-    public void hasAUnusedToken() {
-        List<UUID> mocked_tokenIDs = new ArrayList<>();
-        mocked_tokenIDs.add(UUID.randomUUID());
-        this.customer.setTokenIDs(mocked_tokenIDs);
-    }
-
-    @And("the customer request a unused token")
-    public void theCustomerRequestAUnusedToken() {
-        try {
-            this.tokenID = service.getUnusedToken(customer.getCustomerID());
-        } catch (CustomerException e) {
-            this.exception = e;
-        }
-    }
 
     @Given("a new customer with name {string} {string} and accountID {string} that does not exist in the repository")
     public void aNewCustomerWithNameAndAccountIDThatDoesNotExistInTheRepository(String firstName, String lastName, String accountID) {

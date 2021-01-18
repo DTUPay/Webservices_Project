@@ -31,7 +31,7 @@ public class CustomerAPI {
     @Path("/refund")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public void requestRefund(@Suspended AsyncResponse response, PaymentDTO payment) throws Exception {
+    public void requestRefund(@Suspended AsyncResponse response, PaymentDTO payment) {
         service.broker.requestRefund(payment, response);
     }
 
@@ -40,7 +40,7 @@ public class CustomerAPI {
     @Path("/tokens")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public void requestTokens(@Suspended AsyncResponse response, TokensDTO token) throws Exception {
+    public void requestTokens(@Suspended AsyncResponse response, TokensDTO token) {
         service.broker.requestTokens(token, response);
     }
 
