@@ -188,9 +188,9 @@ public class CustomerBroker implements IMessageBroker {
             reply.setPayload(dto);
             reply.setStatus(201);
 
-        } catch(CustomerException e){
+        } catch(CustomerException ce){
             reply.setStatus(400);
-            reply.setStatusMessage(e.toString());
+            reply.setStatusMessage(ce.getMessage());
             this.sendMessage(reply);
             return;
         }
@@ -205,9 +205,9 @@ public class CustomerBroker implements IMessageBroker {
 
         try {
             customerService.removeCustomer(customer.getCustomerID());
-        } catch(CustomerException e){
+        } catch(CustomerException ce){
             reply.setStatus(400);
-            reply.setStatusMessage(e.toString());
+            reply.setStatusMessage(ce.getMessage());
             this.sendMessage(reply);
             return;
         }
@@ -225,9 +225,9 @@ public class CustomerBroker implements IMessageBroker {
             CustomerDTO customerDTO = new CustomerDTO(customer);
 
             reply.payload = customerDTO;
-        } catch(CustomerException e){
+        } catch(CustomerException ce){
             reply.setStatus(400);
-            reply.setStatusMessage(e.toString());
+            reply.setStatusMessage(ce.getMessage());
             this.sendMessage(reply);
             return;
         }
@@ -260,7 +260,6 @@ public class CustomerBroker implements IMessageBroker {
     // @TODO: Missing in UML
     // @Status: implemented
     public void requestTokens(TokensDTO token, AsyncResponse response) {
-
         try {
             customerService.canRequestTokens(token.getCustomerID(), token.getAmount());
         } catch (CustomerException ce) {
@@ -301,19 +300,6 @@ public class CustomerBroker implements IMessageBroker {
         response.resume(Response.status(message.getStatus()).entity(report));
     }
 
-    // @Status: In dispute / in partial implemented
-    /*
-    If not irrelevant please notify Benjamin for UML update
-    public void getUnusedToken(UUID customerID, AsyncResponse response) {
-        try {
-            UUID tokenID = customerService.getUnusedToken(customerID);
-            response.resume(Response.status(200).entity(gson.toJson(tokenID)));
-        } catch (CustomerException ce) {
-            response.resume(Response.status(400).entity(ce.getMessage()));
-        }
-    }
-    */
-
     /*
         Handle REST Async call responses
      */
@@ -341,8 +327,8 @@ public class CustomerBroker implements IMessageBroker {
         try {
             customerService.addTokens(customerId, tokenIds);
             response.resume(Response.status(message.getStatus()).entity(payload.get("tokenIDs")).build());
-        } catch (Exception e){
-            response.resume(Response.status(500).build());
+        } catch (CustomerException e){
+            response.resume(Response.status(400).entity(e.getMessage()).build());
             e.printStackTrace();
         }
     }

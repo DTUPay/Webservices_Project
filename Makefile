@@ -19,8 +19,20 @@ local_cleanup:
 
 # Cleaning up in Docker, by removing images
 ci_cleanup:
-	BUILD="build-${BUILD_NUMBER}" docker-compose --project-name continous-integration -f docker-compose.ci.yaml down --rmi all
+	bash scripts/ci_cleanup.sh
 	
 # Deploying stable build to server
 production_deployment:
 	bash scripts/production_deploy.sh
+
+# Run local environment
+run:
+	bash scripts/run.sh
+
+# Clean local environment
+clean:
+	bash scripts/clean.sh
+
+# Test integration local environment
+test:
+	cd tests && mvn test

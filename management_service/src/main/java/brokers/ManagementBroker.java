@@ -5,15 +5,24 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.DeliverCallback;
+import dto.CustomerDTO;
+import dto.MerchantDTO;
 import dtupay.ManagementService;
 import dtupay.RestResponseHandler;
+import models.Callback;
 import models.Message;
 
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.ws.rs.container.AsyncResponse;
+import javax.ws.rs.core.Response;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
+import java.util.UUID;
+
+/*
+@author Benjamin Eriksen & ..
+ */
 
 public class ManagementBroker implements IMessageBroker {
     ConnectionFactory factory = new ConnectionFactory();
@@ -28,7 +37,7 @@ public class ManagementBroker implements IMessageBroker {
 
     public ManagementBroker(ManagementService managementService) {
         this.managementService = managementService;
-        RestResponseHandler responseHandler = RestResponseHandler.getInstance();
+        this.responseHandler = RestResponseHandler.getInstance();
 
         factory.setHost("rabbitmq");
 
@@ -112,16 +121,16 @@ public class ManagementBroker implements IMessageBroker {
     private void processMessage(Message message, JsonObject payload) {
         switch(message.getEvent()) {
             case "registerCustomerResponse":
-                this.managementService.registerCustomerResponse(message, payload);
+                registerCustomerResponse(message, payload);
                 break;
             case "removeCustomerResponse":
-                this.managementService.removeCustomerResponse(message);
+                removeCustomerResponse(message);
                 break;
             case "registerMerchantResponse":
-                this.managementService.registerMerchantResponse(message, payload);
+                registerMerchantResponse(message, payload);
                 break;
             case "removeMerchantResponse":
-                this.managementService.removeMerchantResponse(message);
+                removeMerchantResponse(message);
                 break;
             default:
                 System.out.println("Event not handled: " + message.getEvent());
@@ -138,6 +147,107 @@ public class ManagementBroker implements IMessageBroker {
         } catch(Exception e){
             throw new Exception(e);
         }
+    }
+
+    // @Status: Implemented
+    public void registerCustomer(CustomerDTO customer, AsyncResponse response){
+        Message message = new Message();
+
+        message.setService("customer_service");
+        message.setEvent("registerCustomer");
+        message.setPayload(customer);
+        message.setCallback(new Callback("management_service", "registerCustomerResponse"));
+
+        UUID requestId = responseHandler.saveRestResponseObject(response);
+        message.setRequestId(requestId);
+
+        sendMessage(message);
+    }
+
+    // @Status: Implemented
+    public void registerCustomerResponse(Message message, JsonObject payload){
+        AsyncResponse response = responseHandler.getRestResponseObject(message.getRequestId());
+        if(message.getStatus() == 201){
+            response.resume(Response.status(message.getStatus()).entity(payload).build());
+        } else {
+            response.resume(Response.status(message.getStatus()).entity(message.getStatusMessage()).build());
+        }
+    }
+
+    // @Status: Implemented
+    public void removeCustomer(String customerID, AsyncResponse response){
+        Message message = new Message();
+
+        message.setService("customer_service");
+        message.setEvent("removeCustomer");
+
+        CustomerDTO customer = new CustomerDTO();
+        customer.setCustomerID(customerID);
+
+        message.setPayload(customer);
+        message.setCallback(new Callback("management_service", "removeCustomerResponse"));
+
+        UUID requestId = responseHandler.saveRestResponseObject(response);
+        message.setRequestId(requestId);
+
+        sendMessage(message);
+    }
+
+    // @Status: Implemented
+    public void removeCustomerResponse(Message message){
+        AsyncResponse response = responseHandler.getRestResponseObject(message.getRequestId());
+        response.resume(Response.status(message.getStatus()).entity(message.getStatusMessage()).build());
+    }
+
+
+    // @Status: Implemented
+    public void registerMerchant(MerchantDTO merchant, AsyncResponse response) {
+        Message message = new Message();
+
+        message.setService("merchant_service");
+        message.setEvent("registerMerchant");
+        message.setPayload(merchant);
+        message.setCallback(new Callback("management_service", "registerMerchantResponse"));
+
+        UUID requestId = responseHandler.saveRestResponseObject(response);
+        message.setRequestId(requestId);
+
+        sendMessage(message);
+    }
+
+    // @Status: Implemented
+    public void registerMerchantResponse(Message message, JsonObject payload){
+        AsyncResponse response = responseHandler.getRestResponseObject(message.getRequestId());
+        if(message.getStatus() == 201){
+            response.resume(Response.status(message.getStatus()).entity(payload).build());
+        } else {
+            response.resume(Response.status(message.getStatus()).entity(message.getStatusMessage()).build());
+        }
+    }
+
+    // @Status: Implemented
+    public void removeMerchant(String merchantID, AsyncResponse response){
+        Message message = new Message();
+
+        message.setService("merchant_service");
+        message.setEvent("removeMerchant");
+
+        MerchantDTO customer = new MerchantDTO();
+        customer.setMerchantID(merchantID);
+
+        message.setPayload(customer);
+        message.setCallback(new Callback("management_service", "removeMerchantResponse"));
+
+        UUID requestId = responseHandler.saveRestResponseObject(response);
+        message.setRequestId(requestId);
+
+        sendMessage(message);
+    }
+
+    // @Status: Implemented
+    public void removeMerchantResponse(Message message){
+        AsyncResponse response = responseHandler.getRestResponseObject(message.getRequestId());
+        response.resume(Response.status(message.getStatus()).entity(message.getStatusMessage()).build());
     }
 
 }

@@ -93,7 +93,7 @@ public class CustomerService {
      *
      * @throws CustomerException
      */
-    public boolean canRequestTokens(UUID customerID, float amount) throws CustomerException {
+    public boolean canRequestTokens(UUID customerID, int amount) throws CustomerException {
 
         if (!customerRepository.hasCustomer(customerID)){
             throw new CustomerException("Customer does not exist");

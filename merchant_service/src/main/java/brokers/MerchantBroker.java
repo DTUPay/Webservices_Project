@@ -114,28 +114,22 @@ public class MerchantBroker implements IMessageBroker {
 
         switch(message.getEvent()) {
             case "registerMerchant":
-                System.out.println("registerMerchant event caught");
                 registerMerchant(message, payload);
                 break;
             case "removeMerchant":
-                System.out.println("removeMerchant event caught");
                 removeMerchant(message, payload);
                 break;
             case "getMerchant":
-                System.out.println("getMerchant event caught");
                 getMerchant(message, payload);
                 break;
             // generate report receivers
             case "returnMerchantSummary":
-                System.out.println("Merchant report reveiced");
                 returnMerchantReport(message, payload);
                 break;
             case "requestPaymentComplete":
-                System.out.println("requestPaymentComplete reveiced");
                 requestPaymentComplete(message, payload);
                 break;
             case "getMerchantById":
-                System.out.println("getMerchantById received");
                 getMerchantById(message, payload);
                 break;
             default:
@@ -157,8 +151,7 @@ public class MerchantBroker implements IMessageBroker {
             reply.setPayload(dto);
             reply.setStatus(201);
 
-        } catch (Exception e) {
-
+        } catch (MerchantException e) {
             reply.setStatus(400);
             reply.setStatusMessage(e.toString());
             sendMessage(reply);
@@ -175,7 +168,7 @@ public class MerchantBroker implements IMessageBroker {
             MerchantIDDTO dto = gson.fromJson(payload.toString(), MerchantIDDTO.class);
             System.out.println(dto.getMerchantID());
             merchantService.removeMerchant(dto.getMerchantID());
-        } catch (Exception e) {
+        } catch (MerchantException e) {
             reply.setStatus(400);
             reply.setStatusMessage(e.toString());
             sendMessage(reply);
@@ -189,8 +182,9 @@ public class MerchantBroker implements IMessageBroker {
         try{
             MerchantIDDTO dto = gson.fromJson(payload.toString(), MerchantIDDTO.class);
             reply.payload = merchantService.getMerchant(dto.getMerchantID());
-        } catch (Exception e) {
+        } catch (MerchantException e) {
             reply.setStatus(400);
+            reply.setStatusMessage(e.toString());
             sendMessage(reply);
             return;
         }
@@ -216,7 +210,7 @@ public class MerchantBroker implements IMessageBroker {
             Merchant merchant = merchantService.getMerchant(dto.getMerchantID());
 
             reply.payload = merchant;
-        } catch(Exception e){
+        } catch(MerchantException e){
             reply.setStatus(400);
             reply.setStatusMessage(e.toString());
             this.sendMessage(reply);
@@ -252,6 +246,10 @@ public class MerchantBroker implements IMessageBroker {
         //Return status of rabbitMQ request
         AsyncResponse request = responsehandler.getRestResponseObject(message.getRequestId());
         responsehandler.removeRestResponseObject(message.getRequestId());
+        if(message.getStatus() != 200) {
+            request.resume(Response.status(message.getStatus()).entity(message.getStatusMessage()).build());
+            return;
+        }
         request.resume(Response.status(message.getStatus()).entity(gson.fromJson(payload.toString(), PaymentIDDTO.class)).build());
     }
     

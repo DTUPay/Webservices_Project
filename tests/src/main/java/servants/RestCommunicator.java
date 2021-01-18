@@ -37,7 +37,7 @@ public class RestCommunicator {
                 return response.readEntity(Object.class);
             else return true;
         }
-        else throw new Exception(response.getStatus() + " Error!");
+        else throw new Exception(response.getStatus() + " " + response.readEntity(String.class));
 
     }
 
@@ -53,7 +53,7 @@ public class RestCommunicator {
         Response response = target.path(path).request().put(Entity.entity(item, MediaType.APPLICATION_JSON));
         if(response.getStatus() == 200)
             return true;
-        else throw new Exception(response.getStatus() + " Error!");
+        else throw new Exception(response.getStatus() + " " + response.readEntity(String.class));
     }
 
     /**
@@ -67,7 +67,12 @@ public class RestCommunicator {
         protected final String port;
         protected final String location;
         Service(String port, String location) {
-            this.port = port;
+            String user = System.getenv("USER");
+            if(user != null && user.equals("jenkins")){
+                this.port = "1" + port;
+            }else{
+                this.port = port;
+            }
             this.location = location;
         }
     }

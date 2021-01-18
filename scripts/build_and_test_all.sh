@@ -24,5 +24,3 @@ do
  popd
 done
 
-# Final end-to-end test
-# ./system_tests/test.sh

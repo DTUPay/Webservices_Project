@@ -45,18 +45,6 @@ public class CustomerActionSteps {
         Assert.assertEquals(customer.getCustomerTokens().size(), arg0);
     }
 
-    @When("the customer requests {int} new tokens")
-    public void theCustomerRequestsNewTokens(int arg0) {
-        /*
-        try {
-            customer.requestTokens(customer.getID(), arg0);
-        } catch (Exception e) {
-            exception = e;
-        }
-
-         */
-    }
-
     @When("the customer accepts the payment with id {string}")
     public void theCustomerAcceptsThePaymentWithId(String arg0) {
     }

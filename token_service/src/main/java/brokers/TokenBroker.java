@@ -11,6 +11,7 @@ import dto.TokenIDDTO;
 import dto.TokenIdListDTO;
 import dtupay.TokenService;
 import dtupay.RestResponseHandler;
+import exceptions.TokenException;
 import models.Message;
 
 import javax.json.Json;
@@ -108,7 +109,7 @@ public class TokenBroker implements IMessageBroker {
                 dto.getAmount()
         );
 
-        System.out.println("Tokends added");
+        System.out.println("Tokens added");
         //Create payload JSON
         TokenIdListDTO replyPayload = new TokenIdListDTO();
         replyPayload.setTokenIDs(tokenIds);
@@ -131,7 +132,7 @@ public class TokenBroker implements IMessageBroker {
                 reply.setPayload(tokenDTO);
                 sendMessage(reply);
             }
-        } catch(Exception e){
+        } catch(TokenException e){
             reply.setStatus(400);
             reply.setStatusMessage(e.toString());
             sendMessage(reply);

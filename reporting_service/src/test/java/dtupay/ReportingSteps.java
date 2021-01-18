@@ -66,6 +66,7 @@ public class ReportingSteps {
     public void aRequestsAReport(String arg0) {
         ReportRequestDTO dto = new ReportRequestDTO();
         Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DATE, 0);
         dto.setToDate(calendar.getTime());
         calendar.add(Calendar.DATE, -10);
         dto.setFromDate(calendar.getTime());

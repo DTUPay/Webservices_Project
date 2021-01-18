@@ -6,11 +6,12 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.DeliverCallback;
 import dto.*;
-import dtu.ws.fastmoney.BankServiceException_Exception;
 import dtupay.MessageRepository;
 import dtupay.PaymentRepository;
 import dtupay.PaymentService;
 import dtupay.TokenRepository;
+import exceptions.BankException;
+import exceptions.PaymentException;
 import models.Callback;
 import models.Message;
 import models.Payment;
@@ -46,10 +47,10 @@ public class PaymentBroker implements IMessageBroker {
 
             factory.setHost("rabbitmq");
 
-            if(System.getenv("ENVIRONMENT") != null && System.getenv("CONTINUOUS_INTEGRATION") == null){
+            if (System.getenv("ENVIRONMENT") != null && System.getenv("CONTINUOUS_INTEGRATION") == null) {
                 int attempts = 0;
-                while (true){
-                    try{
+                while (true) {
+                    try {
 
                         connection = factory.newConnection();
                         channel = connection.createChannel();
@@ -57,18 +58,18 @@ public class PaymentBroker implements IMessageBroker {
                         this.listenOnQueue(queue);
 
                         break;
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         attempts++;
-                        if(attempts > 10)
+                        if (attempts > 10)
                             throw e;
                         System.out.println("Could not connect to RabbitMQ queue " + queue + ". Trying again.");
                         //Sleep before retrying connection
-                        Thread.sleep(5*1000);
+                        Thread.sleep(5 * 1000);
                     }
                 }
             }
 
-        } catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -78,28 +79,29 @@ public class PaymentBroker implements IMessageBroker {
         try {
             channel.queueDeclare(message.getService(), false, false, false, null);
             channel.basicPublish("", message.getService(), null, gson.toJson(message).getBytes(StandardCharsets.UTF_8));
-        } catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public void onQueue(String queue, DeliverCallback callback){
+    public void onQueue(String queue, DeliverCallback callback) {
         try {
-            channel.basicConsume(queue, true, callback, consumerTag -> { });
-        } catch(Exception e){
+            channel.basicConsume(queue, true, callback, consumerTag -> {
+            });
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public Message createReply(Message originalMessage){
+    public Message createReply(Message originalMessage) {
         Message reply = new Message(originalMessage.getCallback().getService(), originalMessage.getCallback().getEvent());
         reply.setRequestId(originalMessage.getRequestId());
         return reply;
     }
 
-    private void listenOnQueue(String queue){
+    private void listenOnQueue(String queue) {
         deliverCallback = (consumerTag, delivery) -> {
             String message = new String(delivery.getBody(), "UTF-8");
             JsonObject jsonObject = Json.createReader(new StringReader(message)).readObject(); // @TODO: Validate Message, if it is JSON object
@@ -111,9 +113,9 @@ public class PaymentBroker implements IMessageBroker {
     }
 
     // Decodes payload and calls customerService
-    private void processMessage(Message message, JsonObject payload){
+    private void processMessage(Message message, JsonObject payload) {
 
-        switch(message.getEvent()) {
+        switch (message.getEvent()) {
             case "requestPayment":
                 System.out.println("requestPayment event caught");
                 requestPayment(message, payload);
@@ -143,23 +145,23 @@ public class PaymentBroker implements IMessageBroker {
         }
     }
 
-    private void requestPayment(Message message, JsonObject payload){
+    private void requestPayment(Message message, JsonObject payload) {
         PaymentDTO dto = gson.fromJson(payload.toString(), PaymentDTO.class);
         message.setPayload(dto);
         messageRepository.saveMessageObject(message);
         useToken(dto.getTokenID(), "requestPaymentTokenUsed", message.getRequestId());
     }
 
-    private void requestPaymentTokenUsed(Message message, JsonObject payload){
+    private void requestPaymentTokenUsed(Message message, JsonObject payload) {
         Message reply;
         Message originalMessage = messageRepository.getMessageObject(message.getRequestId());
         TokenDTO tokenDTO = null;
-        try{
+        try {
             tokenDTO = gson.fromJson(payload.toString(), TokenDTO.class);
         } catch (Exception e) {
             message.setStatus(400);
         }
-        if(message.getStatus() != 200 || tokenDTO == null){
+        if (message.getStatus() != 200 || tokenDTO == null) {
             messageRepository.removeMessageObject(message.getRequestId());
             reply = createReply(originalMessage);
             reply.setStatus(404); //TODO set correct error code
@@ -180,7 +182,7 @@ public class PaymentBroker implements IMessageBroker {
         sendMessage(getCustomerMessage);
     }
 
-    private void requestPaymentCustomerFetched(Message message, JsonObject payload){
+    private void requestPaymentCustomerFetched(Message message, JsonObject payload) {
         Message reply;
         Message originalMessage = messageRepository.getMessageObject(message.getRequestId());
         messageRepository.removeMessageObject(message.getRequestId());
@@ -190,12 +192,12 @@ public class PaymentBroker implements IMessageBroker {
 
         CustomerDTO customerDTO = null;
         UUID paymentID;
-        try{
+        try {
             customerDTO = gson.fromJson(payload.toString(), CustomerDTO.class);
         } catch (Exception e) {
             message.setStatus(400);
         }
-        if(message.getStatus() != 200 || tokenDTO == null){
+        if (message.getStatus() != 200 || tokenDTO == null) {
             reply = createReply(originalMessage);
             reply.setStatus(404); //TODO set correct error code
             reply.setStatusMessage("Could not fetch customer account id");
@@ -203,9 +205,9 @@ public class PaymentBroker implements IMessageBroker {
             return;
         }
 
-        try{
+        try {
             paymentID = paymentService.createPayment((PaymentDTO) originalMessage.payload, customerDTO, tokenDTO);
-        } catch (BankServiceException_Exception e) {
+        } catch (BankException e) {
             reply = createReply(originalMessage);
             reply.setStatus(400); //TODO set correct error code
             reply.setStatusMessage("Error while making payment: " + e.getMessage());
@@ -220,35 +222,37 @@ public class PaymentBroker implements IMessageBroker {
         reportTransactionUpdate(paymentRepository.getPayment(paymentID));
     }
 
-    private void getRefund(Message message, JsonObject payload){
+    private void getRefund(Message message, JsonObject payload) {
         RefundDTO dto = gson.fromJson(payload.toString(), RefundDTO.class);
         message.setPayload(dto);
         messageRepository.saveMessageObject(message);
         useToken(dto.getTokenID(), "refundPaymentTokenUsed", message.getRequestId());
     }
 
-    private void getRefundTokenUsed(Message message, JsonObject payload){
+    private void getRefundTokenUsed(Message message, JsonObject payload) {
         Message reply;
         Message originalMessage = messageRepository.getMessageObject(message.getRequestId());
         messageRepository.removeMessageObject(message.getRequestId());
         RefundDTO refundDTO = (RefundDTO) originalMessage.getPayload();
         TokenDTO tokenDTO = null;
-        try{
+        try {
             tokenDTO = gson.fromJson(payload.toString(), TokenDTO.class);
         } catch (Exception e) {
             message.setStatus(400);
+            message.setStatusMessage(e.getMessage());
         }
-        if(message.getStatus() != 200 || tokenDTO == null){
+
+        if (message.getStatus() != 200 || tokenDTO == null) {
             reply = createReply(originalMessage);
             reply.setStatus(404); //TODO set correct error code
-            reply.setStatusMessage("The token could not be validated");
+            reply.setStatusMessage("The token could not be validated: " + message.getStatusMessage());
             sendMessage(reply);
             return;
         }
 
-        try{
+        try {
             paymentService.refundPayment(refundDTO, tokenDTO);
-        } catch (Exception e) {
+        } catch (PaymentException | BankException e) {
             reply = createReply(originalMessage);
             reply.setStatus(404); //TODO set correct error code
             reply.setStatusMessage("Error while refunding payment: " + e.getMessage());
@@ -263,7 +267,7 @@ public class PaymentBroker implements IMessageBroker {
         reportTransactionUpdate(paymentRepository.getPayment(refundDTO.getPaymentID()));
     }
 
-    public void useToken(UUID tokenID, String callbackEvent, UUID requestID){
+    public void useToken(UUID tokenID, String callbackEvent, UUID requestID) {
         Message message = new Message();
         message.setEvent("useToken");
         message.setService("token_service");
@@ -276,7 +280,7 @@ public class PaymentBroker implements IMessageBroker {
         sendMessage(message);
     }
 
-    public void reportTransactionUpdate(Payment payment){
+    public void reportTransactionUpdate(Payment payment) {
         Message message = new Message();
         String text = gson.toJson(payment);
         Payment paymentClone = gson.fromJson(text, Payment.class);
