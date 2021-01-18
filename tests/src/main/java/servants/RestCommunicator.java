@@ -67,7 +67,12 @@ public class RestCommunicator {
         protected final String port;
         protected final String location;
         Service(String port, String location) {
-            this.port = port;
+            String user = System.getenv("USER");
+            if(user != null && user.equals("jenkins")){
+                this.port = "1" + port;
+            }else{
+                this.port = port;
+            }
             this.location = location;
         }
     }

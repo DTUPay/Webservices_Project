@@ -94,6 +94,7 @@ public class PaymentSteps {
             assertEquals(tokenCount, arg0);
             System.out.println("done");
         } catch (Exception e) {
+            System.out.println("Could not get tokens");
             e.printStackTrace();
             fail();
         }
@@ -153,6 +154,11 @@ public class PaymentSteps {
         assertEquals(arg0, customer.getBalance(), 0);
     }
 
+    @Then("the customer possesses {int} tokens")
+    public void theCustomerPossessesTokens(int arg0) {
+        assertEquals(arg0, customerAccount.getCustomerTokens().size());
+    }
+
     @Then("the merchant has {int} DKK in his account")
     public void theMerchantHasDKKInHisAccount(int arg0) {
         assertEquals(arg0, merchant.getBalance(), 0);
@@ -188,6 +194,16 @@ public class PaymentSteps {
     public void theMerchantAuthorizesAPaymentWithTheCustomersTokenAndAnAmountOfDKK(int arg0) {
         try {
             paymentID = merchantAccount.requestPayment(arg0, merchantAccount.getId(), this.usableToken);
+        } catch (Exception e) {
+            exception = e;
+        }
+    }
+
+    @When("the customer requests {int} new tokens")
+    public void theCustomerRequestsNewTokens(int arg0) {
+
+        try {
+            customerAccount.requestTokens(customerAccount.getID(), arg0);
         } catch (Exception e) {
             exception = e;
         }
