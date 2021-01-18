@@ -41,7 +41,6 @@ public class PaymentSteps {
         bankCustomer.setFirstName("Jens");
         bankCustomer.setLastName("Jensen");
         bankCustomer.setCprNumber("121514-0001");
-
         try {
             dtu.ws.fastmoney.Account customerAccount = bank.getAccountByCprNumber(bankCustomer.getCprNumber());
             bank.retireAccount(customerAccount.getId());
@@ -49,9 +48,10 @@ public class PaymentSteps {
             System.out.println(e.toString());
         }
 
+        System.out.println("Creating customer bank account...");
         String customerBankAccount = bank.createAccountWithBalance(bankCustomer, new BigDecimal(100));
         customer.setAccountNumber(customerBankAccount);
-
+        System.out.println("done");
         //Merchant: Mads Madsen, 140467-xxxx, 1000 DKK
         merchant = new Merchant("Mads Madsen", "140467", 1000);
         User bankMerchant = new User();
@@ -66,10 +66,10 @@ public class PaymentSteps {
         } catch (Exception e) {
             System.out.println(e.toString());
         }
-
+        System.out.println("Creating customer bank account...");
         String merchantBankAccount = bank.createAccountWithBalance(bankMerchant, new BigDecimal(1000));
-
         merchant.setAccountNumber(merchantBankAccount);
+        System.out.println("done");
 
         //TODO: Store account numbers
         accountManagement = new ManagementServant();
