@@ -4,10 +4,10 @@ public class Customer {
     private String firstName;
     private String lastName;
     private String cpr;
-    private int balance;
+    private double balance;
     private String accountNumber;
 
-    public Customer(String firstName, String lastName, String cpr, int balance) {
+    public Customer(String firstName, String lastName, String cpr, double balance) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.cpr = cpr;
@@ -38,11 +38,11 @@ public class Customer {
         this.cpr = cpr;
     }
 
-    public int getBalance() {
+    public double getBalance() {
         return balance;
     }
 
-    public void setBalance(int balance) {
+    public void setBalance(double balance) {
         this.balance = balance;
     }
 

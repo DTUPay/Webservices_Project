@@ -113,15 +113,15 @@ public class SuccessfulPaymentSteps {
     }
 
     @When("the customer request to see his account balance")
-    public void theCustomerRequestToSeeHisAccountBalance() {
-        //TODO: Request the customers account balance
-        //TODO: customer.setBalance(output)
+    public void theCustomerRequestToSeeHisAccountBalance() throws BankServiceException_Exception {
+        BigDecimal customerBalance = bank.getAccount(customer.getAccountNumber()).getBalance();
+        customer.setBalance(customerBalance.doubleValue());
     }
 
     @When("the merchant request to see his account balance")
-    public void theMerchantRequestToSeeHisAccountBalance() {
-        //TODO: Request the merchants account balance
-        //TODO: merchant.setBalance(output)
+    public void theMerchantRequestToSeeHisAccountBalance() throws BankServiceException_Exception {
+        BigDecimal merchantBalance = bank.getAccount(merchant.getAccountNumber()).getBalance();
+        merchant.setBalance(merchantBalance.doubleValue());
     }
 
     @Then("the payment succeeds")
@@ -154,7 +154,7 @@ public class SuccessfulPaymentSteps {
     @When("the customer selects a token")
     public void theCustomerSelectsAToken() {
         try {
-            usableToken = customerAccount.selectToken();
+            this.usableToken = customerAccount.selectToken();
         } catch (Exception e) {
             exception = e;
         }

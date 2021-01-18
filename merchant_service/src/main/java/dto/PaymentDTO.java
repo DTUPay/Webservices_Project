@@ -8,6 +8,7 @@ public class PaymentDTO extends Payload {
     private UUID merchantID;
     private float amount;
     private UUID tokenID;
+    private String merchantAccountID;
 
     public UUID getTokenID() {
         return tokenID;
@@ -32,5 +33,13 @@ public class PaymentDTO extends Payload {
 
     public void setAmount(float amount) {
         this.amount = amount;
+    }
+
+    public String getMerchantAccountID() {
+        return merchantAccountID;
+    }
+
+    public void setMerchantAccountID(String merchantAccountID) {
+        this.merchantAccountID = merchantAccountID;
     }
 }

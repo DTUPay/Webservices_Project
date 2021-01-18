@@ -11,7 +11,7 @@ public class Token {
         return TokenID;
     }
 
-    public void setTokenID(int tokenID) {
+    public void setTokenID(UUID tokenID) {
         TokenID = UUID.randomUUID();
     }
 

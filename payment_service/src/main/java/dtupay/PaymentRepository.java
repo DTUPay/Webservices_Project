@@ -30,11 +30,13 @@ public class PaymentRepository implements IPaymentRepository {
     }
 
     @Override
+    //TODO still relevant?
     public List<Payment> getPayments() {
         return new ArrayList<>(payments.values());
     }
 
     @Override
+    //TODO still relevant?
     public List<Payment> getPayments(UUID merchantID) {
         return payments.values().stream().filter(payment -> payment.getMerchantID().equals(merchantID)).collect(Collectors.toList());
     }

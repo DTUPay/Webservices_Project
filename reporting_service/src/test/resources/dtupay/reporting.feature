@@ -1,3 +1,4 @@
+
 Feature: Generating reports based on previous transactions
 
   Scenario: Generate manager report

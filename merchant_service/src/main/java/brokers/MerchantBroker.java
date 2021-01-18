@@ -44,6 +44,7 @@ public class MerchantBroker implements IMessageBroker {
 
             factory.setHost("rabbitmq");
 
+            //TODO change env to != null
             if(System.getenv("ENVIRONMENT") != null && System.getenv("CONTINUOUS_INTEGRATION") == null){
                 int attempts = 0;
                 while (true){
@@ -130,6 +131,7 @@ public class MerchantBroker implements IMessageBroker {
                 break;
             case "requestPaymentComplete":
                 System.out.println("requestPaymentComplete reveiced");
+                requestPaymentComplete(message, payload);
             case "getMerchantById":
                 System.out.println("getMerchantById received");
                 getMerchantById(message, payload);
@@ -196,7 +198,8 @@ public class MerchantBroker implements IMessageBroker {
     // Request payment functions
     public void requestPayment(PaymentDTO payment, AsyncResponse response){
         try {
-            this.merchantService.getMerchant(payment.getMerchantID());
+            Merchant merchant = this.merchantService.getMerchant(payment.getMerchantID());
+            payment.setMerchantAccountID(merchant.getAccountNumber());
         } catch (MerchantException me) {
             response.resume(Response.status(400).entity(me.getMessage()).build());
             return;
