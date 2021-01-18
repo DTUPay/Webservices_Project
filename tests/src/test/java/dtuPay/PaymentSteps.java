@@ -228,6 +228,12 @@ public class PaymentSteps {
         assertEquals(arg0, exception.getMessage());
     }
 
+    @Then("the customer possesses {int} tokens")
+    public void the_customer_possesses_tokens(Integer int1) {
+        Integer tokens = customerAccount.getCustomerTokens().size();
+        assertEquals(tokens, int1);
+    }
+
     @After
     public void removeUserBankAccounts() throws BankServiceException_Exception {
         bank.retireAccount(customer.getAccountNumber());
