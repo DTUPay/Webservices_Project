@@ -308,6 +308,7 @@ public class CustomerBroker implements IMessageBroker {
     // @TODO: Missing in UML
     // @Status: Implemented
     public void requestRefundResponse(Message message, JsonObject payload){
+        System.out.println("Response Status:" + message.getStatus());
         AsyncResponse response = this.responseHandler.getRestResponseObject(message.getRequestId());
         response.resume(Response.status(message.getStatus()).entity(message.getStatusMessage()));
     }

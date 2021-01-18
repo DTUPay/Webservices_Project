@@ -17,5 +17,14 @@ Feature: Requesting refunds
     * the merchant has 1000 DKK in his account
 
   Scenario: Attempting to refund an already refunded payment
+    Given the customer already has refunded a given payment
+    * the customer has 100 DKK in his account
+    * the merchant has 1000 DKK in his account
+    When the customer request to have the payment refunded
+    #Then the refunding fails
+    #Then the error message is ""
+    * the customer has 100 DKK in his account
+    * the merchant has 1000 DKK in his account
+
 
   Scenario: Attempting to refund with an invalid token

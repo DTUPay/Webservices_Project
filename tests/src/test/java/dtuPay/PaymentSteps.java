@@ -134,6 +134,15 @@ public class PaymentSteps {
         assertTrue(customerAccount.getCustomerTokens().size() == 0);
     }
 
+    @Given("the customer already has refunded a given payment")
+    public void theCustomerAlreadyHasRefundedAGivenPayment() {
+        try {
+            paymentRefunded = customerAccount.requestRefund(customerAccount.selectToken(), paymentID);
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
     @When("the customer request to see his account balance")
     public void theCustomerRequestToSeeHisAccountBalance() throws BankServiceException_Exception {
         BigDecimal customerBalance = bank.getAccount(customer.getAccountNumber()).getBalance();
@@ -213,6 +222,11 @@ public class PaymentSteps {
     @Then("the error message is {string}")
     public void theErrorMessageIs(String arg0) {
         assertEquals(arg0, exception.getMessage());
+    }
+
+    @Then("the refunding fails")
+    public void theRefundingFails() {
+        assertFalse(paymentRefunded);
     }
 
     @After
