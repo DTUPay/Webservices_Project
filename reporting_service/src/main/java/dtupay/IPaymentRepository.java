@@ -16,5 +16,4 @@ public interface IPaymentRepository {
 
     List<Payment> getPayments();
 
-    List<Payment> getPayments(UUID id, boolean isMerchant);
 }
