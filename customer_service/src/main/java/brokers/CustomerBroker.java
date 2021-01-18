@@ -145,6 +145,9 @@ public class CustomerBroker implements IMessageBroker {
             case "receiveReport":
                 receiveReport(message, payload);
                 break;
+            case "requestRefundResponse":
+                requestRefundResponse(message, payload);
+                break;
             default:
                 System.out.println("Event not handled: " + message.getEvent());
         }
