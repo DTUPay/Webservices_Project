@@ -7,15 +7,11 @@ package dtupay;
 
 import brokers.ReportingBroker;
 import dto.ReportRequestDTO;
-import exceptions.TokenException;
 import io.quarkus.runtime.Quarkus;
 import io.quarkus.runtime.annotations.QuarkusMain;
 import models.Payment;
-import models.PaymentStatus;
 import models.Report;
-import models.Token;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -54,13 +50,20 @@ public class ReportingService {
         }
     }
 
+    public List<Payment> getPayments(UUID id, boolean isMerchant) {
+        if (isMerchant) {
+            return paymentRepository.getPayments().stream().filter(payment -> payment.getMerchantID().equals(id)).collect(Collectors.toList());
+        } else {
+            return paymentRepository.getPayments().stream().filter(payment -> payment.getCustomerID().equals(id)).collect(Collectors.toList());
+        }
+    }
+
     public Report getManagerReport(){
         return new Report(paymentRepository.getPayments(), false);
     }
 
     public Report getMerchantReport(ReportRequestDTO reportRequestDTO){
-        List<Payment> payments = paymentRepository
-                .getPayments(reportRequestDTO.getMerchantID(),true)
+        List<Payment> payments = getPayments(reportRequestDTO.getMerchantID(),true)
                 .stream()
                 .filter(p -> p.getDate().after(reportRequestDTO.getFromDate())
                         && p.getDate().before(reportRequestDTO.getToDate())
@@ -70,8 +73,7 @@ public class ReportingService {
     }
 
     public Report getCustomerReport(ReportRequestDTO reportRequestDTO){
-        List<Payment> payments = paymentRepository
-                .getPayments(reportRequestDTO.getCustomerID(),false)
+        List<Payment> payments = getPayments(reportRequestDTO.getCustomerID(),false)
                 .stream()
                 .filter(p -> p.getDate().after(reportRequestDTO.getFromDate())
                         && p.getDate().before(reportRequestDTO.getToDate())

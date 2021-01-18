@@ -2,8 +2,10 @@ package dtupay;
 
 import models.Payment;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * @author Mikkel Rosenfeldt Anderson & Laura & Benjamin
@@ -29,15 +31,6 @@ public class PaymentRepository implements IPaymentRepository {
     @Override
     public List<Payment> getPayments() {
         return new ArrayList<>(payments.values());
-    }
-
-    @Override
-    public List<Payment> getPayments(UUID id, boolean isMerchant) {
-        if (isMerchant) {
-            return payments.values().stream().filter(payment -> payment.getMerchantID().equals(id)).collect(Collectors.toList());
-        } else {
-            return payments.values().stream().filter(payment -> payment.getCustomerID().equals(id)).collect(Collectors.toList());
-        }
     }
 
     public void removeAllPayments(){

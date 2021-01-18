@@ -94,7 +94,6 @@ public class PaymentSteps {
             assertEquals(tokenCount, arg0);
             System.out.println("done");
         } catch (Exception e) {
-            System.out.println("Could not get tokens");
             e.printStackTrace();
             fail();
         }
@@ -130,6 +129,11 @@ public class PaymentSteps {
         assertNotNull(paymentID);
     }
 
+    @Given("the customer has no tokens")
+    public void theCustomerHasNoTokens() {
+        assertTrue(customerAccount.getCustomerTokens().size() == 0);
+    }
+
     @When("the customer request to see his account balance")
     public void theCustomerRequestToSeeHisAccountBalance() throws BankServiceException_Exception {
         BigDecimal customerBalance = bank.getAccount(customer.getAccountNumber()).getBalance();
@@ -144,6 +148,38 @@ public class PaymentSteps {
         System.out.println("New balance of merchant: " + merchant.getBalance());
     }
 
+    @When("the customer selects a token")
+    public void theCustomerSelectsAToken() {
+        try {
+            this.usableToken = customerAccount.selectToken();
+        } catch (Exception e) {
+            exception = e;
+        }
+    }
+
+    @When("the merchant authorizes a payment with the customers token and an amount of {int} DKK")
+    public void theMerchantAuthorizesAPaymentWithTheCustomersTokenAndAnAmountOfDKK(int arg0) {
+        try {
+            paymentID = merchantAccount.requestPayment(arg0, merchantAccount.getId(), this.usableToken);
+        } catch (Exception e) {
+            exception = e;
+        }
+    }
+
+    @When("the customer request to have the payment refunded")
+    public void theCustomerRequestToHaveThePaymentRefunded() {
+        try {
+            paymentRefunded = customerAccount.requestRefund(customerAccount.selectToken(), paymentID);
+        } catch (Exception e) {
+            exception = e;
+        }
+    }
+
+    @When("the customer provides an invalid token")
+    public void theCustomerProvidesAnInvalidToken() {
+        usableToken = UUID.randomUUID();
+    }
+
     @Then("the payment succeeds")
     public void thePaymentSucceeds() {
         assertNotNull(paymentID);
@@ -152,11 +188,6 @@ public class PaymentSteps {
     @Then("the customer has {int} DKK in his account")
     public void theCustomerHasDKKInHisAccount(int arg0) {
         assertEquals(arg0, customer.getBalance(), 0);
-    }
-
-    @Then("the customer possesses {int} tokens")
-    public void theCustomerPossessesTokens(int arg0) {
-        assertEquals(arg0, customerAccount.getCustomerTokens().size());
     }
 
     @Then("the merchant has {int} DKK in his account")
@@ -174,47 +205,19 @@ public class PaymentSteps {
         assertTrue(paymentRefunded);
     }
 
+    @Then("the payment fails")
+    public void thePaymentFails() {
+        assertNull(paymentID);
+    }
+
+    @Then("the error message is {string}")
+    public void theErrorMessageIs(String arg0) {
+        assertEquals(arg0, exception.getMessage());
+    }
+
     @After
     public void removeUserBankAccounts() throws BankServiceException_Exception {
         bank.retireAccount(customer.getAccountNumber());
         bank.retireAccount(merchant.getAccountNumber());
-    }
-
-    @When("the customer selects a token")
-    public void theCustomerSelectsAToken() {
-        try {
-            this.usableToken = customerAccount.selectToken();
-        } catch (Exception e) {
-            exception = e;
-        }
-    }
-
-
-    @When("the merchant authorizes a payment with the customers token and an amount of {int} DKK")
-    public void theMerchantAuthorizesAPaymentWithTheCustomersTokenAndAnAmountOfDKK(int arg0) {
-        try {
-            paymentID = merchantAccount.requestPayment(arg0, merchantAccount.getId(), this.usableToken);
-        } catch (Exception e) {
-            exception = e;
-        }
-    }
-
-    @When("the customer requests {int} new tokens")
-    public void theCustomerRequestsNewTokens(int arg0) {
-
-        try {
-            customerAccount.requestTokens(customerAccount.getID(), arg0);
-        } catch (Exception e) {
-            exception = e;
-        }
-    }
-
-    @When("the customer request to have the payment refunded")
-    public void theCustomerRequestToHaveThePaymentRefunded() {
-        try {
-            paymentRefunded = customerAccount.requestRefund(customerAccount.selectToken(), paymentID);
-        } catch (Exception e) {
-            exception = e;
-        }
     }
 }

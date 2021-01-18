@@ -4,19 +4,15 @@ import dto.CustomerDTO;
 import dto.PaymentDTO;
 import dto.RefundDTO;
 import dto.TokenDTO;
-import dtu.ws.fastmoney.BankService;
 import dtu.ws.fastmoney.BankServiceException_Exception;
-import dtu.ws.fastmoney.BankServiceService;
 import dtu.ws.fastmoney.User;
 import exceptions.BankException;
 import exceptions.PaymentException;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
-import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import io.cucumber.messages.IdGenerator;
 import models.Merchant;
 import models.Payment;
 import models.PaymentStatus;
@@ -24,9 +20,8 @@ import models.Token;
 import org.junit.Assert;
 
 import java.math.BigDecimal;
-import java.util.*;
-
-import static org.junit.Assert.*;
+import java.util.Calendar;
+import java.util.UUID;
 
 /**
  * @author Oliver O. Nielsen & Björn Wilting
@@ -120,7 +115,7 @@ public class PaymentSteps {
     }
 
     @Given("a payment has been made")
-    public void a_payment_has_been_made() throws BankServiceException_Exception {
+    public void a_payment_has_been_made() throws BankException {
         paymentId = service.createPayment(payment, customerDTO, tokenDTO);
     }
 
@@ -149,7 +144,7 @@ public class PaymentSteps {
     public void the_service_creates_a_payment() {
         try {
             paymentId = service.createPayment(payment, customerDTO, tokenDTO);
-        } catch (BankServiceException_Exception e) {
+        } catch (BankException e) {
             exception = e;
         }
     }
