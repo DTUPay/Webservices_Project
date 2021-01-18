@@ -44,7 +44,7 @@ public class ReportingSteps {
             payment.setTokenID(token.getTokenID());
             payment.setCustomerID(customerID);
             Calendar calendar = Calendar.getInstance();
-            calendar.add(Calendar.DATE, -i);
+            calendar.add(Calendar.DATE, -1);
             payment.setDate(calendar.getTime());
             if(new Random().nextInt(10) == 9)
                 payment.setStatus(PaymentStatus.REFUNDED);
