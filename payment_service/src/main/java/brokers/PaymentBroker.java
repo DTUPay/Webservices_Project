@@ -185,8 +185,8 @@ public class PaymentBroker implements IMessageBroker {
         messageRepository.removeMessageObject(message.getRequestId());
         TokenDTO tokenDTO = tokenRepository.getMessageObject(message.getRequestId());
         tokenRepository.removeMessageObject(message.getRequestId());
-        System.out.println("original message: " + originalMessage.payload.toString());
-        PaymentDTO paymentDTO = gson.fromJson(originalMessage.payload.toString(), PaymentDTO.class);
+        System.out.println("original message: " + originalMessage.payload);
+
         CustomerDTO customerDTO = null;
         UUID paymentID;
         try{
@@ -203,7 +203,7 @@ public class PaymentBroker implements IMessageBroker {
         }
 
         try{
-            paymentID = paymentService.createPayment(paymentDTO, customerDTO, tokenDTO);
+            paymentID = paymentService.createPayment((PaymentDTO) originalMessage.payload, customerDTO, tokenDTO);
         } catch (BankServiceException_Exception e) {
             reply = createReply(originalMessage);
             reply.setStatus(400); //TODO set correct error code

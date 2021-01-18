@@ -1,16 +1,16 @@
 package dtuPay;
 
+import dtu.ws.fastmoney.*;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
-import io.cucumber.java.en.*;
-
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
 import servants.*;
-import dtu.ws.fastmoney.*;
 
 import java.math.BigDecimal;
 import java.util.UUID;
 
-import static java.lang.System.exit;
 import static org.junit.Assert.*;
 
 public class SuccessfulPaymentSteps {
@@ -36,13 +36,13 @@ public class SuccessfulPaymentSteps {
         //TODO: Create customer and merchant bank accounts
         //Customer: Jens Jensen, 121012-xxxx, 100 DKK
         customer = new Customer("Jens", "Jensen", "121012-xxxx", 100);
-        User bankCustomer = new User();
+        dtu.ws.fastmoney.User bankCustomer = new dtu.ws.fastmoney.User();
         bankCustomer.setFirstName("Jens");
         bankCustomer.setLastName("Jensen");
         bankCustomer.setCprNumber("121514-0001");
 
         try {
-            Account customerAccount = bank.getAccountByCprNumber(bankCustomer.getCprNumber());
+            dtu.ws.fastmoney.Account customerAccount = bank.getAccountByCprNumber(bankCustomer.getCprNumber());
             bank.retireAccount(customerAccount.getId());
         } catch(Exception e) {
             System.out.println(e.toString());
@@ -91,14 +91,11 @@ public class SuccessfulPaymentSteps {
 
     @Given("a customer has a bank account provided by the bank")
     public void aCustomerWithNameAndCprNumberAndBalanceDKKHasABankAccount() {
-        //TODO: Assert that customer is registered with the bank
         assertNotNull(customer.getAccountNumber());
     }
 
     @Given("the customer is registered with DTU Pay")
     public void theCustomerIsRegisteredWithDTUPay() throws Exception {
-        //TODO: Register the customer with DTU pay using management servant
-        //TODO: Set customer id from returned accountID
         customerAccount = new CustomerServant(accountManagement.registerCustomer(customer));
     }
 
@@ -131,12 +128,12 @@ public class SuccessfulPaymentSteps {
 
     @Then("the customer has {int} DKK in his account")
     public void theCustomerHasDKKInHisAccount(int arg0) {
-        assertEquals(customer.getBalance(), arg0);
+        assertEquals(customer.getBalance(), arg0, 0);
     }
 
     @Then("the merchant has {int} DKK in his account")
     public void theMerchantHasDKKInHisAccount(int arg0) {
-        assertEquals(merchant.getBalance(), arg0);
+        assertEquals(merchant.getBalance(), arg0, 0);
     }
 
     @Then("the token is consumed")
@@ -146,7 +143,6 @@ public class SuccessfulPaymentSteps {
 
     @After
     public void removeUserBankAccounts() throws BankServiceException_Exception {
-        //TODO: Remove customer and merchant bank accounts
         bank.retireAccount(customer.getAccountNumber());
         bank.retireAccount(merchant.getAccountNumber());
     }
