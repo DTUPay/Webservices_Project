@@ -87,10 +87,12 @@ public class PaymentSteps {
     public void theCustomerHasTokens(int arg0) {
         assertEquals(customerAccount.getCustomerTokens().size(), 0);
         try {
+            System.out.println("Requesting customer tokens");
             customerAccount.requestTokens(customerAccount.getID(), arg0);
             tokenCount = customerAccount.getCustomerTokens().size();
             System.out.println(customerAccount.getCustomerTokens().size());
             assertEquals(tokenCount, arg0);
+            System.out.println("done");
         } catch (Exception e) {
             e.printStackTrace();
             fail();
@@ -104,7 +106,9 @@ public class PaymentSteps {
 
     @Given("the customer is registered with DTU Pay")
     public void theCustomerIsRegisteredWithDTUPay() throws Exception {
+        System.out.println("Registering customer on DTU Pay");
         customerAccount = new CustomerServant(accountManagement.registerCustomer(customer));
+        System.out.println("done");
     }
 
     @Given("a merchant has a bank account provided by the bank with a balance of {int} DKK")
@@ -114,7 +118,9 @@ public class PaymentSteps {
 
     @Given("the merchant is registered with DTU Pay")
     public void theMerchantIsRegisteredWithDTUPay() throws Exception {
+        System.out.println("Registering customer on DTU Pay");
         merchantAccount = new MerchantServant(accountManagement.registerMerchant(merchant));
+        System.out.println("done");
     }
 
     @Given("a successful payment of {int} DKK has been made to the merchant by the customer")
@@ -127,12 +133,14 @@ public class PaymentSteps {
     public void theCustomerRequestToSeeHisAccountBalance() throws BankServiceException_Exception {
         BigDecimal customerBalance = bank.getAccount(customer.getAccountNumber()).getBalance();
         customer.setBalance(customerBalance.doubleValue());
+        System.out.println("New balance of customer: " + customer.getBalance());
     }
 
     @When("the merchant request to see his account balance")
     public void theMerchantRequestToSeeHisAccountBalance() throws BankServiceException_Exception {
         BigDecimal merchantBalance = bank.getAccount(merchant.getAccountNumber()).getBalance();
         merchant.setBalance(merchantBalance.doubleValue());
+        System.out.println("New balance of merchant: " + merchant.getBalance());
     }
 
     @Then("the payment succeeds")
