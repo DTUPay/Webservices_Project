@@ -1,5 +1,5 @@
 /*
-@author Oliver O. Nielsen
+@author Oliver O. Nielsen & Benjamin
  */
 
 package dtupay;
@@ -24,43 +24,37 @@ public class ManagementAPI {
         return "Welcome to Management Service!";
     }
 
-    @GET
-    @Produces(MediaType.TEXT_PLAIN)
-    public String hello() {
-        return "Welcome to Management Service!";
-    }
-
     @POST
     @Path("/customer")
     @Consumes(MediaType.APPLICATION_JSON)
     public void registerCustomer(@Suspended AsyncResponse response, CustomerDTO customer) {
-        service.registerCustomer(customer, response);
+        service.broker.registerCustomer(customer, response);
     }
 
     @DELETE
     @Path("/customer/{customerID}")
     public void removeCustomer(@Suspended AsyncResponse response, @PathParam("customerID") String customerID) {
-        service.removeCustomer(customerID, response);
+        service.broker.removeCustomer(customerID, response);
     }
 
     @POST
     @Path("/merchant")
     @Produces(MediaType.APPLICATION_JSON)
     public void registerMerchant(@Suspended AsyncResponse response, MerchantDTO merchant) {
-        service.registerMerchant(merchant, response);
+        service.broker.registerMerchant(merchant, response);
     }
 
     @DELETE
     @Path("/merchant/{merchantID}")
     @Consumes(MediaType.APPLICATION_JSON)
     public void removeMerchant(@Suspended AsyncResponse response, @PathParam("merchantID") String merchantID) {
-        service.removeMerchant(merchantID, response);
+        service.broker.removeMerchant(merchantID, response);
     }
 
     @GET
     @Path("/report")
     @Produces(MediaType.APPLICATION_JSON)
-    public String getReport() {
+    public String requestReport() {
         return "Here is your advanced report";
     }
 
