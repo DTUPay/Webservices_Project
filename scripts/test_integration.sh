@@ -8,8 +8,8 @@ if [ -z ${BUILD_NUMBER+x} ]; then export BUILD="build-local"; else export BUILD=
 echo "Starting CI environment"
 docker-compose --project-name continous-integration -f docker-compose.ci.yaml up -d
 
-echo "Sleep 8 seconds before running tests on CI environment"
-sleep 8
+echo "Sleep 30 seconds before running tests on CI environment"
+sleep 30
 
 echo "Get into system_tests directory"
 cd tests
