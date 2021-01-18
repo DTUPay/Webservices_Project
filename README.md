@@ -19,7 +19,7 @@
 ## Useful links
 | Production                                                               | Localhost                      |
 |----------------------|------------------------------------------------------------------------------------|
-| [Rabbit MQ Management](http://g-20.compute.dtu.dk:15672) | [Rabbit MQ Management](http://localhost:15672) |
+| [Rabbit MQ Management](http://g-20.compute.dtu.dk:15672) (username: guest / password: guest)| [Rabbit MQ Management](http://localhost:15672) (username: guest / password: guest)|
 | [Jenkins](http://g-20.compute.dtu.dk:8282/)              |          |
 
 ## Jenkins login info
