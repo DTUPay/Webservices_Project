@@ -14,6 +14,9 @@ public class Customer {
         this.balance = balance;
     }
 
+    public Customer() {
+    }
+
     public String getFirstName() {
         return firstName;
     }
