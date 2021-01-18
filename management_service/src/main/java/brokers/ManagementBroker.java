@@ -1,5 +1,4 @@
 package brokers;
-// @author: Rubatharisan Thirumathyam
 import com.google.gson.Gson;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
@@ -21,7 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 /*
-@author Benjamin Eriksen & ..
+@author Benjamin Eriksen & Rubatharisan Thirumathyam
  */
 
 public class ManagementBroker implements IMessageBroker {
