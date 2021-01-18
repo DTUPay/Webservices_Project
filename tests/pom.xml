@@ -5,7 +5,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>dtuPay</groupId>
-	<artifactId>system_tests</artifactId>
+	<artifactId>tests</artifactId>
 	<version>SNAPSHOT 0.0.1</version>
 
 	<properties>
