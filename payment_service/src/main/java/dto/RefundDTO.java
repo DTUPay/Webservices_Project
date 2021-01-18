@@ -1,8 +1,10 @@
 package dto;
 
+import models.Payload;
+
 import java.util.UUID;
 
-public class RefundDTO {
+public class RefundDTO extends Payload {
     private UUID tokenID;
     private UUID paymentID;
 
