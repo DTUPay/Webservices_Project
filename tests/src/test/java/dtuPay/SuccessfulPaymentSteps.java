@@ -28,7 +28,7 @@ public class SuccessfulPaymentSteps {
 
     @Before
     public void CreateUsersInBank() throws BankServiceException_Exception {
-        service  = new dtu.ws.fastmoney.BankServiceService();
+        service = new dtu.ws.fastmoney.BankServiceService();
         bank = service.getBankServicePort();
 
         System.out.println("Hello world?");
@@ -44,7 +44,7 @@ public class SuccessfulPaymentSteps {
         try {
             dtu.ws.fastmoney.Account customerAccount = bank.getAccountByCprNumber(bankCustomer.getCprNumber());
             bank.retireAccount(customerAccount.getId());
-        } catch(Exception e) {
+        } catch (Exception e) {
             System.out.println(e.toString());
         }
 
@@ -62,7 +62,7 @@ public class SuccessfulPaymentSteps {
         try {
             Account merchantAccount = bank.getAccountByCprNumber(bankMerchant.getCprNumber());
             bank.retireAccount(merchantAccount.getId());
-        } catch(Exception e) {
+        } catch (Exception e) {
             System.out.println(e.toString());
         }
 
@@ -79,7 +79,7 @@ public class SuccessfulPaymentSteps {
     public void theCustomerHasTokens(int arg0) {
         assertEquals(customerAccount.getCustomerTokens().size(), 0);
         try {
-            customerAccount.requestTokens(customerAccount.getID(),arg0);
+            customerAccount.requestTokens(customerAccount.getID(), arg0);
             tokenCount = customerAccount.getCustomerTokens().size();
             System.out.println(customerAccount.getCustomerTokens().size());
             assertEquals(tokenCount, arg0);
@@ -144,7 +144,7 @@ public class SuccessfulPaymentSteps {
 
     @Then("the token is consumed")
     public void theTokenIsConsumed() {
-        assertEquals(tokenCount-1,customerAccount.getCustomerTokens().size());
+        assertEquals(tokenCount - 1, customerAccount.getCustomerTokens().size());
     }
 
     @After

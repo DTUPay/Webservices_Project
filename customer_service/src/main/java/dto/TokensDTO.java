@@ -6,7 +6,7 @@ import java.util.UUID;
 
 public class TokensDTO extends Payload {
     private UUID customerID;
-    private float amount;
+    private int amount;
 
     public UUID getCustomerID() {
         return customerID;
@@ -20,7 +20,7 @@ public class TokensDTO extends Payload {
         return amount;
     }
 
-    public void setAmount(float amount) {
+    public void setAmount(int amount) {
         this.amount = amount;
     }
 }
