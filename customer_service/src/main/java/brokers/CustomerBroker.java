@@ -243,12 +243,12 @@ public class CustomerBroker implements IMessageBroker {
 
     // @TODO: Missing in UML
     // @Status: Implemented
-    public void requestRefund(PaymentDTO payment, AsyncResponse response){
+    public void requestRefund(RefundDTO refund, AsyncResponse response){
 
         Message message = new Message();
         message.setEvent("getRefund");
         message.setService("payment_service");
-        message.setPayload(payment);
+        message.setPayload(refund);
         message.setCallback(new Callback("customer_service", "requestRefundResponse"));
 
         UUID requestId = responseHandler.saveRestResponseObject(response);

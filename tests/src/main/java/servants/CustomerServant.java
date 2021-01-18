@@ -46,12 +46,11 @@ public class CustomerServant {
     }
 
     //TODO: Change message signature to have customerID, merchantID and paymentID
-    public boolean requestRefund(UUID customerID, UUID merchantID, UUID paymentID) {
+    public boolean requestRefund(UUID tokenID, UUID paymentID) {
         RestCommunicator communicator = new RestCommunicator(Service.CUSTOMER);
         String path = "/refund";
         JsonObject refundDto = Json.createObjectBuilder()
-                .add("customerID", customerID.toString())
-                .add("merchantID", merchantID.toString())
+                .add("tokenID", tokenID.toString())
                 .add("paymentID", paymentID.toString())
                 .build();
         try {

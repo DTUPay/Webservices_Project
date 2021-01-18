@@ -140,12 +140,12 @@ public class PaymentSteps {
 
     @Then("the customer has {int} DKK in his account")
     public void theCustomerHasDKKInHisAccount(int arg0) {
-        assertEquals(customer.getBalance(), arg0, 0);
+        assertEquals(arg0, customer.getBalance(), 0);
     }
 
     @Then("the merchant has {int} DKK in his account")
     public void theMerchantHasDKKInHisAccount(int arg0) {
-        assertEquals(merchant.getBalance(), arg0, 0);
+        assertEquals(arg0, merchant.getBalance(), 0);
     }
 
     @Then("the token is consumed")

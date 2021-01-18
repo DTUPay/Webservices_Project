@@ -13,5 +13,5 @@ Feature: Requesting refunds
     * the merchant request to see his account balance
     * the customer request to see his account balance
     Then the payment is refunded
-    * the merchant has 100 DKK in his account
-    * the customer has 1000 DKK in his account
+    * the customer has 100 DKK in his account
+    * the merchant has 1000 DKK in his account
