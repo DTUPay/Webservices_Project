@@ -73,6 +73,9 @@ public class PaymentService {
         if(payment.getStatus() != PaymentStatus.COMPLETED){
             throw new BankException("Payment already refunded");
         }
+        System.out.println("MerchantAccount:" + payment.getMerchantAccountID());
+        System.out.println("CustomerAccount:" + payment.getCustomerAccountID());
+        System.out.println("Amount: " + payment.getAmount());
         System.out.println("Refunding payment...");
         bankService.transferMoneyFromTo(
                 payment.getMerchantAccountID(), // Money from
