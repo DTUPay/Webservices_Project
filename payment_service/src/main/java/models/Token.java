@@ -5,13 +5,13 @@ import java.util.UUID;
 public class Token {
     private UUID TokenID;
     private Date ExpiryDate;
-    private int CustomerID;
+    private UUID CustomerID;
 
     public UUID getTokenID() {
         return TokenID;
     }
 
-    public void setTokenID(int tokenID) {
+    public void setTokenID(UUID tokenID) {
         TokenID = UUID.randomUUID();
     }
 
@@ -23,11 +23,11 @@ public class Token {
         ExpiryDate = expiryDate;
     }
 
-    public int getCustomerID() {
+    public UUID getCustomerID() {
         return CustomerID;
     }
 
-    public void setCustomerID(int customerID) {
+    public void setCustomerID(UUID customerID) {
         CustomerID = customerID;
     }
 }

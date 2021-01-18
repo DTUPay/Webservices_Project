@@ -1,33 +1,31 @@
 package models;
-import java.util.Date;
+
 import java.util.UUID;
 
 public class Token {
-    private UUID TokenID;
-    private Date ExpiryDate;
-    private int CustomerID;
+    private final UUID tokenID;
+    private String customerID;
+    private boolean isUsed;
+
+    public Token(String customerID) {
+        this.tokenID = UUID.randomUUID();
+        this.customerID = customerID;
+        this.isUsed = false;
+    }
 
     public UUID getTokenID() {
-        return TokenID;
+        return this.tokenID;
     }
 
-    public void setTokenID(int tokenID) {
-        TokenID = UUID.randomUUID();
+    public String getCustomerID() {
+        return this.customerID;
     }
 
-    public Date getExpiryDate() {
-        return ExpiryDate;
+    public boolean isUsed() {
+        return this.isUsed;
     }
 
-    public void setExpiryDate(Date expiryDate) {
-        ExpiryDate = expiryDate;
-    }
-
-    public int getCustomerID() {
-        return CustomerID;
-    }
-
-    public void setCustomerID(int customerID) {
-        CustomerID = customerID;
+    public void setUsed(boolean used) {
+        this.isUsed = used;
     }
 }

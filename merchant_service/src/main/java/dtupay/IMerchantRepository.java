@@ -2,10 +2,16 @@ package dtupay;
 
 import models.Merchant;
 
+import java.util.UUID;
+
 public interface IMerchantRepository {
 
-    void registerMerchant(Merchant merchant) throws Exception;
+    void addMerchant(Merchant merchant) ;
 
-    void deleteMerchant(String cpr) throws Exception;
+    void removeMerchant(UUID merchantID);
+
+    Merchant getMerchant(UUID merchantID);
+
+    boolean hasMerchant(UUID merchantID);
 
 }

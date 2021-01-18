@@ -1,18 +1,20 @@
 /*
-@author Oliver O. Nielsen & Bjørn Wilting
+@author Oliver O. Nielsen & Bjørn Wilting & Benjamin Eriksen
  */
 
 package dtupay;
 
-import exceptions.CustomerException;
 import models.Customer;
+
+import java.util.UUID;
 
 public interface ICustomerRepository {
 
-    void registerCustomer(Customer customer) throws CustomerException;
+    void addCustomer(Customer customer);
 
-    void deleteCustomer(String cpr) throws CustomerException;
+    Customer getCustomer(UUID customerID);
 
-    Customer getCustomer(String cpr) throws CustomerException;
+    void removeCustomer(UUID customerID);
 
+    boolean hasCustomer(UUID customerID);
 }

@@ -1,46 +1,32 @@
 /*
-@author Oliver O. Nielsen & Bjørn Wilting
+@author Oliver O. Nielsen & Bjørn Wilting & Benjamin Eriksen
  */
 
 package models;
 
+import javax.json.bind.annotation.JsonbCreator;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+import java.util.UUID;
 
 public class Customer {
-    private int customerID;
     private String firstName;
     private String lastName;
-    private String CPRNumber;
-    private List<Token> tokens;
+    private String accountID;
+    private UUID customerID;
+    private List<UUID> tokenIDs;
 
     public Customer(){
-
+        this.tokenIDs = new ArrayList<>();
     }
-    public Customer(String firstName, String lastName, String CPR){
+
+    public Customer(String firstName, String lastName, String accountID, UUID customerID){
         this.firstName = firstName;
         this.lastName = lastName;
-        this.CPRNumber = CPR;
-        this.tokens = new ArrayList<Token>();
-        this.customerID = new Random().nextInt(1000000)+1;
-    }
-
-    public Customer(int id, String firstName, String lastName, String CPRNumber){
-        this.customerID = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.CPRNumber = CPRNumber;
-        //Initialize empty array if none is provided
-        this.tokens = new ArrayList<>();
-    }
-
-    public int getCustomerID() {
-        return customerID;
-    }
-
-    public void setCustomerID(int customerID) {
+        this.accountID = accountID;
         this.customerID = customerID;
+        this.accountID = accountID;
+        this.tokenIDs = new ArrayList<>();
     }
 
     public String getFirstName() {
@@ -59,19 +45,35 @@ public class Customer {
         this.lastName = lastName;
     }
 
-    public String getCPRNumber() {
-        return CPRNumber;
+    public UUID getCustomerID() {
+        return customerID;
     }
 
-    public void setCPRNumber(String CPRNumber) {
-        this.CPRNumber = CPRNumber;
+    public void setCustomerID(UUID customerID) {
+        if(this.customerID != null)
+            return;
+        this.customerID = customerID;
     }
 
-    public List<Token> getTokens() {
-        return tokens;
+    public List<UUID> getTokenIDs() {
+        return tokenIDs;
     }
 
-    public void setTokens(List<Token> tokens) {
-        this.tokens = tokens;
+    public void setTokenIDs(List<UUID> tokenIDs) {
+        this.tokenIDs = tokenIDs;
+    }
+
+    public String getAccountID() {
+        return accountID;
+    }
+
+    public void setAccountID(String accountID) {
+        this.accountID = accountID;
+    }
+
+    public void addTokens(List<UUID> tokens){
+        tokens.forEach((token) -> {
+            this.tokenIDs.add(token);
+        });
     }
 }

@@ -393,7 +393,6 @@ definitions:
     properties:
       paymentid:
         type: string
-
 #Other definitions
 
   customer:

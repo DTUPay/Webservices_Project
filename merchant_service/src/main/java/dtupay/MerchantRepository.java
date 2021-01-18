@@ -4,18 +4,37 @@ package dtupay;
 import models.Merchant;
 
 import java.util.HashMap;
+import java.util.UUID;
 
 public class MerchantRepository implements IMerchantRepository {
 
-    HashMap<String, Merchant> merchants = new HashMap<>();
+    HashMap<UUID, Merchant> merchants = new HashMap<>();
+    private static MerchantRepository instance = new MerchantRepository();
+    private MerchantRepository(){}
+
+    //Get the only object available
+    public static MerchantRepository getInstance(){
+        return instance;
+    }
+
 
     @Override
-    public void registerMerchant(Merchant merchant) throws Exception {
-        merchants.put(merchant.getCVR(), merchant);
+    public void addMerchant(Merchant merchant) {
+        merchants.put(merchant.getMerchantID(), merchant);
     }
 
     @Override
-    public void deleteMerchant(String cpr) throws Exception {
-        merchants.remove(cpr);
+    public void removeMerchant(UUID merchantID) {
+        merchants.remove(merchantID);
+    }
+
+    @Override
+    public Merchant getMerchant(UUID merchantID) {
+        return merchants.get(merchantID);
+    }
+
+    @Override
+    public boolean hasMerchant(UUID merchantID) {
+        return merchants.containsKey(merchantID);
     }
 }

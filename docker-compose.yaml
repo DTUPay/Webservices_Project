@@ -37,11 +37,14 @@ services:
       - ENVIRONMENT=PRODUCTION
     depends_on:
       - rabbitmq
+  reporting_service:
+    image: reporting_service:${BUILD}
+    environment:
+      - ENVIRONMENT=PRODUCTION
+    depends_on:
+      - rabbitmq
   rabbitmq:
     image: rabbitmq:3.8.9-management
     ports:
       - 15672:15672
-    # volumes:
-    #  - rabbitmq-volume01:/var/lib/rabbitmq
-volumes:
-  rabbitmq-volume01: {}
+      - 5672:5672

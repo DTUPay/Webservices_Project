@@ -1,20 +1,20 @@
 package dtupay;
 
-import exceptions.PaymentException;
 import models.Payment;
-import models.PaymentStatus;
-import models.Token;
 
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * @author Mikkel Rosenfeldt Anderson & Laura & Benjamin
+ */
 public interface IPaymentRepository {
-    Payment getPayment(UUID PaymentID) throws PaymentException;
 
-    UUID requestPayment(int amount, int merchantID);
+    void addPayment(Payment payment);
 
-    PaymentStatus acceptPayment(UUID PaymentID, Token token);
+    Payment getPayment(UUID paymentID);
 
-    List<Payment> getManagerSummary();
+    List<Payment> getPayments();
 
+    List<Payment> getPayments(UUID merchantID);
 }

@@ -12,7 +12,7 @@ echo "Sleep 8 seconds before running tests on CI environment"
 sleep 8
 
 echo "Get into system_tests directory"
-cd system_tests
+cd tests
 
 echo "Executing tests"
-# mvn test
+mvn test

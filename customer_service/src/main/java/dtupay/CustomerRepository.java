@@ -1,29 +1,36 @@
+/*
+@author Benjamin Eriksen
+ */
+
 package dtupay;
 
-import exceptions.CustomerException;
 import models.Customer;
 
 import java.util.HashMap;
+import java.util.UUID;
+
 public class CustomerRepository implements ICustomerRepository {
 
-    HashMap<String, Customer> customers = new HashMap<>();
+    HashMap<UUID, Customer> customers = new HashMap<>();
 
     @Override
-    public void registerCustomer(Customer customer) throws CustomerException {
-        // TODO: Handle customer already exists
-        customers.put(customer.getCPRNumber(), customer);
+    public void addCustomer(Customer customer) {
+        customers.put(customer.getCustomerID(), customer);
     }
 
     @Override
-    public void deleteCustomer(String cpr) throws CustomerException {
-        // TODO: Handle customer not found
-        customers.remove(cpr);
+    public Customer getCustomer(UUID customerID)  {
+        return customers.get(customerID);
     }
 
     @Override
-    public Customer getCustomer(String cpr) throws CustomerException {
-        // TODO: Handle customer not found
-        return customers.get(cpr);
+    public void removeCustomer(UUID customerID) {
+        customers.remove(customerID);
+    }
+
+    @Override
+    public boolean hasCustomer(UUID customerID) {
+        return customers.containsKey(customerID);
     }
 
 }

@@ -1,5 +1,5 @@
 /*
-@author Benjamin Eriksen
+@author Benjamin Eriksen & Rubatharisan Thirumathyam
  */
 
 package dtupay;
@@ -12,6 +12,10 @@ import java.util.UUID;
 public class TokenRepository implements ITokenRepository {
 
     HashMap<UUID, Token> tokens = new HashMap<>();
+    private static TokenRepository instance = new TokenRepository();
+    public static TokenRepository getInstance(){
+        return instance;
+    }
 
     @Override
     public void addToken(Token token) {

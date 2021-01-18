@@ -1,18 +1,43 @@
 # Webservices Project
 [![Build Status](http://g-20.compute.dtu.dk:8282/buildStatus/icon?job=DTUPay-CI_CD&build=0&subject=CI/CD)](http://g-20.compute.dtu.dk:8282/job/DTUPay-CI_CD/lastBuild/)
 
+## Participants
+* Björn Wilting (s184214)
+* Mikkel Rosenfeldt Anderson (s184230)
+* Laura Sønderskov Hansen (s184234)
+* Oliver Orla Nielsen (s164917)
+* Benjamin Eriksen (s153724)
+* Rubatharisan Thirumathyam (s205904)
+
 ## Web-service (debug) endpoints
-| Name                 | Production                                                                                               |
-|----------------------|----------------------------------------------------------------------------------------------------------|
-| Management Service   | [http://g-20.compute.dtu.dk:8080/management_service](http://g-20.compute.dtu.dk:8080/management_service) |
-| Customer Service     | [http://g-20.compute.dtu.dk:8081/customer_service](http://g-20.compute.dtu.dk:8081/customer_service)     |
-| Merchant Service     | [http://g-20.compute.dtu.dk:8082/merchant_service](http://g-20.compute.dtu.dk:8082/merchant_service)     |
+| Production                                                               | Localhost |
+|--------------------------------------------------------------------------|-----------|
+| [Management Service](http://g-20.compute.dtu.dk:8080/management_service) | [Management Service](http://localhost:8080/management_service) |
+| [Customer service](http://g-20.compute.dtu.dk:8081/customer_service)     | [Customer service](http://localhost:8081/customer_service)     |
+| [Merchant service](http://g-20.compute.dtu.dk:8082/merchant_service)     | [Merchant service](http://localhost:8082/merchant_service)     |
 
 ## Useful links
-| Name                 | Link                                                                                                     |
+| Production                                                               | Localhost                      |
+|----------------------|------------------------------------------------------------------------------------|
+| [Rabbit MQ Management](http://g-20.compute.dtu.dk:15672) | [Rabbit MQ Management](http://localhost:15672) |
+| [Jenkins](http://g-20.compute.dtu.dk:8282/)              |          |
+
+## Jenkins login info
+| Username | Password | Associated email |
+|----------------------|---------------------------------------------|--------------------------------------|
+| Hubert | Hubert | huba@dtu.dk             |
+| Ragnar | Ragnar | s111975@student.dtu.dk  |
+| Georg  | Georg  | s134545@student.dtu.dk  |
+
+## Implemented services
+| Name                 | Status                                                                                                     |
 |----------------------|----------------------------------------------------------------------------------------------------------|
-| Rabbit MQ Management | [http://g-20.compute.dtu.dk:15672](http://g-20.compute.dtu.dk:15672)                                     |
-| Jenkins.             | [http://g-20.compute.dtu.dk:8282/](http://g-20.compute.dtu.dk:8282/)                                     |
+| management_service   | Implemented                                                                                              |
+| merchant_service     | Implemented                                                                                             |
+| customer_service     | Implemented                                                                                              |
+| token_service        | Drafting                                                                                              |
+| payment_service      | In progress                                                                                              |
+| reporting_service    | Drafting                                                                                                 |
 
 ## How to run
 Build and test all services
@@ -34,16 +59,25 @@ bash scripts/run_integration.sh
 ```
 message:
 {
-  "event": "addTokens",
+  "event": "<event>",
+  "status": 200,
+  "statusMessage": "<NONE>",
   "requestId": <UUID>,
+  "messageId": <UUID>,
   "payload": {
-    "customerId": 1234,
-    "amount": 5
+    "customerID": "<UUID>", # example
+    "amount": 5 # example
+  },
+  "callback": {
+    "service": "<service_name>",
+    "event": "<event>"
   }
 }
 
-RabbitMQ.sendMessage("token_service", message); # Actor: customer_service
+RabbitMQ.sendMessage("<service_name>", message, callback = null);
 ```
+## Message response <-> requests
+https://gist.github.com/Rubatharisan/64c3737145e8ff2805deeed104808a00 (draft)
 
 ## Server Ports
 ![Ports](docs/ports.png)

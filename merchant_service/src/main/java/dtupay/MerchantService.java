@@ -1,47 +1,67 @@
 package dtupay;
 
+import brokers.MerchantBroker;
+import com.google.gson.Gson;
+import exceptions.MerchantException;
 import io.quarkus.runtime.Quarkus;
 import io.quarkus.runtime.annotations.QuarkusMain;
+import models.Merchant;
 
-import javax.json.JsonObject;
-import javax.ws.rs.container.AsyncResponse;
-import javax.ws.rs.core.Response;
-import java.util.HashMap;
 import java.util.UUID;
 
+
+/**
+ * @author Mikkel Rosenfeldt Anderson & Benjamin
+ */
 @QuarkusMain
 public class MerchantService {
-    RabbitMq rabbitMq;
-    public HashMap<UUID, AsyncResponse> pendingRequests = new HashMap<>();
+    MerchantBroker broker;
+    IMerchantRepository merchantRepository = MerchantRepository.getInstance();
+    RestResponseHandler RestfulHandler = RestResponseHandler.getInstance();
+    private static MerchantService instance = new MerchantService();
+    Gson gson = new Gson();
 
     public MerchantService() {
-        try {
-            String serviceName = System.getenv("SERVICE_NAME"); //merchant_service
-            System.out.println(serviceName + " started");
-            this.rabbitMq = new RabbitMq(serviceName, this);
-        } catch (Exception e) { e.printStackTrace(); }
+        broker = new MerchantBroker(this);
+    }
+    public static MerchantService getInstance(){
+        return instance;
     }
 
     public static void main(String[] args) {
-        MerchantService service = new MerchantService();
+        MerchantService service = MerchantService.getInstance();
         Quarkus.run();
     }
 
-    public UUID addPendingRequest(AsyncResponse asyncResponse){
-        UUID uuid = UUID.randomUUID();
-        pendingRequests.put(uuid, asyncResponse);
-        return uuid;
+
+    public UUID registerMerchant(Merchant merchant) throws MerchantException {
+        UUID merchantID;
+
+        while(true) {
+            merchantID = UUID.randomUUID();
+            if(!merchantRepository.hasMerchant(merchantID)){
+                break;
+            }
+        }
+
+        merchant.setMerchantID(merchantID);
+        merchantRepository.addMerchant(merchant);
+        return merchant.getMerchantID();
     }
 
-    public void respondPendingRequest(UUID uuid){
-        pendingRequests.get(uuid).resume(Response.status(202).build());
-        pendingRequests.remove(uuid);
+    // @Status: Implemented
+    public void removeMerchant(UUID merchantID) throws MerchantException {
+        System.out.println(merchantID);
+        if (merchantRepository.hasMerchant(merchantID)) {
+            merchantRepository.removeMerchant(merchantID);
+        }
+        else throw new MerchantException("Merchant with given merchantID doesn't exist");
     }
 
-    public void demo(JsonObject jsonObject){
-        // UUID needs to be trimmed after convertion from JSON
-        String uuidString = jsonObject.get("uuid").toString().replaceAll("\"", "").replaceAll("\\\\", "");
-        UUID uuid = UUID.fromString(uuidString);
-        respondPendingRequest(uuid);
+    public Merchant getMerchant(UUID merchantID) throws MerchantException {
+        if (merchantRepository.hasMerchant(merchantID)) {
+            return merchantRepository.getMerchant(merchantID);
+        }
+        else throw new MerchantException("Merchant with given merchantID doesn't exist");
     }
 }

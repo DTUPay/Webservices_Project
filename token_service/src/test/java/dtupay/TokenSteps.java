@@ -1,4 +1,6 @@
-// @author: Benjamin Eriksen & Rubatharisan Thirumathyam
+/*
+@author Benjamin Eriksen & Rubatharisan Thirumathyam
+ */
 
 package dtupay;
 
@@ -18,26 +20,28 @@ public class TokenSteps {
     TokenService tokenService = new TokenService();
     ArrayList<UUID> tokenIDs;
     UUID tokenID;
-    String customerID;
-    boolean isValid;
+    UUID customerID;
+    UUID tokenBelongsTo;
     private String errorMsg;
 
     @Given("a request for {int} tokens for a customer with id {string}")
     public void aRequestForTokensForACustomerWithId(int amount, String id) {
-        this.customerID = id;
-        this.tokenIDs = this.tokenService.addTokens(id, amount);
+        UUID customerID = UUID.fromString(id);
+        this.customerID = customerID;
+        this.tokenIDs = this.tokenService.addTokens(customerID, amount);
     }
 
     @Then("those tokens are created for the customer")
     public void thoseTokensAreCreatedForTheCustomer() throws TokenException {
         for (UUID tokenID : this.tokenIDs) {
-            this.tokenService.isTokenValid(tokenID, this.customerID);
+            assertEquals(this.tokenService.isTokenValid(tokenID),this.customerID);
         }
     }
 
 
     @Given("a tokenID and a customerID {string}")
-    public void aTokenIDAndACustomerID(String customerID) {
+    public void aTokenIDAndACustomerID(String id) {
+        UUID customerID = UUID.fromString(id);
         this.customerID = customerID;
         this.tokenID = this.tokenService.addTokens(customerID, 1).get(0);
 
@@ -45,7 +49,7 @@ public class TokenSteps {
 
     @And("a corresponding token in the token repository")
     public void aCorrespondingTokenInTheTokenRepository() throws TokenException {
-        this.tokenService.isTokenValid(this.tokenID, this.customerID);
+        assertEquals(this.tokenService.isTokenValid(this.tokenID),this.customerID);
     }
 
     @When("the token is used")
@@ -58,8 +62,14 @@ public class TokenSteps {
     }
 
     @Then("the token is no longer active")
-    public void theTokenIsNoLongerActive() throws TokenException {
-        this.tokenService.isTokenValid(tokenID, this.customerID);
+    public void theTokenIsNoLongerActive() {
+        try {
+            this.tokenService.isTokenValid(tokenID);
+            fail();
+        } catch (TokenException e) {
+            assertEquals(e.getMessage(), "Token has already been used");
+        }
+
 
     }
 
@@ -87,31 +97,21 @@ public class TokenSteps {
     @When("validity is checked")
     public void validityIsChecked() {
         try {
-            this.isValid = this.tokenService.isTokenValid(this.tokenID,this.customerID);
+            tokenBelongsTo = this.tokenService.isTokenValid(this.tokenID);
         } catch (TokenException te) {
             this.errorMsg = te.getMessage();
         }
     }
 
-    @Then("the response is valid")
-    public void theResponseIsValid() {
-        assertTrue(this.isValid);
-    }
-
-    @Then("the response is invalid")
-    public void theResponseIsInvalid() {
-        assertFalse(this.isValid);
-    }
-
     @And("that token is valid")
     public void thatTokenIsValid() throws TokenException {
-        assertTrue(this.tokenService.isTokenValid(this.tokenID,this.customerID));
+        this.tokenService.isTokenValid(this.tokenID);
     }
 
-    @And("that token is invalid")
-    public void thatTokenIsInvalid() throws TokenException {
-        this.tokenService.useToken(tokenID);
-        assertFalse(this.tokenService.isTokenValid(this.tokenID,this.customerID));
+    @Then("the response is the customerID {string}")
+    public void theResponseIsTheCustomerID(String customerID) throws TokenException {
+        UUID customerIdInUUID = UUID.fromString(customerID);
+        assertEquals(customerIdInUUID,this.tokenService.isTokenValid(this.tokenID));
     }
 }
 

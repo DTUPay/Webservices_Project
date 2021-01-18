@@ -132,7 +132,6 @@ local.properties
 .idea/modules.xml
 .idea/*.iml
 .idea/modules
-*.iml
 *.ipr
 
 # CMake
@@ -236,5 +235,8 @@ buildNumber.properties
 .mvn/timing.properties
 # https://github.com/takari/maven-wrapper#usage-without-binary-jar
 .mvn/wrapper/maven-wrapper.jar
+*.iml
 
 # End of https://www.toptal.com/developers/gitignore/api/intellij,eclipse,maven,java
+
+documentation/

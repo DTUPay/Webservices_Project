@@ -5,38 +5,42 @@
 package dtupay;
 
 
+import brokers.TokenBroker;
 import exceptions.TokenException;
-import models.Token;
 import io.quarkus.runtime.Quarkus;
 import io.quarkus.runtime.annotations.QuarkusMain;
+import models.Token;
 
-import javax.json.Json;
-import javax.json.JsonObject;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
+/**
+ * @author Oliver O. Nielsen & Rubatharisan Thirumathyam & Benjamin Eriksen & Mikkel Rosenfeldt Anderson
+ */
 @QuarkusMain
 public class TokenService {
-    ITokenRepository tokenRepository;
-    RabbitMq rabbitMq;
-
-
+    private static TokenService instance = new TokenService();
+    ITokenRepository tokenRepository = TokenRepository.getInstance();
+    TokenBroker broker;
     public TokenService() {
-        try {
-            String serviceName = System.getenv("SERVICE_NAME"); //token_service
-            System.out.println(serviceName + " started");
-            this.rabbitMq = new RabbitMq(serviceName, this);
-        } catch (Exception e) { e.printStackTrace(); }
-        this.tokenRepository = new TokenRepository();
+        broker = new TokenBroker(this);
     }
+
+    public static void main(String[] args) {
+        TokenService service = TokenService.getInstance();
+        Quarkus.run();
+    }
+
+    public static TokenService getInstance(){
+        return instance;
+    }
+
 
     /*
         TokenService Functionality
      */
 
-    public ArrayList<UUID> addTokens(String customerID, int amount) {
-        //TODO: Verify amount of tokens! -> Do in CustomerService
+    public ArrayList<UUID> addTokens(UUID customerID, int amount) {
         ArrayList<UUID> tokenIDs = new ArrayList<>();
         for (int i = 0; i< amount; i++) {
             Token token = new Token(customerID);
@@ -46,61 +50,32 @@ public class TokenService {
         return tokenIDs;
     }
 
+    public boolean useToken(UUID tokenID) throws TokenException {
+        Token token = getToken(tokenID);
+        if (!token.isUsed()){
+            token.setUsed(true);
+            return true;
+        } else {
+            throw new TokenException("Token has already been used");
+        }
+    }
 
-    public void useToken(UUID tokenID) throws TokenException {
+    public Token getToken(UUID tokenID) throws TokenException {
         if (tokenRepository.containsToken(tokenID)) {
-            if (!tokenRepository.getToken(tokenID).isUsed()){
-                tokenRepository.getToken(tokenID).setUsed(true);
-            } else {
+            return tokenRepository.getToken(tokenID);
+        }
+        throw new TokenException("Token doesn't exist");
+    }
+
+    public UUID isTokenValid(UUID tokenID) throws TokenException {
+        if (this.tokenRepository.containsToken(tokenID)) {
+            if (!this.tokenRepository.getToken(tokenID).isUsed()) {
+                return this.tokenRepository.getToken(tokenID).getCustomerID();
+            }
+            else {
                 throw new TokenException("Token has already been used");
             }
         }
         throw new TokenException("Token doesn't exist");
     }
-
-    public boolean isTokenValid(UUID tokenID, String customerID) throws TokenException {
-        if (this.tokenRepository.containsToken(tokenID)) {
-            return this.tokenRepository.getToken(tokenID).getCustomerID().equals(customerID) && !this.tokenRepository.getToken(tokenID).isUsed();
-        }
-        throw new TokenException("Token doesn't exist");
-    }
-
-    /*
-        RabbitMQ call and callback
-     */
-
-
-    public static void main(String[] args) {
-        TokenService service = new TokenService();
-        Quarkus.run();
-    }
-
-
-    private void addTokens(JsonObject jsonObject){
-        JsonObject j = (JsonObject) jsonObject.get("payload");
-        System.out.println("Next json parse success");
-        List<UUID> tokenIds = addTokens(
-                j.get("customerId").toString(),
-                Integer.parseInt(j.get("amount").toString())
-        );
-        System.out.println("Amount and customerID parse success");
-        String uuid = jsonObject.get("requestId").toString();
-        JsonObject response = Json.createObjectBuilder()
-                .add("hello", "hello")
-                .add("uuid", uuid)
-                //.add("requestId", uuid.toString())
-                .build();
-        System.out.println("Response created");
-        rabbitMq.sendMessage("customer_service", response);
-
-    }
-        //rabbitMqTest.sendMessage("customer_service", response);
-
-    public void demo(JsonObject jsonObject){
-        // Implement me
-    }
-
-
-
-
 }
