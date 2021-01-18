@@ -1,5 +1,5 @@
 package dtupay;
-
+// @author: Rubatharisan Thirumathyam & Oliver O. Nielsen
 import javax.ws.rs.container.AsyncResponse;
 import java.util.HashMap;
 import java.util.UUID;
@@ -15,15 +15,15 @@ public class RestResponseHandler {
         return instance;
     }
 
-    boolean containsRestResponseObject(UUID requestId){
+    public boolean containsRestResponseObject(UUID requestId){
         return this.pendingRequests.containsKey(requestId);
     }
 
-    AsyncResponse getRestResponseObject(UUID requestId){
+    public AsyncResponse getRestResponseObject(UUID requestId){
         return this.pendingRequests.get(requestId);
     }
 
-    void removeRestResponseObject(UUID requestId){
+    public void removeRestResponseObject(UUID requestId){
         pendingRequests.remove(requestId);
     }
 
