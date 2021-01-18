@@ -6,7 +6,6 @@ package dtupay;
 
 
 import brokers.CustomerBroker;
-import com.google.gson.Gson;
 import exceptions.CustomerException;
 import io.quarkus.runtime.Quarkus;
 import io.quarkus.runtime.annotations.QuarkusMain;
@@ -24,7 +23,6 @@ public class CustomerService {
     private static CustomerService instance = new CustomerService();
     CustomerBroker broker;
     ICustomerRepository customerRepository = new CustomerRepository();
-    Gson gson = new Gson();
 
     public CustomerService() {
         broker = new CustomerBroker(this);
@@ -71,22 +69,6 @@ public class CustomerService {
     public boolean hasCustomer(UUID customerID) {
         return customerRepository.hasCustomer(customerID);
     }
-
-    /*
-    If not irrelevant please notify Benjamin for UML update
-    public UUID getUnusedToken(UUID customerID) throws CustomerException {
-        if (customerRepository.hasCustomer(customerID)) {
-            try {
-                return customerRepository.getCustomer(customerID).getTokenIDs().remove(0);
-            } catch (IndexOutOfBoundsException e) {
-                throw new CustomerException("No more tokens left");
-            }
-        } else {
-            throw new CustomerException("Customer with given customerID doesn't exist");
-        }
-    }
-
-     */
 
     // Adds tokens to Customer
     public void addTokens(UUID customerID, List<UUID> tokens) throws CustomerException {

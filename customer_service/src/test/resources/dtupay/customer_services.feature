@@ -15,22 +15,6 @@ Feature: Manage customers
     Then an error message with "Customer with given customerID doesn't exist" is thrown
     And a customer with accountID "123456xxxx" does not exist in the repository
 
-  Scenario: Get unused token
-    Given a new customer with name "Rich" "Kid" and accountID "310819xxxx" that does exist in the repository
-    And has a unused token
-    And the customer request a unused token
-    Then the token is removed from the customers token
-
-  Scenario: Get unused token - no more tokens left
-    Given a new customer with name "Poor" "Kid" and accountID "111111xxxx" that does exist in the repository
-    And the customer request a unused token
-    Then an error message with "No more tokens left" is thrown
-
-  Scenario: Get unused token - no more tokens left
-    Given a new customer with name "What" "Kid" and accountID "111111????" that does not exist in the repository
-    And the customer request a unused token
-    Then an error message with "Customer with given customerID doesn't exist" is thrown
-
   Scenario: Invalid customerID should throw a exception
     Given a random customerID that does not exist
     Then an error message with "Customer with given customerID doesn't exist" is thrown
