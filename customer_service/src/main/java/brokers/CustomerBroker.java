@@ -260,7 +260,6 @@ public class CustomerBroker implements IMessageBroker {
     // @TODO: Missing in UML
     // @Status: implemented
     public void requestTokens(TokensDTO token, AsyncResponse response) {
-
         try {
             customerService.canRequestTokens(token.getCustomerID(), token.getAmount());
         } catch (CustomerException ce) {

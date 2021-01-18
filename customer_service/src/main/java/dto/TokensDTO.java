@@ -16,7 +16,7 @@ public class TokensDTO extends Payload {
         this.customerID = customerID;
     }
 
-    public float getAmount() {
+    public int getAmount() {
         return amount;
     }
 

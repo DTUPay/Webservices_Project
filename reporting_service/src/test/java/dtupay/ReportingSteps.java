@@ -44,7 +44,7 @@ public class ReportingSteps {
             payment.setTokenID(token.getTokenID());
             payment.setCustomerID(customerID);
             Calendar calendar = Calendar.getInstance();
-            calendar.add(Calendar.DATE, -i);
+            calendar.add(Calendar.DATE, -1);
             payment.setDate(calendar.getTime());
             if(new Random().nextInt(10) == 9)
                 payment.setStatus(PaymentStatus.REFUNDED);
@@ -66,8 +66,9 @@ public class ReportingSteps {
     public void aRequestsAReport(String arg0) {
         ReportRequestDTO dto = new ReportRequestDTO();
         Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DATE, 1);
         dto.setToDate(calendar.getTime());
-        calendar.add(Calendar.DATE, -10);
+        calendar.add(Calendar.DATE, -200);
         dto.setFromDate(calendar.getTime());
 
         switch (arg0) {
