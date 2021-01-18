@@ -35,9 +35,9 @@
 | management_service   | Implemented                                                                                              |
 | merchant_service     | Implemented                                                                                             |
 | customer_service     | Implemented                                                                                              |
-| token_service        | Drafting                                                                                              |
-| payment_service      | In progress                                                                                              |
-| reporting_service    | Drafting                                                                                                 |
+| token_service        | Implemented                                                                                              |
+| payment_service      | Implemented                                                                                              |
+| reporting_service    | Implemented                                                                                                 |
 
 ## How to run
 Build and test all services
