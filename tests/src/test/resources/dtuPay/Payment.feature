@@ -16,7 +16,16 @@ Feature: Making a payment
     * the customer has 80 DKK in his account
     * the merchant has 1020 DKK in his account
 
+
   Scenario: Attempt to pay with invalid token
+    Given the customer has no tokens
+    When the customer provides an invalid token
+    * the merchant authorizes a payment with the customers token and an amount of 20 DKK
+    * the customer request to see his account balance
+    * the merchant request to see his account balance
+    Then the payment fails
+    * the customer has 100 DKK in his account
+    * the merchant has 1000 DKK in his account
 
   Scenario: Payment with insufficient funds
 
