@@ -108,12 +108,15 @@ public class ReportingBroker implements IMessageBroker {
             case "getManagerReport":
                 System.out.println("getManagerReport event caught");
                 getManagerReport(message, payload);
+                break;
             case "getMerchantReport":
                 System.out.println("getMerchantReport event caught");
                 getMerchantReport(message, payload);
+                break;
             case "getCustomerReport":
                 System.out.println("getCustomerReport event caught");
                 getCustomerReport(message, payload);
+                break;
             default:
                 System.out.println("Event not handled: " + message.getEvent());
         }
