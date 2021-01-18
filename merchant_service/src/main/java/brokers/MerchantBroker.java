@@ -252,7 +252,7 @@ public class MerchantBroker implements IMessageBroker {
         //Return status of rabbitMQ request
         AsyncResponse request = responsehandler.getRestResponseObject(message.getRequestId());
         responsehandler.removeRestResponseObject(message.getRequestId());
-        request.resume(Response.status(message.getStatus()).entity(gson.fromJson(payload.toString(), PaymentIDDTO.class)));
+        request.resume(Response.status(message.getStatus()).entity(gson.fromJson(payload.toString(), PaymentIDDTO.class)).build());
     }
     
     /*
