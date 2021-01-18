@@ -185,6 +185,10 @@ public class PaymentSteps {
 
     @When("the customer request to have the payment refunded")
     public void theCustomerRequestToHaveThePaymentRefunded() {
-        paymentRefunded = customerAccount.requestRefund(customerAccount.getID(), merchantAccount.getId(), paymentID);
+        try {
+            paymentRefunded = customerAccount.requestRefund(customerAccount.selectToken(), paymentID);
+        } catch (Exception e) {
+            exception = e;
+        }
     }
 }
