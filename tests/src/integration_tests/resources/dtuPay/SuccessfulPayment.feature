@@ -16,5 +16,3 @@ Feature: Successful Payment
     * the customer has 80 DKK in his account
     * the merchant has 1020 DKK in his account
 
-
-

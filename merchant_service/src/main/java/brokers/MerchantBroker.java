@@ -132,9 +132,11 @@ public class MerchantBroker implements IMessageBroker {
             case "requestPaymentComplete":
                 System.out.println("requestPaymentComplete reveiced");
                 requestPaymentComplete(message, payload);
+                break;
             case "getMerchantById":
                 System.out.println("getMerchantById received");
                 getMerchantById(message, payload);
+                break;
             default:
                 System.out.println("Event not handled: " + message.getEvent());
         }
