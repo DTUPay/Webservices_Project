@@ -231,6 +231,7 @@ public class PaymentBroker implements IMessageBroker {
         Message reply;
         Message originalMessage = messageRepository.getMessageObject(message.getRequestId());
         messageRepository.removeMessageObject(message.getRequestId());
+        RefundDTO refundDTO = (RefundDTO) originalMessage.getPayload();
         TokenDTO tokenDTO = null;
         try{
             tokenDTO = gson.fromJson(payload.toString(), TokenDTO.class);
@@ -246,7 +247,7 @@ public class PaymentBroker implements IMessageBroker {
         }
 
         try{
-            paymentService.refundPayment((RefundDTO) originalMessage.getPayload(), tokenDTO);
+            paymentService.refundPayment(refundDTO, tokenDTO);
         } catch (Exception e) {
             reply = createReply(originalMessage);
             reply.setStatus(404); //TODO set correct error code
