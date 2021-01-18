@@ -277,11 +277,14 @@ public class PaymentBroker implements IMessageBroker {
 
     public void reportTransactionUpdate(Payment payment){
         Message message = new Message();
-        payment.setMerchantAccountID("redacted");
-        payment.setCustomerAccountID("redacted");
+        String text = gson.toJson(payment);
+        Payment paymentClone = gson.fromJson(text, Payment.class);
+
+        paymentClone.setMerchantAccountID("redacted");
+        paymentClone.setCustomerAccountID("redacted");
         message.setEvent("transactionUpdate");
         message.setService("reporting_service");
-        message.setPayload(payment);
+        message.setPayload(paymentClone);
         sendMessage(message);
     }
 
