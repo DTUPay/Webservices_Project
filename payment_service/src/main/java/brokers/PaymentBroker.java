@@ -11,8 +11,9 @@ import dtupay.MessageRepository;
 import dtupay.PaymentRepository;
 import dtupay.PaymentService;
 import dtupay.TokenRepository;
-import exceptions.BankException;
-import models.*;
+import models.Callback;
+import models.Message;
+import models.Payment;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -261,11 +262,11 @@ public class PaymentBroker implements IMessageBroker {
         reportTransactionUpdate(paymentRepository.getPayment(refundDTO.getPaymentID()));
     }
 
-    public void useToken(UUID tokenID, String callbackEvent, UUID reguestID){
+    public void useToken(UUID tokenID, String callbackEvent, UUID requestID){
         Message message = new Message();
         message.setEvent("useToken");
         message.setService("token_service");
-        message.setRequestId(reguestID);
+        message.setRequestId(requestID);
 
         TokenIDDTO payload = new TokenIDDTO();
         payload.setTokenID(tokenID);
