@@ -1,21 +1,27 @@
 package dtupay;
 
 import brokers.PaymentBroker;
-import dto.*;
-import dtu.ws.fastmoney.*;
+import dto.CustomerDTO;
+import dto.PaymentDTO;
+import dto.RefundDTO;
+import dto.TokenDTO;
+import dtu.ws.fastmoney.BankService;
+import dtu.ws.fastmoney.BankServiceException_Exception;
+import dtu.ws.fastmoney.BankServiceService;
 import exceptions.BankException;
 import exceptions.PaymentException;
 import io.cucumber.messages.internal.com.google.gson.Gson;
 import io.quarkus.runtime.Quarkus;
 import io.quarkus.runtime.annotations.QuarkusMain;
-import models.*;
+import models.Payment;
+import models.PaymentStatus;
 
-import javax.json.Json;
-import javax.json.JsonObject;
 import javax.ws.rs.container.AsyncResponse;
-import javax.ws.rs.core.Response;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * @author Mikkel Rosenfeldt Anderson & Laura & Benjamin
@@ -50,7 +56,8 @@ public class PaymentService {
         return payment;
     }
 
-    public UUID createPayment(PaymentDTO paymentDTO, CustomerDTO customerDTO, TokenDTO tokenDTO) throws BankServiceException_Exception {
+
+    public UUID createPayment(PaymentDTO paymentDTO, CustomerDTO customerDTO, TokenDTO tokenDTO) throws BankException {
         Payment payment = new Payment(paymentDTO.getMerchantID(), paymentDTO.getAmount());
         payment.setCustomerID(customerDTO.getCustomerID());
         payment.setTokenID(tokenDTO.getTokenID());
@@ -58,31 +65,43 @@ public class PaymentService {
         payment.setMerchantAccountID(paymentDTO.getMerchantAccountID());
 
         System.out.println("Create payment account numbers: " + payment.getCustomerAccountID() + " and " + payment.getMerchantAccountID());
-        bankService.transferMoneyFromTo(
-                customerDTO.getAccountNumber(), // Money from
-                paymentDTO.getMerchantAccountID(), // Money to
-                BigDecimal.valueOf(payment.getAmount()),
-                "New payment: " + payment.getPaymentID());
+        try {
+            bankService.transferMoneyFromTo(
+                    customerDTO.getAccountNumber(), // Money from
+                    paymentDTO.getMerchantAccountID(), // Money to
+                    BigDecimal.valueOf(payment.getAmount()),
+                    "New payment: " + payment.getPaymentID());
 
-        payment.setStatus(PaymentStatus.COMPLETED);
-        paymentRepository.addPayment(payment);
-        return payment.getPaymentID();
+            payment.setStatus(PaymentStatus.COMPLETED);
+            paymentRepository.addPayment(payment);
+            return payment.getPaymentID();
+        }
+        catch (BankServiceException_Exception e ) {
+            throw new BankException(e.getMessage());
+        }
+    }
+    public List<Payment> getPayments(UUID merchantID) {
+        return paymentRepository.getPayments().stream().filter(payment -> payment.getMerchantID().equals(merchantID)).collect(Collectors.toList());
     }
 
-    public void refundPayment(RefundDTO refundDTO, TokenDTO tokenDTO) throws BankServiceException_Exception, BankException {
+    public void refundPayment(RefundDTO refundDTO, TokenDTO tokenDTO) throws BankException, PaymentException {
         Payment payment = paymentRepository.getPayment(refundDTO.getPaymentID());
         if(payment.getStatus() != PaymentStatus.COMPLETED){
-            throw new BankException("Payment already refunded");
+            throw new PaymentException("Payment already refunded");
         }
         System.out.println("MerchantAccount:" + payment.getMerchantAccountID());
         System.out.println("CustomerAccount:" + payment.getCustomerAccountID());
         System.out.println("Amount: " + payment.getAmount());
         System.out.println("Refunding payment...");
-        bankService.transferMoneyFromTo(
-                payment.getMerchantAccountID(), // Money from
-                payment.getCustomerAccountID(), // Money to
-                BigDecimal.valueOf(payment.getAmount()),
-                "Refund payment: " + payment.getPaymentID());
+        try {
+            bankService.transferMoneyFromTo(
+                    payment.getMerchantAccountID(), // Money from
+                    payment.getCustomerAccountID(), // Money to
+                    BigDecimal.valueOf(payment.getAmount()),
+                    "Refund payment: " + payment.getPaymentID());
+        } catch (BankServiceException_Exception e) {
+            throw new BankException(e.getMessage());
+        }
         System.out.println("Payment refunded");
         payment.setStatus(PaymentStatus.REFUNDED);
         payment.setRefundTokenID(tokenDTO.getTokenID());

@@ -6,11 +6,12 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.DeliverCallback;
 import dto.*;
-import dtu.ws.fastmoney.BankServiceException_Exception;
 import dtupay.MessageRepository;
 import dtupay.PaymentRepository;
 import dtupay.PaymentService;
 import dtupay.TokenRepository;
+import exceptions.BankException;
+import exceptions.PaymentException;
 import models.Callback;
 import models.Message;
 import models.Payment;
@@ -205,7 +206,7 @@ public class PaymentBroker implements IMessageBroker {
 
         try{
             paymentID = paymentService.createPayment((PaymentDTO) originalMessage.payload, customerDTO, tokenDTO);
-        } catch (BankServiceException_Exception e) {
+        } catch (BankException e) {
             reply = createReply(originalMessage);
             reply.setStatus(400); //TODO set correct error code
             reply.setStatusMessage("Error while making payment: " + e.getMessage());
@@ -237,18 +238,19 @@ public class PaymentBroker implements IMessageBroker {
             tokenDTO = gson.fromJson(payload.toString(), TokenDTO.class);
         } catch (Exception e) {
             message.setStatus(400);
+            message.setStatusMessage(e.getMessage());
         }
         if(message.getStatus() != 200 || tokenDTO == null){
             reply = createReply(originalMessage);
             reply.setStatus(404); //TODO set correct error code
-            reply.setStatusMessage("The token could not be validated");
+            reply.setStatusMessage("The token could not be validated: " + message.getStatusMessage());
             sendMessage(reply);
             return;
         }
 
         try{
             paymentService.refundPayment(refundDTO, tokenDTO);
-        } catch (Exception e) {
+        } catch (PaymentException | BankException e) {
             reply = createReply(originalMessage);
             reply.setStatus(404); //TODO set correct error code
             reply.setStatusMessage("Error while refunding payment: " + e.getMessage());
