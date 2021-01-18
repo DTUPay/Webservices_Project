@@ -192,6 +192,35 @@ public class MerchantBroker implements IMessageBroker {
         sendMessage(reply);
     }
 
+    public void returnMerchantReport(Message message, JsonObject payload) {
+        AsyncResponse request = responsehandler.getRestResponseObject(message.getRequestId());
+        responsehandler.removeRestResponseObject(message.getRequestId());
+        if(message.getStatus() != 200){
+            request.resume(Response.status(message.getStatus()));
+            return;
+        }
+
+        //TODO cast payload to expected DTO before returning
+        request.resume(Response.status(message.getStatus()).entity(payload));
+    }
+
+    public void getMerchantById(Message message, JsonObject payload) {
+        Message reply = createReply(message);
+        try {
+            MerchantIDDTO dto = gson.fromJson(payload.toString(), MerchantIDDTO.class);
+            Merchant merchant = merchantService.getMerchant(dto.getMerchantID());
+
+            reply.payload = merchant;
+        } catch(Exception e){
+            reply.setStatus(400);
+            reply.setStatusMessage(e.toString());
+            this.sendMessage(reply);
+            return;
+        }
+
+        this.sendMessage(reply);
+    }
+
     // @Status: Implemented
     // Request payment functions
     public void requestPayment(PaymentDTO payment, AsyncResponse response){
@@ -237,38 +266,11 @@ public class MerchantBroker implements IMessageBroker {
         sendMessage(message);
     }
 
-    public void returnMerchantReport(Message message, JsonObject payload) {
-        AsyncResponse request = responsehandler.getRestResponseObject(message.getRequestId());
-        responsehandler.removeRestResponseObject(message.getRequestId());
-        if(message.getStatus() != 200){
-            request.resume(Response.status(message.getStatus()));
-            return;
-        }
-
-        //TODO cast payload to expected DTO before returning
-        request.resume(Response.status(message.getStatus()).entity(payload));
-    }
-
     // Request payment functions
     public void requestPaymentResponse(Message message){
         AsyncResponse response = responsehandler.getRestResponseObject(message.getRequestId());
         response.resume(Response.status(message.getStatus()).entity(message.getStatusMessage()).build());
     }
 
-    public void getMerchantById(Message message, JsonObject payload) {
-        Message reply = createReply(message);
-        try {
-            MerchantIDDTO dto = gson.fromJson(payload.toString(), MerchantIDDTO.class);
-            Merchant merchant = merchantService.getMerchant(dto.getMerchantID());
 
-            reply.payload = merchant;
-        } catch(Exception e){
-            reply.setStatus(400);
-            reply.setStatusMessage(e.toString());
-            this.sendMessage(reply);
-            return;
-        }
-
-        this.sendMessage(reply);
-    }
 }

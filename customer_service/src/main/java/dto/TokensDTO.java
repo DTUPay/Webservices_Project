@@ -2,7 +2,6 @@ package dto;
 // @author: Rubatharisan Thirumathyam
 import models.Payload;
 
-import java.util.List;
 import java.util.UUID;
 
 public class TokensDTO extends Payload {

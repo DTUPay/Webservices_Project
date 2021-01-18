@@ -4,22 +4,18 @@ package dtupay;
 import dto.PaymentDTO;
 import dto.ReportRequestDTO;
 
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.container.AsyncResponse;
 import javax.ws.rs.container.Suspended;
 import javax.ws.rs.core.MediaType;
-import java.util.UUID;
 
 
 @Path("/merchant_service")
 public class MerchantAPI {
     MerchantService service = new MerchantService();
-
-    @GET
-    @Produces(MediaType.TEXT_PLAIN)
-    public String hello() {
-        return "Welcome to Merchant Service!";
-    }
 
     @POST
     @Path("/payment")
