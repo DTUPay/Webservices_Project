@@ -89,9 +89,9 @@ public class SuccessfulPaymentSteps {
         }
     }
 
-    @Given("a customer has a bank account provided by the bank")
-    public void aCustomerWithNameAndCprNumberAndBalanceDKKHasABankAccount() {
-        assertNotNull(customer.getAccountNumber());
+    @Given("a customer has a bank account provided by the bank with a balance of {int} DKK")
+    public void aCustomerHasABankAccountProvidedByTheBankWithABalanceOfDkk(int arg0) throws BankServiceException_Exception {
+        assertEquals(bank.getAccount(customer.getAccountNumber()).getBalance(), BigDecimal.valueOf(arg0));
     }
 
     @Given("the customer is registered with DTU Pay")
@@ -99,14 +99,20 @@ public class SuccessfulPaymentSteps {
         customerAccount = new CustomerServant(accountManagement.registerCustomer(customer));
     }
 
-    @Given("a merchant has a bank account provided by the bank")
-    public void aMerchantWithNameAndCprNumberAndBalanceDKKHasABankAccount() {
-        assertNotNull(merchant.getAccountNumber());
+    @Given("a merchant has a bank account provided by the bank with a balance of {int} DKK")
+    public void aMerchantWithNameAndCprNumberAndBalanceDKKHasABankAccount(int arg0) throws BankServiceException_Exception {
+        assertEquals(bank.getAccount(merchant.getAccountNumber()).getBalance(), BigDecimal.valueOf(arg0));
     }
 
     @Given("the merchant is registered with DTU Pay")
     public void theMerchantIsRegisteredWithDTUPay() throws Exception {
         merchantAccount = new MerchantServant(accountManagement.registerMerchant(merchant));
+    }
+
+    @Given("a successful payment of {int} DKK has been made to the merchant by the customer")
+    public void aPaymentOfDKKHasBeenMadeToTheMerchantByTheCustomer(int arg0) throws Exception {
+        success = merchantAccount.requestPayment(arg0, merchantAccount.getId(), customerAccount.selectToken());
+        assertTrue(success);
     }
 
     @When("the customer request to see his account balance")
