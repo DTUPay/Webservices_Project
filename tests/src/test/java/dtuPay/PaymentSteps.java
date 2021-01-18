@@ -94,6 +94,7 @@ public class PaymentSteps {
             assertEquals(tokenCount, arg0);
             System.out.println("done");
         } catch (Exception e) {
+            System.out.println("Could not get tokens");
             e.printStackTrace();
             fail();
         }

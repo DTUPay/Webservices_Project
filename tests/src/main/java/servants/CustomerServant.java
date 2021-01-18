@@ -43,6 +43,7 @@ public class CustomerServant {
                 .build();
         Object responseEntity = communicator.post(tokenRequest,path, 200);
         addTokens(convertListToUUID(responseEntity));
+        System.out.println("Tokens added");
     }
 
     //TODO: Change message signature to have customerID, merchantID and paymentID
