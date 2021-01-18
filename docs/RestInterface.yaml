@@ -1,0 +1,439 @@
+swagger: '2.0'
+info:
+  description: |
+    Author: Oliver O. Nielsen & Björn Wilting
+  version: 1.0.0
+  title: DTUpay
+
+tags:
+- name: Management Service
+- name: Customer Service
+- name: Merchant Service
+
+# schemes:
+# - http
+
+paths:
+#Reworked REST actions
+
+  /customer_service/refund:
+      #Request a refund of a paid payment
+      put:
+        tags:
+        - Customer Service
+        summary: Request a refund of a paid payment
+        operationId: requestRefund
+        consumes:
+          - application/json
+        produces:
+          - application/json
+        parameters:
+        - in: body
+          required: true
+          name: paymentdto
+          schema:
+            $ref: '#/definitions/refunddto'
+          description: Id of payment to refund
+        responses:
+          200:
+            description: Refund granted
+            #TODO Define response
+            #Was the refund authorized or rejected?
+          400:
+            description: Refund denied
+            #TODO define further
+          
+  /customer_service/tokens:
+    #Request a new set of tokens
+    post:
+      tags:
+      - Customer Service
+      summary: Request a new set of tokens
+      operationId: requestTokens
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+      - in: body
+        required: true
+        name: tokendto
+        schema: 
+          $ref: '#/definitions/tokendto'
+        description: Amount of tokens to request
+      responses:
+        200:
+          description: Returns list of requested tokens
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/uuiddto'
+        400:
+          description: Bad request
+          #TODO: define protocol
+          
+  /customer_service/report:
+    #Customer requests are report of his transactions
+    post:
+      tags:
+      - Customer Service
+      summary: Customer requests are report of his transactions
+      operationId: requestCustomerReport
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+      - in: body
+        required: true
+        name: customerreportdto
+        schema: 
+          $ref: '#/definitions/customerrequestreportdto'
+        description: Report request
+      responses:
+        200:
+          description: Returns list of transactions
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/customerreportdto'
+        400:
+          description: Bad request
+          #TODO: define protocol
+          
+  /management_service/report:
+    #Generate a report of all transactions
+    #and summary of all the money being transfered (total sum?)
+    get:
+      tags:
+      - Management Service
+      summary: Generate a report of all transactions
+      operationId: requestManagementReport
+      produces:
+        - application/json
+      responses:
+        200:
+          description: Returns transaction report
+          schema:
+            $ref: '#/definitions/managementreportdto'
+        500:
+          description: Unexpected internal error
+          
+  /management_service/customer:
+    #Add a customer to the system
+    post:
+      tags:
+      - Management Service
+      summary: Add a customer to the system
+      operationId: registerCustomer
+      consumes:
+      - application/json
+      parameters:
+      - in: body
+        name: customerdto
+        description: The customer to be added
+        required: true
+        schema:
+          $ref: '#/definitions/customerdto'
+      responses:
+        201:
+          description: OK, object created
+          #define
+        400:
+          description: Invalid CustomerID
+          #define
+  
+  /management_service/customer/{id}:
+    #Remove a customer from the system (delete by id)
+    delete:
+      tags:
+      - Management Service
+      summary: Delete customer by id
+      operationId: deleteCustomer
+      parameters:
+      - in: path
+        name: id
+        type: string
+        required: true
+        description: Id of customer to delete
+      responses:
+        202:
+          description: resource was marked for deletion
+          #define
+        404:
+          description: Customer not found
+          #define
+          
+  /management_service/merchant:
+    #Add a merchant to the system
+    post:
+      tags:
+      - Management Service
+      summary: Add a merchant to the system
+      operationId: addMerchant
+      consumes:
+      - application/json
+      parameters:
+      - in: body
+        name: merchant
+        description: The merchant to be added
+        required: true
+        schema:
+          $ref: '#/definitions/merchant'
+      responses:
+        201:
+          description: OK, object created
+          #define
+        400:
+          description: Invalid MerchantID
+          #define
+
+  /management_service/merchant/{id}:
+    #Delete a merchant from the system (delete by id)
+    delete:
+      tags:
+      - Management Service
+      summary: Delete merchant by id
+      operationId: deleteMerchant
+      parameters:
+      - in: path
+        name: id
+        type: integer
+        required: true
+        description: Id of merchant to delete
+      responses:
+        202:
+          description: resource was marked for deletion
+          #define
+        404:
+          description: Merchant not found
+          #define
+
+  /merchant_service/payment:
+    #Request a payment
+    post:
+      tags:
+      - Merchant Service
+      summary: Request a payment
+      operationId: requestPayment
+      consumes:
+      - application/json
+      parameters:
+      - in: body
+        required: true
+        name: paymentdto
+        schema:
+          $ref: '#/definitions/paymentdto'
+        description: The payment to be added
+      responses:
+        201:
+          description: OK, payment created
+          schema:
+            $ref: '#/definitions/paymentiddto'
+          #TODO define response
+        #TODO Add 4xx code for invalid requests? Invalid tokens?
+        500:
+          description: Unexpected internal error
+          #TODO define response
+
+  /merchant_service/report:
+    #Generate a report for a merchant
+    post:
+      tags:
+      - Merchant Service
+      summary: Generate a report for a merchant
+      operationId: requestMerchantReport
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        required: true
+        name: reportrequestdto
+        schema:
+          $ref: '#/definitions/reportrequestdto'
+        description: merchant Id
+      responses:
+        200:
+          #TODO: define
+          description: List of transactions of the merchant
+          schema:
+            $ref: '#/definitions/merchantreportdto'
+        500:
+          #TODO define
+          description: Unexpected internal error
+            
+            
+            
+            
+definitions:
+#Data transfer Objects
+  tokendto:
+    type: object
+    properties:
+      customerID:
+        type: string
+      amount:
+        type: integer
+        
+  refunddto:
+    type: object
+    properties:
+      customerID:
+        type: string
+      merchantID:
+        type: string
+      paymentID:
+        type: string
+
+  paymentdto:
+    type: object
+    properties:
+      merchantID:
+        type: string
+      amount:
+        type: number
+      tokenid:
+        type: string
+
+  reportrequestdto: #Rename to merchantreportrequestdto
+    type: object
+    properties:
+      merchantID:
+        type: string
+      startdate:
+        type: string
+      enddate:
+        type: string
+        
+  merchantreportdto:
+    type: array
+    items:
+        $ref: '#/definitions/merchanttransactiondto'
+        
+  merchanttransactiondto:
+    type: object
+    properties:
+      amount:
+        type: integer
+      tokenID:
+        type: string
+        
+  uuiddto:
+    type: object
+    properties:
+      uuid:
+        type: string
+        
+  customerrequestreportdto:
+    type: object
+    properties:
+      customerID:
+        type: string
+      startdate:
+        type: string
+      enddate:
+        type: string
+        
+  customerreportdto:
+    type: array
+    items:
+      $ref: '#/definitions/customertransactiondto'
+    
+  customertransactiondto:
+    type: object
+    properties:
+      amount:
+        type: number
+      merchantID:
+        type: string
+      tokenid:
+        type: string
+        
+  managementreportdto:
+    type: object
+    properties:
+      transactions:
+        type: array
+        items:
+          $ref: '#/definitions/managementtransactiondto'
+      #Might need changing
+      totalsum:
+        type: number
+  
+  managementtransactiondto:
+    type: object
+    properties:
+      amount:
+        type: number
+      merchantid:
+        type: string
+      tokenid:
+        type: string
+    
+  customerdto:
+    type: object
+    properties:
+      name:
+        type: string
+      bankaccount:
+        type: string #TODO more appropriate type needed, possibly
+        
+  merchantdto:
+    type: object
+    properties:
+      name:
+        type: string
+      bankaccount:
+        type: string #TODO more appropriate type needed, possibly
+  
+  paymentiddto:
+    type: object
+    properties:
+      paymentid:
+        type: string
+
+#Other definitions
+
+  customer:
+    type: object
+    properties:
+      customerID:
+        type: string
+      name:
+        type: string
+      accountnumber:
+        type: string
+        
+  token:
+    type: object
+    properties:
+      TokenID:
+        type: integer
+        format: int64
+      ExpireDate:
+        type: string
+        format: date
+      CustomerID:
+        type: integer
+        format: int64
+    xml:
+      name: Tag
+      
+      
+  merchant:
+    type: object
+    properties:
+      MerchantID:
+        type: string
+      name:
+        type: string
+      accountNumber:
+        type: string
+      
+host: g-20.compute.dtu.dk
+# basePath: DTUpay/test/1.0.0
+schemes:
+ - https
+ - http
