@@ -1,9 +1,8 @@
 /*
 @author Benjamin Eriksen
  */
-
 package dtupay;
-
+// @author: Benjamin Eriksen
 import models.Customer;
 
 import java.util.HashMap;

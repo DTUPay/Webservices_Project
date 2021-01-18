@@ -1,4 +1,5 @@
 package dtupay;
+// @author: Rubatharisan Thirumathyam
 
 import brokers.ManagementBroker;
 import com.google.gson.Gson;
@@ -13,8 +14,6 @@ import javax.json.JsonObject;
 import javax.ws.rs.container.AsyncResponse;
 import javax.ws.rs.core.Response;
 import java.util.UUID;
-
-// @author: Rubatharisan Thirumathyam
 
 @QuarkusMain
 public class ManagementService {

@@ -1,5 +1,5 @@
 package dto;
-
+// @author: Oliver O. Nielsen
 import models.Payload;
 
 import java.util.UUID;
