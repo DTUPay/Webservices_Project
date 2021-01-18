@@ -3,14 +3,17 @@
  */
 
 package dtupay;
-// @author Rubatharisan & Oliver
+// @author Rubatharisan Thirumathyam & Oliver O. Nielsen
 
 import dto.*;
+import models.Customer;
 
 import javax.ws.rs.*;
 import javax.ws.rs.container.AsyncResponse;
 import javax.ws.rs.container.Suspended;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.util.UUID;
 
 
 @Path("/customer_service")
@@ -20,8 +23,22 @@ public class CustomerAPI {
     @POST
     @Path("/customer")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void registerCustomer(@Suspended AsyncResponse response, CustomerDTO customer) {
-        //service.registerCustomer(customer, response);
+    @Produces(MediaType.APPLICATION_JSON)
+    public void registerCustomer(@Suspended AsyncResponse response, CustomerDTO customerDTO) {
+        if(customerDTO.getFirstName() != null && customerDTO.getLastName() != null && customerDTO.getAccountNumber() != null){
+            Customer customer = new Customer();
+            customer.setAccountID(customerDTO.getAccountNumber());
+            customer.setFirstName(customerDTO.getFirstName());
+            customer.setLastName(customerDTO.getLastName());
+            try {
+                service.registerCustomer(customer);
+                response.resume(Response.status(200).entity(customer).build());
+            } catch(Exception e){
+                response.resume(Response.status(400).entity("Bad request").build());
+            }
+        } else {
+            response.resume(Response.status(400).entity("Missing required fields for creating a customer").build());
+        }
     }
 
     // @Status: Implemented

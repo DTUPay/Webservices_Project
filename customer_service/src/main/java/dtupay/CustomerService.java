@@ -16,7 +16,7 @@ import java.util.UUID;
 
 
 /**
- * @author Mikkel Rosenfeldt Anderson & Benjamin
+ * @author Mikkel Rosenfeldt Anderson & Benjamin Eriksen & Rubatharisan Thirumathyam
  */
 @QuarkusMain
 public class CustomerService {

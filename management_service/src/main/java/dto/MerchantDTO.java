@@ -1,5 +1,5 @@
 package dto;
-
+// @author: Rubatharisan Thirumathyam
 import models.Payload;
 
 public class MerchantDTO extends Payload {
