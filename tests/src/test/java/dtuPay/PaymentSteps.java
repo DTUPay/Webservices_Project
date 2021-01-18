@@ -180,6 +180,19 @@ public class PaymentSteps {
         usableToken = UUID.randomUUID();
     }
 
+    @When("the customer requests {int} new tokens")
+    public void the_customer_requests_new_tokens(Integer int1) {
+        // Write code here that turns the phrase above into concrete actions
+        try {
+            System.out.println("Requesting customer tokens");
+            customerAccount.requestTokens(customerAccount.getID(), int1);
+            System.out.println("done");
+        } catch (Exception e) {
+            //e.printStackTrace();
+            //fail();
+        }
+    }
+
     @Then("the payment succeeds")
     public void thePaymentSucceeds() {
         assertNotNull(paymentID);
