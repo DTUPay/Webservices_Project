@@ -18,3 +18,6 @@ Feature: Manage customers
   Scenario: Invalid customerID should throw a exception
     Given a random customerID that does not exist
     Then an error message with "Customer with given customerID doesn't exist" is thrown
+
+  # Make more tests to get complete coverage of canRequestTokens and addTokens
+
