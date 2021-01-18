@@ -57,6 +57,7 @@ public class PaymentService {
         payment.setCustomerAccountID(customerDTO.getAccountNumber());
         payment.setMerchantAccountID(paymentDTO.getMerchantAccountID());
 
+        System.out.println("Create payment account numbers: " + payment.getCustomerAccountID() + " and " + payment.getMerchantAccountID());
         bankService.transferMoneyFromTo(
                 customerDTO.getAccountNumber(), // Money from
                 paymentDTO.getMerchantAccountID(), // Money to
