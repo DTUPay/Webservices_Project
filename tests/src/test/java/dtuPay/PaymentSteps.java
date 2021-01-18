@@ -240,10 +240,11 @@ public class PaymentSteps {
     @Then("the refunding fails")
     public void theRefundingFails() {
         assertFalse(paymentRefunded);
+    }
 
     @Then("the customer possesses {int} tokens")
-    public void the_customer_possesses_tokens(Integer int1) {
-        Integer tokens = customerAccount.getCustomerTokens().size();
+    public void the_customer_possesses_tokens(int int1) {
+        int tokens = customerAccount.getCustomerTokens().size();
         assertEquals(tokens, int1);
     }
 
