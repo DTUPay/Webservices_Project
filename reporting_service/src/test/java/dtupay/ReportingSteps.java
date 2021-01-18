@@ -42,12 +42,12 @@ public class ReportingSteps {
             TestPayment payment = new TestPayment(merchantID, new Random().nextInt(10000)+1);
             Token token = new Token(UUID.randomUUID());
             payment.setTokenID(token.getTokenID());
-            payment.setCustomerID(customerID);
+            payment.setCustomerID(token.getCustomerID());
             Calendar calendar = Calendar.getInstance();
-            calendar.add(Calendar.DATE, -i);
+            calendar.add(Calendar.HOUR, -i);
             payment.setDate(calendar.getTime());
-            if(new Random().nextInt(10) == 9)
-                payment.setStatus(PaymentStatus.REFUNDED);
+            //if(new Random().nextInt(10) == 9)
+            //    payment.setStatus(PaymentStatus.REFUNDED);
             reportingService.paymentRepository.addPayment(payment);
 
             //Customer transaction
@@ -56,8 +56,8 @@ public class ReportingSteps {
             payment.setTokenID(token.getTokenID());
             payment.setCustomerID(customerID);
             payment.setDate(calendar.getTime());
-            if(new Random().nextInt(10) == 9)
-                payment.setStatus(PaymentStatus.REFUNDED);
+            //if(new Random().nextInt(10) == 9)
+            //    payment.setStatus(PaymentStatus.REFUNDED);
             reportingService.paymentRepository.addPayment(payment);
         }
     }
@@ -66,9 +66,9 @@ public class ReportingSteps {
     public void aRequestsAReport(String arg0) {
         ReportRequestDTO dto = new ReportRequestDTO();
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DATE, 0);
+        calendar.add(Calendar.HOUR, 2);
         dto.setToDate(calendar.getTime());
-        calendar.add(Calendar.DATE, -10);
+        calendar.add(Calendar.HOUR, -300);
         dto.setFromDate(calendar.getTime());
 
         switch (arg0) {
