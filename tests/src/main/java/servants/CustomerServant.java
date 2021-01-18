@@ -46,7 +46,7 @@ public class CustomerServant {
     }
 
     //TODO: Change message signature to have customerID, merchantID and paymentID
-    public void requestRefund(UUID customerID, UUID merchantID, UUID paymentID) throws Exception {
+    public boolean requestRefund(UUID customerID, UUID merchantID, UUID paymentID) {
         RestCommunicator communicator = new RestCommunicator(Service.CUSTOMER);
         String path = "/refund";
         JsonObject refundDto = Json.createObjectBuilder()
@@ -54,10 +54,12 @@ public class CustomerServant {
                 .add("merchantID", merchantID.toString())
                 .add("paymentID", paymentID.toString())
                 .build();
-        boolean success = communicator.put(refundDto, path);
-        if(success)
-            return;
-        throw new Exception("Refunding the payment: " + paymentID + " failed!");
+        try {
+            return communicator.put(refundDto, path);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public List<?> requestReport() throws Exception {

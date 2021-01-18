@@ -243,7 +243,7 @@ public class CustomerBroker implements IMessageBroker {
     public void requestRefund(PaymentDTO payment, AsyncResponse response){
 
         Message message = new Message();
-        message.setEvent("requestRefund");
+        message.setEvent("getRefund");
         message.setService("payment_service");
         message.setPayload(payment);
         message.setCallback(new Callback("customer_service", "requestRefundResponse"));

@@ -13,7 +13,7 @@ import java.util.UUID;
 
 import static org.junit.Assert.*;
 
-public class SuccessfulPaymentSteps {
+public class PaymentSteps {
     private CustomerServant customerAccount;
     private MerchantServant merchantAccount;
     private ManagementServant accountManagement;
@@ -25,6 +25,7 @@ public class SuccessfulPaymentSteps {
     private BankService bank;
     private UUID usableToken;
     private UUID paymentID;
+    private boolean paymentRefunded;
 
     @Before
     public void CreateUsersInBank() throws BankServiceException_Exception {
@@ -73,6 +74,11 @@ public class SuccessfulPaymentSteps {
         //TODO: Store account numbers
         accountManagement = new ManagementServant();
 
+    }
+
+    @Given("the customer has the paymentID of his last payment")
+    public void theCustomerHasThePaymentIDOfHisLastPayment() {
+        assertNotNull(paymentID);
     }
 
     @Given("the customer has {int} tokens")
@@ -147,6 +153,11 @@ public class SuccessfulPaymentSteps {
         assertEquals(tokenCount - 1, customerAccount.getCustomerTokens().size());
     }
 
+    @Then("the payment is refunded")
+    public void thePaymentIsRefunded() {
+        assertTrue(paymentRefunded);
+    }
+
     @After
     public void removeUserBankAccounts() throws BankServiceException_Exception {
         bank.retireAccount(customer.getAccountNumber());
@@ -170,5 +181,10 @@ public class SuccessfulPaymentSteps {
         } catch (Exception e) {
             exception = e;
         }
+    }
+
+    @When("the customer request to have the payment refunded")
+    public void theCustomerRequestToHaveThePaymentRefunded() {
+        paymentRefunded = customerAccount.requestRefund(customerAccount.getID(), merchantAccount.getId(), paymentID);
     }
 }
