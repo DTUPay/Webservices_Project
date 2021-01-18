@@ -210,6 +210,11 @@ public class PaymentSteps {
         assertNull(paymentID);
     }
 
+    @Then("the error message is {string}")
+    public void theErrorMessageIs(String arg0) {
+        assertEquals(arg0, exception.getMessage());
+    }
+
     @After
     public void removeUserBankAccounts() throws BankServiceException_Exception {
         bank.retireAccount(customer.getAccountNumber());

@@ -24,8 +24,18 @@ Feature: Making a payment
     * the customer request to see his account balance
     * the merchant request to see his account balance
     Then the payment fails
+    * the error message is "404 The token could not be validated"
     * the customer has 100 DKK in his account
     * the merchant has 1000 DKK in his account
 
   Scenario: Payment with insufficient funds
+    Given the customer has 1 tokens
+    When the customer selects a token
+    * the merchant authorizes a payment with the customers token and an amount of 120 DKK
+    * the customer request to see his account balance
+    * the merchant request to see his account balance
+    Then the payment fails
+    * the error message is "400 Error while making payment: Debtor balance will be negative"
+    * the customer has 100 DKK in his account
+    * the merchant has 1000 DKK in his account
 
