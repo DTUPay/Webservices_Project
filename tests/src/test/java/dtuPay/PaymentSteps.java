@@ -189,6 +189,19 @@ public class PaymentSteps {
         usableToken = UUID.randomUUID();
     }
 
+    @When("the customer requests {int} new tokens")
+    public void the_customer_requests_new_tokens(Integer int1) {
+        // Write code here that turns the phrase above into concrete actions
+        try {
+            System.out.println("Requesting customer tokens");
+            customerAccount.requestTokens(customerAccount.getID(), int1);
+            System.out.println("done");
+        } catch (Exception e) {
+            //e.printStackTrace();
+            //fail();
+        }
+    }
+
     @Then("the payment succeeds")
     public void thePaymentSucceeds() {
         assertNotNull(paymentID);
@@ -227,6 +240,11 @@ public class PaymentSteps {
     @Then("the refunding fails")
     public void theRefundingFails() {
         assertFalse(paymentRefunded);
+
+    @Then("the customer possesses {int} tokens")
+    public void the_customer_possesses_tokens(Integer int1) {
+        Integer tokens = customerAccount.getCustomerTokens().size();
+        assertEquals(tokens, int1);
     }
 
     @After
