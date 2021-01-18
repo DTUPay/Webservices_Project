@@ -72,8 +72,7 @@ public class CustomerService {
         return customerRepository.hasCustomer(customerID);
     }
 
-    /*
-    If not irrelevant please notify Benjamin for UML update
+
     public UUID getUnusedToken(UUID customerID) throws CustomerException {
         if (customerRepository.hasCustomer(customerID)) {
             try {
@@ -85,8 +84,6 @@ public class CustomerService {
             throw new CustomerException("Customer with given customerID doesn't exist");
         }
     }
-
-     */
 
     // Adds tokens to Customer
     public void addTokens(UUID customerID, List<UUID> tokens) throws CustomerException {
