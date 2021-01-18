@@ -50,7 +50,6 @@ public class TokenService {
         return tokenIDs;
     }
 
-
     public boolean useToken(UUID tokenID) throws TokenException {
         Token token = getToken(tokenID);
         if (!token.isUsed()){

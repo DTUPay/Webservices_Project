@@ -35,7 +35,6 @@ public class MerchantRepository implements IMerchantRepository {
 
     @Override
     public boolean hasMerchant(UUID merchantID) {
-        System.out.println(merchants.toString());
         return merchants.containsKey(merchantID);
     }
 }
