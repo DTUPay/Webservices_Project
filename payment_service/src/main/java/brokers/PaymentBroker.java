@@ -277,6 +277,8 @@ public class PaymentBroker implements IMessageBroker {
 
     public void reportTransactionUpdate(Payment payment){
         Message message = new Message();
+        payment.setMerchantAccountID("redacted");
+        payment.setCustomerAccountID("redacted");
         message.setEvent("transactionUpdate");
         message.setService("reporting_service");
         message.setPayload(payment);
