@@ -1,10 +1,9 @@
 package dtupay;
+// @author: Rubatharisan Thirumathyam
 
 import brokers.ManagementBroker;
 import io.quarkus.runtime.Quarkus;
 import io.quarkus.runtime.annotations.QuarkusMain;
-
-// @author: Rubatharisan Thirumathyam
 
 @QuarkusMain
 public class ManagementService {

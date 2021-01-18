@@ -3,7 +3,7 @@
  */
 
 package dtupay;
-// @author Rubatharisan & Oliver
+// @author Rubatharisan Thirumathyam & Oliver O. Nielsen
 
 import dto.*;
 

@@ -1,7 +1,7 @@
 /*
 @author Oliver O. Nielsen & Bjørn Wilting & Benjamin Eriksen
  */
-
+// @author: Benjamin Eriksen
 package dtupay;
 
 import models.Customer;
