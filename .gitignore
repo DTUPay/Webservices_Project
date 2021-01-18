@@ -132,7 +132,6 @@ local.properties
 .idea/modules.xml
 .idea/*.iml
 .idea/modules
-*.iml
 *.ipr
 
 # CMake
