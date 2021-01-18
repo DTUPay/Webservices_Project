@@ -222,6 +222,7 @@ public class PaymentBroker implements IMessageBroker {
 
     private void getRefund(Message message, JsonObject payload){
         RefundDTO dto = gson.fromJson(payload.toString(), RefundDTO.class);
+        message.setPayload(dto);
         messageRepository.saveMessageObject(message);
         useToken(dto.getTokenID(), "refundPaymentTokenUsed", message.getRequestId());
     }
@@ -230,7 +231,7 @@ public class PaymentBroker implements IMessageBroker {
         Message reply;
         Message originalMessage = messageRepository.getMessageObject(message.getRequestId());
         messageRepository.removeMessageObject(message.getRequestId());
-        RefundDTO refundDTO = gson.fromJson(originalMessage.payload.toString(), RefundDTO.class);
+        RefundDTO refundDTO = (RefundDTO) originalMessage.getPayload();
         TokenDTO tokenDTO = null;
         try{
             tokenDTO = gson.fromJson(payload.toString(), TokenDTO.class);
@@ -277,9 +278,14 @@ public class PaymentBroker implements IMessageBroker {
 
     public void reportTransactionUpdate(Payment payment){
         Message message = new Message();
+        String text = gson.toJson(payment);
+        Payment paymentClone = gson.fromJson(text, Payment.class);
+
+        paymentClone.setMerchantAccountID("redacted");
+        paymentClone.setCustomerAccountID("redacted");
         message.setEvent("transactionUpdate");
         message.setService("reporting_service");
-        message.setPayload(payment);
+        message.setPayload(paymentClone);
         sendMessage(message);
     }
 

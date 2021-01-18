@@ -2,6 +2,7 @@ package servants;
 
 import javax.json.Json;
 import javax.json.JsonObject;
+import java.util.HashMap;
 import java.util.UUID;
 
 /**
@@ -32,7 +33,7 @@ public class MerchantServant {
         this.id = id;
     }
 
-    public boolean requestPayment(int amount, UUID merchantID, UUID tokenID) throws Exception {
+    public UUID requestPayment(int amount, UUID merchantID, UUID tokenID) throws Exception {
         RestCommunicator communicator = new RestCommunicator(RestCommunicator.Service.MERCHANT);
         JsonObject payment = Json.createObjectBuilder()
                 .add("amount", amount)
@@ -40,13 +41,9 @@ public class MerchantServant {
                 .add("tokenID", tokenID.toString())
                 .add("merchantAccountID", "Empty...")
                 .build();
-        try {
-            communicator.post(payment,"/payment", 200);
-        } catch (Exception e){
-            return false;
-        }
-
-        return true;
+            Object responseEntity = communicator.post(payment,"/payment", 200);
+            HashMap<String, String> paymentIdEntity = (HashMap<String, String>) responseEntity;
+            return UUID.fromString(paymentIdEntity.get("paymentID"));
     }
     
     

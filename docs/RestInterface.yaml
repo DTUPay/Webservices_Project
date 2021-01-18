@@ -228,6 +228,8 @@ paths:
       responses:
         201:
           description: OK, payment created
+          schema:
+            $ref: '#/definitions/paymentiddto'
           #TODO define response
         #TODO Add 4xx code for invalid requests? Invalid tokens?
         500:
@@ -386,7 +388,11 @@ definitions:
       bankaccount:
         type: string #TODO more appropriate type needed, possibly
   
-  
+  paymentiddto:
+    type: object
+    properties:
+      paymentid:
+        type: string
 #Other definitions
 
   customer:

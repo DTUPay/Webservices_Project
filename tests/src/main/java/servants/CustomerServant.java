@@ -46,30 +46,31 @@ public class CustomerServant {
     }
 
     //TODO: Change message signature to have customerID, merchantID and paymentID
-    public void requestRefund(String paymentID) throws Exception {
+    public boolean requestRefund(UUID tokenID, UUID paymentID) {
         RestCommunicator communicator = new RestCommunicator(Service.CUSTOMER);
         String path = "/refund";
-        boolean success = communicator.put(paymentID, path);
-        if(success)
-            return;
-        throw new Exception("Refunding the payment: " + paymentID + " failed!");
+        JsonObject refundDto = Json.createObjectBuilder()
+                .add("tokenID", tokenID.toString())
+                .add("paymentID", paymentID.toString())
+                .build();
+        try {
+            return communicator.put(refundDto, path);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
+
+    public List<?> requestReport() throws Exception {
+        throw new Exception("Not implemented!");
+    }
+
 
     private void addTokens(List list) {
         for(Object object : list) {
             this.customerTokens.add((UUID) object);
         }
 
-    }
-
-    private <T> boolean verifyList(Object responseEntity, Class<T> type) {
-        if(responseEntity instanceof List<?>) {
-            List<?> list = (List<?>) responseEntity;
-            for (Object obj : list)
-                if(!type.isInstance(obj)) return false;
-            return true;
-        }
-        return false;
     }
 
     private <T> List<UUID> convertListToUUID(Object responseEntity) throws Exception {

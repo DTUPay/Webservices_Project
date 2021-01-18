@@ -5,9 +5,7 @@
 package dtupay;
 // @author Rubatharisan Thirumathyam & Oliver O. Nielsen
 
-import dto.CustomerDTO;
-import dto.PaymentDTO;
-import dto.TokensDTO;
+import dto.*;
 
 import javax.ws.rs.*;
 import javax.ws.rs.container.AsyncResponse;
@@ -31,8 +29,8 @@ public class CustomerAPI {
     @Path("/refund")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public void requestRefund(@Suspended AsyncResponse response, PaymentDTO payment) {
-        service.broker.requestRefund(payment, response);
+    public void requestRefund(@Suspended AsyncResponse response, RefundDTO refund) {
+        service.broker.requestRefund(refund, response);
     }
 
     // @Status: Implemented
@@ -44,5 +42,12 @@ public class CustomerAPI {
         service.broker.requestTokens(token, response);
     }
 
+    @POST
+    @Path("/report")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public void requestReport(@Suspended AsyncResponse response, ReportRequestDTO reportRequest) {
+        service.broker.requestReport(reportRequest, response);
+    }
 
 }

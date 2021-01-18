@@ -19,7 +19,7 @@
 ## Useful links
 | Production                                                               | Localhost                      |
 |----------------------|------------------------------------------------------------------------------------|
-| [Rabbit MQ Management](http://g-20.compute.dtu.dk:15672) | [Rabbit MQ Management](http://localhost:15672) |
+| [Rabbit MQ Management](http://g-20.compute.dtu.dk:15672) (username: guest / password: guest)| [Rabbit MQ Management](http://localhost:15672) (username: guest / password: guest)|
 | [Jenkins](http://g-20.compute.dtu.dk:8282/)              |          |
 
 ## Jenkins login info
@@ -35,9 +35,9 @@
 | management_service   | Implemented                                                                                              |
 | merchant_service     | Implemented                                                                                             |
 | customer_service     | Implemented                                                                                              |
-| token_service        | Drafting                                                                                              |
-| payment_service      | In progress                                                                                              |
-| reporting_service    | Drafting                                                                                                 |
+| token_service        | Implemented                                                                                              |
+| payment_service      | Implemented                                                                                              |
+| reporting_service    | Implemented                                                                                                 |
 
 ## How to run
 Build and test all services

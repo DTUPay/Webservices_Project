@@ -57,6 +57,7 @@ public class PaymentService {
         payment.setCustomerAccountID(customerDTO.getAccountNumber());
         payment.setMerchantAccountID(paymentDTO.getMerchantAccountID());
 
+        System.out.println("Create payment account numbers: " + payment.getCustomerAccountID() + " and " + payment.getMerchantAccountID());
         bankService.transferMoneyFromTo(
                 customerDTO.getAccountNumber(), // Money from
                 paymentDTO.getMerchantAccountID(), // Money to
@@ -73,13 +74,16 @@ public class PaymentService {
         if(payment.getStatus() != PaymentStatus.COMPLETED){
             throw new BankException("Payment already refunded");
         }
-
+        System.out.println("MerchantAccount:" + payment.getMerchantAccountID());
+        System.out.println("CustomerAccount:" + payment.getCustomerAccountID());
+        System.out.println("Amount: " + payment.getAmount());
+        System.out.println("Refunding payment...");
         bankService.transferMoneyFromTo(
                 payment.getMerchantAccountID(), // Money from
                 payment.getCustomerAccountID(), // Money to
                 BigDecimal.valueOf(payment.getAmount()),
                 "Refund payment: " + payment.getPaymentID());
-
+        System.out.println("Payment refunded");
         payment.setStatus(PaymentStatus.REFUNDED);
         payment.setRefundTokenID(tokenDTO.getTokenID());
     }
