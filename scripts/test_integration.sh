@@ -15,4 +15,4 @@ echo "Get into system_tests directory"
 cd tests
 
 echo "Executing tests"
-# mvn test
+mvn test
