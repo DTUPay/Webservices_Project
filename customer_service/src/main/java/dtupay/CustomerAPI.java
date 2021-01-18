@@ -7,6 +7,7 @@ package dtupay;
 
 import dto.CustomerDTO;
 import dto.PaymentDTO;
+import dto.ReportRequestDTO;
 import dto.TokensDTO;
 
 import javax.ws.rs.*;
@@ -44,5 +45,12 @@ public class CustomerAPI {
         service.broker.requestTokens(token, response);
     }
 
+    @POST
+    @Path("/report")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public void requestReport(@Suspended AsyncResponse response, ReportRequestDTO reportRequest) {
+        service.broker.requestReport(reportRequest, response);
+    }
 
 }
