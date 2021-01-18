@@ -58,7 +58,7 @@ public class Payment extends Payload{
     }
 
     public void setStatus(PaymentStatus paymentStatus) {
-        paymentStatus = paymentStatus;
+        this.paymentStatus = paymentStatus;
     }
 
     public UUID getCustomerID() {

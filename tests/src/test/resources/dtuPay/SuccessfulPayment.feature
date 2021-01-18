@@ -8,7 +8,7 @@ Feature: Successful Payment
   Scenario: Successful payment
     Given the customer has 5 tokens
     When the customer selects a token
-    When the merchant authorizes a payment with the customers token and an amount of 20 DKK
+    * the merchant authorizes a payment with the customers token and an amount of 20 DKK
     * the customer request to see his account balance
     * the merchant request to see his account balance
     Then the payment succeeds

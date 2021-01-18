@@ -19,6 +19,7 @@ public class TokenRepository {
         return instance;
     }
 
+    //TODO
     public boolean containsToken(UUID tokenId){
         return this.tokens.containsKey(tokenId);
     }

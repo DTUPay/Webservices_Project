@@ -4,6 +4,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
 
+/**
+ * @author Mikkel Rosenfeldt Anderson & Laura
+ */
 public class Payment extends Payload{
     private final UUID paymentID;
     private final UUID merchantID;
@@ -27,6 +30,19 @@ public class Payment extends Payload{
         this.paymentStatus = PaymentStatus.COMPLETED;
         this.date = Calendar.getInstance().getTime();
         this.paymentID = UUID.randomUUID();
+    }
+
+    public Payment(Payment payment) {
+        this.paymentID = payment.getPaymentID();
+        this.merchantID = payment.getMerchantID();
+        this.tokenID = payment.getTokenID();
+        this.refundTokenID = payment.getRefundTokenID();
+        this.customerID = payment.getCustomerID();
+        this.customerAccountID = payment.getCustomerAccountID();
+        this.merchantAccountID = payment.getMerchantAccountID();
+        this.date = payment.getDate();
+        this.amount = payment.getAmount();
+        this.paymentStatus = payment.getStatus();
     }
 
     public UUID getPaymentID() {

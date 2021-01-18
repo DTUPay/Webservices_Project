@@ -7,35 +7,37 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import models.*;
-import org.junit.Assert;
-import org.junit.Test;
+import models.PaymentStatus;
+import models.Report;
+import models.Token;
 import testModels.TestPayment;
 
+import java.util.Calendar;
+import java.util.Random;
+import java.util.UUID;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
+import static org.junit.Assert.*;
 
 /**
- * @author Oliver O. Nielsen & Rubatharisan Thirumathyam
+ * @author Oliver O. Nielsen & Rubatharisan Thirumathyam & Mikkel Rosenfeldt Anderson & Laura
  */
 public class ReportingSteps {
-
-    Merchant merchant;
-    Token token;
-    ReportingService reportingService = ReportingService.getInstance();
+    ReportingService reportingService = ReportingService.getInstance();;
     UUID merchantID = UUID.randomUUID();
     UUID customerID = UUID.randomUUID();
     Report managerReport = null;
     Report merchantReport = null;
     Report customerReport = null;
 
-    @Before
-    public void generateTransactions(){
-        System.out.println("before is running");
+    @After
+    public void cleanup(){
+        reportingService.paymentRepository.removeAllPayments();
+    }
+
+    @Given("{int} transactions have been made")
+    public void transactionsHaveBeenMade(int arg0) {
         //Generate merchant & customer transactions
-        for(int i = 0; i < 100; i++){
+        for(int i = 0; i < arg0; i++){
             //Merchant transaction
             TestPayment payment = new TestPayment(merchantID, new Random().nextInt(10000)+1);
             Token token = new Token(UUID.randomUUID());
@@ -47,7 +49,6 @@ public class ReportingSteps {
             if(new Random().nextInt(10) == 9)
                 payment.setStatus(PaymentStatus.REFUNDED);
             reportingService.paymentRepository.addPayment(payment);
-
 
             //Customer transaction
             payment = new TestPayment(UUID.randomUUID(), new Random().nextInt(10000)+1);
@@ -61,59 +62,47 @@ public class ReportingSteps {
         }
     }
 
-    @After
-    public void cleanup(){
-        //reportingService.paymentRepository.removeAllPayments();
-    }
-
-    @Given("a manager requesting a report")
-    public void a_manager_requesting_a_report() {
-        managerReport = reportingService.getManagerReport();
-    }
-
-    @Then("a manager report is received")
-    public void a_manager_report_is_received() {
-        Assert.assertNotNull(managerReport);
-        //Must include all payments
-        //Assert.assertEquals(managerReport.getPayments().size(), reportingService.paymentRepository.getPayments());
-        System.out.println("done");
-    }
-
-    @Given("a merchant requesting a report")
-    public void a_merchant_requesting_a_report() {
+    @When("a {string} requests a report")
+    public void aRequestsAReport(String arg0) {
         ReportRequestDTO dto = new ReportRequestDTO();
-        dto.setMerchantID(merchantID);
         Calendar calendar = Calendar.getInstance();
         dto.setToDate(calendar.getTime());
         calendar.add(Calendar.DATE, -10);
         dto.setFromDate(calendar.getTime());
 
-        merchantReport = reportingService.getMerchantReport(dto);
+        switch (arg0) {
+            case "manager":
+                managerReport = reportingService.getManagerReport();
+                break;
+            case "customer":
+                dto.setCustomerID(customerID);
+                customerReport = reportingService.getCustomerReport(dto);
+                break;
+            case "merchant":
+                dto.setMerchantID(merchantID);
+                merchantReport = reportingService.getMerchantReport(dto);
+                break;
+        }
     }
 
-    @Then("a merchant report is received")
-    public void a_merchant_report_is_received() {
-        Assert.assertNotNull(merchantReport);
-        Assert.assertEquals(merchantReport.getPayments().size(), 10);
-        Assert.assertNull(merchantReport.getPayments().get(0).getCustomerID());
+    @Then("a customer report is received with {int} transactions")
+    public void aCustomerReportIsReceivedWithTransactions(int arg0) {
+        assertNotNull(customerReport);
+        assertEquals(arg0, customerReport.getPayments().size());
+        assertTrue(customerReport.getPayments().stream().allMatch(payment -> payment.getCustomerID() == this.customerID));
     }
 
-    @Given("a customer requesting a report")
-    public void a_customer_requesting_a_report() {
-        ReportRequestDTO dto = new ReportRequestDTO();
-        dto.setCustomerID(customerID);
-        Calendar calendar = Calendar.getInstance();
-        dto.setToDate(calendar.getTime());
-        calendar.add(Calendar.DATE, -10);
-        dto.setFromDate(calendar.getTime());
-
-        customerReport = reportingService.getCustomerReport(dto);
+    @Then("a merchant report is received with {int} transactions")
+    public void aMerchantReportIsReceivedWithTransactions(int arg0) {
+        assertNotNull(merchantReport);
+        assertEquals(arg0, merchantReport.getPayments().size());
+        assertTrue(merchantReport.getPayments().stream().allMatch(payment -> payment.getCustomerID() == null));
+        assertTrue(merchantReport.getPayments().stream().allMatch(payment -> payment.getMerchantID() == this.merchantID));
     }
 
-    @Then("a customer report is received")
-    public void a_customer_report_is_received() {
-        Assert.assertNotNull(customerReport);
-        //Assert.assertEquals(customerReport.getPayments().size(), 10);
+    @Then("a manager report is received with {int} transactions")
+    public void aManagerReportIsReceivedWithTransactions(int arg0) {
+        assertNotNull(managerReport);
+        assertEquals(arg0, managerReport.getPayments().size());
     }
-
 }

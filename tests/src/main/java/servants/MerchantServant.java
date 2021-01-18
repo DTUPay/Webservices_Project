@@ -33,14 +33,15 @@ public class MerchantServant {
     }
 
     public boolean requestPayment(int amount, UUID merchantID, UUID tokenID) throws Exception {
-        RestCommunicator communicator = new RestCommunicator(RestCommunicator.Service.CUSTOMER);
+        RestCommunicator communicator = new RestCommunicator(RestCommunicator.Service.MERCHANT);
         JsonObject payment = Json.createObjectBuilder()
                 .add("amount", amount)
                 .add("merchantID", merchantID.toString())
                 .add("tokenID", tokenID.toString())
+                .add("merchantAccountID", "Empty...")
                 .build();
         try {
-            communicator.post(payment,"`/merchant", 200);
+            communicator.post(payment,"/payment", 200);
         } catch (Exception e){
             return false;
         }

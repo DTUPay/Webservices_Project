@@ -65,7 +65,7 @@ message:
   "requestId": <UUID>,
   "messageId": <UUID>,
   "payload": {
-    "customerId": 1234, # example
+    "customerID": "<UUID>", # example
     "amount": 5 # example
   },
   "callback": {

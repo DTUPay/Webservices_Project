@@ -22,6 +22,7 @@ public class MerchantAPI {
     @Consumes(MediaType.APPLICATION_JSON)
     //Should return boolean
     public void requestPayment(@Suspended AsyncResponse response, PaymentDTO paymentDTO) {
+        System.out.println("merchant api account number: " + paymentDTO.getMerchantAccountID() + " end of number");
         service.broker.requestPayment(paymentDTO, response);
     }
 

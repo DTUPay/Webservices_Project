@@ -32,14 +32,19 @@ public class PaymentRepository implements IPaymentRepository {
     }
 
     @Override
-    public List<Payment> getPayments(UUID merchantID) {
-        return payments.values().stream().filter(payment -> payment.getMerchantID().equals(merchantID)).collect(Collectors.toList());
+    public List<Payment> getPayments(UUID id, boolean isMerchant) {
+        if (isMerchant) {
+            return payments.values().stream().filter(payment -> payment.getMerchantID().equals(id)).collect(Collectors.toList());
+        } else {
+            return payments.values().stream().filter(payment -> payment.getCustomerID().equals(id)).collect(Collectors.toList());
+        }
     }
 
     public void removeAllPayments(){
-        Iterator it = payments.entrySet().iterator();
+        payments.clear();
+        /*Iterator it = payments.entrySet().iterator();
         while (it.hasNext()) {
             it.remove(); // avoids a ConcurrentModificationException
-        }
+        }*/
     }
 }

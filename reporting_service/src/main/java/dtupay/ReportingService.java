@@ -21,7 +21,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
- * @author Oliver O. Nielsen
+ * @author Oliver O. Nielsen & Mikkel Rosenfeldt Anderson & Laura
  */
 @QuarkusMain
 public class ReportingService {
@@ -60,11 +60,10 @@ public class ReportingService {
 
     public Report getMerchantReport(ReportRequestDTO reportRequestDTO){
         List<Payment> payments = paymentRepository
-                .getPayments()
+                .getPayments(reportRequestDTO.getMerchantID(),true)
                 .stream()
                 .filter(p -> p.getDate().after(reportRequestDTO.getFromDate())
                         && p.getDate().before(reportRequestDTO.getToDate())
-                        && p.getMerchantID().equals(reportRequestDTO.getMerchantID())
                 )
                 .collect(Collectors.toList());
         return new Report(payments, true);
@@ -72,14 +71,12 @@ public class ReportingService {
 
     public Report getCustomerReport(ReportRequestDTO reportRequestDTO){
         List<Payment> payments = paymentRepository
-                .getPayments()
+                .getPayments(reportRequestDTO.getCustomerID(),false)
                 .stream()
-                .filter(p -> p.getDate().after(reportRequestDTO.getFromDate()))
-                .filter(p -> p.getDate().before(reportRequestDTO.getToDate()))
-                .filter(p -> p.getMerchantID().equals(reportRequestDTO.getMerchantID()))
+                .filter(p -> p.getDate().after(reportRequestDTO.getFromDate())
+                        && p.getDate().before(reportRequestDTO.getToDate())
+                )
                 .collect(Collectors.toList());
         return new Report(payments, false);
     }
-
-
 }

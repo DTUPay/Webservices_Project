@@ -143,6 +143,7 @@ public class CustomerBroker implements IMessageBroker {
                 break;
             case "getCustomerByID":
                 getCustomerById(message, payload);
+                break;
             default:
                 System.out.println("Event not handled: " + message.getEvent());
         }

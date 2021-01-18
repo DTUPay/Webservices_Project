@@ -1,8 +1,12 @@
 package models;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Oliver O. Nielsen & Mikkel Rosenfeldt Anderson & Laura
+ */
 public class Report extends Payload{
     private List<Payment> payments;
     private double totalAmount;
@@ -10,15 +14,22 @@ public class Report extends Payload{
     private int totalRefunded;
     private double result;
 
+    /**
+     * @param payments
+     * @param anonymous Should hide CustomerID
+     */
     public Report(List<Payment> payments, boolean anonymous){
+        List<Payment> newPayments = new ArrayList<>();
         for (Payment payment:payments) {
-            payment.setMerchantAccountID("redacted");
-            payment.setCustomerAccountID("redacted");
+            Payment newPayment = new Payment(payment);
+            newPayment.setMerchantAccountID("redacted");
+            newPayment.setCustomerAccountID("redacted");
             if(anonymous){
-                payment.setCustomerID(null);
+                newPayment.setCustomerID(null);
             }
+            newPayments.add(newPayment);
         }
-        this.payments = payments;
+        this.payments = newPayments;
         this.totalAmount = getPayments().stream().mapToDouble(Payment::getAmount).sum();
         this.totalPayments = getPayments().size();
         List<Payment> refunds = getPayments().stream()

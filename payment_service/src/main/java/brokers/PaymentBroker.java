@@ -116,12 +116,15 @@ public class PaymentBroker implements IMessageBroker {
             case "requestPayment":
                 System.out.println("requestPayment event caught");
                 requestPayment(message, payload);
+                break;
             case "requestPaymentTokenUsed":
                 System.out.println("requestPaymentTokenUsed event caught");
                 requestPaymentTokenUsed(message, payload);
+                break;
             case "requestPaymentCustomerFetched":
                 System.out.println("requestPaymentCustomerFetched event caught");
                 requestPaymentCustomerFetched(message, payload);
+                break;
             case "getRefund":
                 System.out.println("requestTokens event caught");
                 getRefund(message, payload);
@@ -141,6 +144,7 @@ public class PaymentBroker implements IMessageBroker {
 
     private void requestPayment(Message message, JsonObject payload){
         PaymentDTO dto = gson.fromJson(payload.toString(), PaymentDTO.class);
+        message.setPayload(dto);
         messageRepository.saveMessageObject(message);
         useToken(dto.getTokenID(), "requestPaymentTokenUsed", message.getRequestId());
     }
@@ -163,6 +167,7 @@ public class PaymentBroker implements IMessageBroker {
             return;
         }
 
+        System.out.println("Original message: " + originalMessage.toString());
         tokenRepository.saveTokenObject(originalMessage.getRequestId(), tokenDTO);
         Message getCustomerMessage = new Message("customer_service", "getCustomerByID");
         Callback callback = new Callback("payment_service", "requestPaymentCustomerFetched");
@@ -180,6 +185,7 @@ public class PaymentBroker implements IMessageBroker {
         messageRepository.removeMessageObject(message.getRequestId());
         TokenDTO tokenDTO = tokenRepository.getMessageObject(message.getRequestId());
         tokenRepository.removeMessageObject(message.getRequestId());
+        System.out.println("original message: " + originalMessage.payload.toString());
         PaymentDTO paymentDTO = gson.fromJson(originalMessage.payload.toString(), PaymentDTO.class);
         CustomerDTO customerDTO = null;
         UUID paymentID;

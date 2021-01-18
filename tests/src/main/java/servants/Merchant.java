@@ -3,10 +3,10 @@ package servants;
 public class Merchant {
     private String name;
     private String cpr;
-    private int balance;
+    private double balance;
     private String accountNumber;
 
-    public Merchant(String name, String cpr, int balance) {
+    public Merchant(String name, String cpr, double balance) {
         this.name = name;
         this.cpr = cpr;
         this.balance = balance;
@@ -28,11 +28,11 @@ public class Merchant {
         this.cpr = cpr;
     }
 
-    public int getBalance() {
+    public double getBalance() {
         return balance;
     }
 
-    public void setBalance(int balance) {
+    public void setBalance(double balance) {
         this.balance = balance;
     }
 
