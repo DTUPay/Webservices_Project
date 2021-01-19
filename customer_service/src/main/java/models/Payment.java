@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.UUID;
 
 /**
- * @author Mikkel Rosenfeldt Anderson & Laura
+ * @author Oliver O. Nielsen
  */
 public class Payment extends Payload{
     private final UUID paymentID;
