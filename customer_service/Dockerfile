@@ -5,11 +5,8 @@
 # Lets base our development image on a Maven + Java JDK image
 FROM maven:3.6.3-jdk-11-slim AS buildstage
 
-# Setting a default argument of service name if none is giving as a build-arg
-ARG SERVICE_NAME_ARG=application_service
-
 # Setting the service name argument as a environment variable
-ENV SERVICE_NAME=$SERVICE_NAME_ARG
+ENV SERVICE_NAME=customer_service
 
 # Let build know, that it is CI environment.
 ENV CONTINUOUS_INTEGRATION=true
@@ -28,7 +25,7 @@ RUN --mount=type=cache,target=/root/.m2 mvn verify
 
 # Artifacts folder with final artifacts
 RUN mkdir artifacts \
-    && mv target/$SERVICE_NAME-1.0-SNAPSHOT-runner.jar target/lib/ artifacts/
+    && mv target/customer_service-1.0-SNAPSHOT-runner.jar target/lib/ artifacts/
 
 # Test stage -
 
@@ -51,4 +48,4 @@ COPY --from=buildstage /app-code/artifacts /app
 WORKDIR /app
 
 # Entrypoint which starts our runner
-ENTRYPOINT java -Xmx64m -jar $SERVICE_NAME-1.0-SNAPSHOT-runner.jar
+ENTRYPOINT java -Xmx64m -jar customer_service-1.0-SNAPSHOT-runner.jar
