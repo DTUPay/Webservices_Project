@@ -51,14 +51,14 @@ public class ReportingSteps {
             dtu.ws.fastmoney.Account customerAccount = bank.getAccountByCprNumber(bankCustomer.getCprNumber());
             bank.retireAccount(customerAccount.getId());
         } catch (Exception e) {
-            System.out.println(e.toString());
+            // System.out.println(e.toString());
         }
 
-        System.out.println("Creating customer bank account...");
+        // System.out.println("Creating customer bank account...");
         String customerBankAccount = bank.createAccountWithBalance(bankCustomer, new BigDecimal(100));
-        System.out.println("CustomerBankAccount: " + customerBankAccount);
+        // System.out.println("CustomerBankAccount: " + customerBankAccount);
         customer.setAccountNumber(customerBankAccount);
-        System.out.println("done");
+        // System.out.println("done");
         //Merchant: Mads Madsen, 140467-xxxx, 1000 DKK
         merchant = new Merchant("Madsine Madsen", "140468", 1000);
         User bankMerchant = new User();
@@ -71,13 +71,13 @@ public class ReportingSteps {
             Account merchantAccount = bank.getAccountByCprNumber(bankMerchant.getCprNumber());
             bank.retireAccount(merchantAccount.getId());
         } catch (Exception e) {
-            System.out.println(e.toString());
+            // System.out.println(e.toString());
         }
-        System.out.println("Creating merchant bank account...");
+        // System.out.println("Creating merchant bank account...");
         String merchantBankAccount = bank.createAccountWithBalance(bankMerchant, new BigDecimal(1000));
-        System.out.println("MerchantBankAccount: " + merchantBankAccount);
+        // System.out.println("MerchantBankAccount: " + merchantBankAccount);
         merchant.setAccountNumber(merchantBankAccount);
-        System.out.println("done");
+        // System.out.println("done");
 
         //TODO: Store account numbers
         accountManagement = new ManagementServant();

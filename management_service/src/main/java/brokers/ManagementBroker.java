@@ -250,7 +250,7 @@ public class ManagementBroker implements IMessageBroker {
     public void requestReport(ReportRequestDTO reportRequestDTO, AsyncResponse response) {
 
         Message message = new Message();
-        message.setEvent("getCustomerReport");
+        message.setEvent("getManagerReport");
         message.setService("reporting_service");
         message.setPayload(reportRequestDTO);
         message.setCallback(new Callback("management_service", "receiveReport"));
