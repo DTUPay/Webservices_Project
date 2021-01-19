@@ -76,7 +76,6 @@ public class CustomerService {
 
     // Adds tokens to Customer
     public void addTokens(UUID customerID, List<UUID> tokens) throws CustomerException {
-        // Todo why is the logic not creating tokens?
         if(customerRepository.hasCustomer(customerID)){
             Customer customer = customerRepository.getCustomer(customerID);
             customer.addTokens(tokens);

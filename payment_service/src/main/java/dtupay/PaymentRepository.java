@@ -29,7 +29,6 @@ public class PaymentRepository implements IPaymentRepository {
     }
 
     @Override
-    //TODO still relevant?
     public List<Payment> getPayments() {
         return new ArrayList<>(payments.values());
     }

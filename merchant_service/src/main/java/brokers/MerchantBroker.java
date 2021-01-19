@@ -15,6 +15,7 @@ import exceptions.MerchantException;
 import models.Callback;
 import models.Merchant;
 import models.Message;
+import models.Report;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -45,7 +46,6 @@ public class MerchantBroker implements IMessageBroker {
 
             factory.setHost("rabbitmq");
 
-            //TODO change env to != null
             if(System.getenv("ENVIRONMENT") != null && System.getenv("CONTINUOUS_INTEGRATION") == null){
                 int attempts = 0;
                 while (true){
@@ -77,7 +77,7 @@ public class MerchantBroker implements IMessageBroker {
     private void listenOnQueue(String queue){
         deliverCallback = (consumerTag, delivery) -> {
             String message = new String(delivery.getBody(), "UTF-8");
-            JsonObject jsonObject = Json.createReader(new StringReader(message)).readObject(); // @TODO: Validate Message, if it is JSON object
+            JsonObject jsonObject = Json.createReader(new StringReader(message)).readObject();
 
             this.processMessage(gson.fromJson(jsonObject.toString(), Message.class), jsonObject.getJsonObject("payload"));
         };
@@ -132,6 +132,9 @@ public class MerchantBroker implements IMessageBroker {
                 break;
             case "getMerchantById":
                 getMerchantById(message, payload);
+                break;
+            case "receiveReport":
+                receiveReport(message, payload);
                 break;
             default:
                 System.out.println("Event not handled: " + message.getEvent());
@@ -275,6 +278,12 @@ public class MerchantBroker implements IMessageBroker {
     public void requestPaymentResponse(Message message){
         AsyncResponse response = responsehandler.getRestResponseObject(message.getRequestId());
         response.resume(Response.status(message.getStatus()).entity(message.getStatusMessage()).build());
+    }
+
+    public void receiveReport(Message message, JsonObject payload){
+        AsyncResponse response = responsehandler.getRestResponseObject(message.getRequestId());
+        Report report = gson.fromJson(payload.toString(), Report.class);
+        response.resume(Response.status(message.getStatus()).entity(report).build());
     }
 
 

@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 public class ReportingService {
     private static ReportingService instance = new ReportingService();
     ReportingBroker broker;
-    PaymentRepository paymentRepository;
+    public PaymentRepository paymentRepository;
 
     public ReportingService() {
         this.paymentRepository = PaymentRepository.getInstance();
@@ -63,22 +63,22 @@ public class ReportingService {
     }
 
     public Report getMerchantReport(ReportRequestDTO reportRequestDTO){
-        List<Payment> payments = getPayments(reportRequestDTO.getMerchantID(),true)
-                .stream()
+        List<Payment> payments = getPayments(reportRequestDTO.getMerchantID(),true);
+/*                .stream()
                 .filter(p -> p.getDate().after(reportRequestDTO.getFromDate())
                         && p.getDate().before(reportRequestDTO.getToDate())
                 )
-                .collect(Collectors.toList());
+                .collect(Collectors.toList());*/
         return new Report(payments, true);
     }
 
     public Report getCustomerReport(ReportRequestDTO reportRequestDTO){
-        List<Payment> payments = getPayments(reportRequestDTO.getCustomerID(),false)
-                .stream()
-                .filter(p -> p.getDate().after(reportRequestDTO.getFromDate())
-                        && p.getDate().before(reportRequestDTO.getToDate())
-                )
-                .collect(Collectors.toList());
+        List<Payment> payments = getPayments(reportRequestDTO.getCustomerID(),false);
+                //.stream()
+                //.filter(p -> p.getDate().after(reportRequestDTO.getFromDate())
+                //        && p.getDate().before(reportRequestDTO.getToDate())
+                //)
+                //.collect(Collectors.toList());
         return new Report(payments, false);
     }
 }
