@@ -3,7 +3,6 @@ package dtuPay;
 import dtu.ws.fastmoney.*;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
-import io.cucumber.java.PendingException;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -107,16 +106,14 @@ public class ReportingSteps {
     }
 
     @When("the merchant requests a report")
-    public void theMerchantRequestsAReport() {
-        throw new PendingException();
-        //report = merchantServant.requestReport(merchantID);
+    public void theMerchantRequestsAReport() throws Exception {
+        report = merchantServant.requestReport(merchantID);
     }
 
 
     @When("the manager requests a manager report")
-    public void theManagerRequestsAManagerReport() {
-        throw new PendingException();
-        //report = accountManagement.requestReport();
+    public void theManagerRequestsAManagerReport() throws Exception {
+        report = accountManagement.requestReport();
     }
 
     @Then("the report contains {int} payments")
