@@ -34,7 +34,6 @@ public class RestCommunicator {
         Response response = target.path(path).request().post(Entity.entity(item, MediaType.APPLICATION_JSON));
         if(response.getStatus() == expectedStatusCode) {
             if(response.hasEntity()) {
-                response.close();
                 return response.readEntity(Object.class);
             }
             else {
