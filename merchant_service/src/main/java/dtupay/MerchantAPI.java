@@ -1,8 +1,9 @@
 package dtupay;
 
-
+import dto.MerchantDTO;
 import dto.PaymentDTO;
 import dto.ReportRequestDTO;
+import models.Merchant;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -11,11 +12,26 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.container.AsyncResponse;
 import javax.ws.rs.container.Suspended;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 
 @Path("/merchant_service")
 public class MerchantAPI {
     MerchantService service = new MerchantService();
+
+    @POST
+    @Path("/merchant")
+    @Produces(MediaType.APPLICATION_JSON)
+    public void registerMerchant(@Suspended AsyncResponse response, MerchantDTO merchantDTO) {
+        Merchant merchant = new Merchant(merchantDTO.getName(), merchantDTO.getAccountNumber());
+        try {
+            service.registerMerchant(merchant);
+            response.resume(Response.status(201).entity(merchant).build());
+        } catch(Exception e){
+            response.resume(Response.status(400).entity(e.getMessage()).build());
+        }
+    }
+
 
     @POST
     @Path("/payment")

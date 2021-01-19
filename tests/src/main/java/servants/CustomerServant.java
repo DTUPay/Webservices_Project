@@ -1,10 +1,12 @@
 package servants;
 
+import models.Customer;
 import servants.RestCommunicator.Service;
 
 import javax.json.Json;
 import javax.json.JsonObject;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,6 +21,13 @@ public class CustomerServant {
     public CustomerServant(UUID id) {
         this.id = id;
         this.customerTokens = new ArrayList<>();
+    }
+
+    public UUID registerCustomer(Customer customer) throws Exception {
+        RestCommunicator dtuPay = new RestCommunicator(RestCommunicator.Service.CUSTOMER);
+        Object object = dtuPay.post(customer, "/customer", 201);
+        HashMap<String, String> customerObject = (HashMap<String, String>) object;
+        return UUID.fromString(customerObject.get("customerID"));
     }
 
     public UUID getID() {

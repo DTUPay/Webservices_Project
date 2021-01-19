@@ -6,6 +6,8 @@ import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import models.Customer;
+import models.Merchant;
 import servants.*;
 
 import java.math.BigDecimal;

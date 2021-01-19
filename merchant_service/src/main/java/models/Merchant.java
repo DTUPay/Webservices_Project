@@ -10,6 +10,11 @@ public class Merchant extends Payload{
     private UUID merchantID;
     private String accountNumber;
 
+    public Merchant(String name, String accountNumber){
+        this.name = name;
+        this.accountNumber = accountNumber;
+    }
+
     public Merchant(String name, String accountNumber, UUID merchantID){
         this.merchantID = merchantID;
         this.name = name;

@@ -56,6 +56,7 @@ public class PaymentBroker implements IMessageBroker {
                         channel = connection.createChannel();
                         channel.queueDeclare(queue, false, false, false, null);
                         this.listenOnQueue(queue);
+                        System.out.println("Successfully connected to RabbitMQ queue " + queue + ".");
 
                         break;
                     } catch (Exception e) {

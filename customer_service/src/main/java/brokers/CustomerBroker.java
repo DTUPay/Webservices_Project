@@ -58,6 +58,7 @@ public class CustomerBroker implements IMessageBroker {
                         channel.queueDeclare(queue, false, false, false, null);
 
                         this.listenOnQueue(queue);
+                        System.out.println("Successfully connected to RabbitMQ queue " + queue + ".");
 
                         break;
                     }catch (Exception e){
@@ -297,7 +298,7 @@ public class CustomerBroker implements IMessageBroker {
     public void receiveReport(Message message, JsonObject payload){
         AsyncResponse response = this.responseHandler.getRestResponseObject(message.getRequestId());
         Report report = gson.fromJson(payload.toString(), Report.class);
-        response.resume(Response.status(message.getStatus()).entity(report));
+        response.resume(Response.status(message.getStatus()).entity(report).build());
     }
 
     /*

@@ -6,11 +6,13 @@ package dtupay;
 // @author Rubatharisan Thirumathyam & Oliver O. Nielsen
 
 import dto.*;
+import models.Customer;
 
 import javax.ws.rs.*;
 import javax.ws.rs.container.AsyncResponse;
 import javax.ws.rs.container.Suspended;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 
 @Path("/customer_service")
@@ -20,8 +22,18 @@ public class CustomerAPI {
     @POST
     @Path("/customer")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void registerCustomer(@Suspended AsyncResponse response, CustomerDTO customer) {
-        //service.registerCustomer(customer, response);
+    //@Produces(MediaType.APPLICATION_JSON)
+    public void registerCustomer(@Suspended AsyncResponse response, CustomerDTO customerDTO) {
+        Customer customer = new Customer();
+        customer.setAccountID(customerDTO.getAccountNumber());
+        customer.setFirstName(customerDTO.getFirstName());
+        customer.setLastName(customerDTO.getLastName());
+        try {
+            service.registerCustomer(customer);
+            response.resume(Response.status(201).entity(customer).build());
+        } catch(Exception e){
+            response.resume(Response.status(400).entity(e.getMessage()).build());
+        }
     }
 
     // @Status: Implemented

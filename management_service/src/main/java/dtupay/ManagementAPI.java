@@ -6,6 +6,7 @@ package dtupay;
 
 import dto.CustomerDTO;
 import dto.MerchantDTO;
+import dto.ReportRequestDTO;
 
 import javax.ws.rs.*;
 import javax.ws.rs.container.AsyncResponse;
@@ -51,11 +52,11 @@ public class ManagementAPI {
         service.broker.removeMerchant(merchantID, response);
     }
 
-    @GET
+    @POST
     @Path("/report")
     @Produces(MediaType.APPLICATION_JSON)
-    public String requestReport() {
-        return "Here is your advanced report";
+    public void requestReport(@Suspended AsyncResponse response) {
+        service.broker.requestReport(new ReportRequestDTO(), response);
     }
 
 }

@@ -35,6 +35,10 @@ public class MerchantService {
 
 
     public UUID registerMerchant(Merchant merchant) throws MerchantException {
+        if(merchant.getName() == null || merchant.getAccountNumber() == null){
+            throw new MerchantException("Missing fields for creating a merchant");
+        }
+
         UUID merchantID;
 
         while(true) {

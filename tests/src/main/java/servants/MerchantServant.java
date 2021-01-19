@@ -1,5 +1,7 @@
 package servants;
 
+import models.Merchant;
+
 import javax.json.Json;
 import javax.json.JsonObject;
 import java.util.HashMap;

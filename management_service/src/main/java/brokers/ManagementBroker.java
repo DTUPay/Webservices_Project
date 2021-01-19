@@ -1,5 +1,4 @@
 package brokers;
-// @author: Rubatharisan Thirumathyam
 import com.google.gson.Gson;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
@@ -7,10 +6,12 @@ import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.DeliverCallback;
 import dto.CustomerDTO;
 import dto.MerchantDTO;
+import dto.ReportRequestDTO;
 import dtupay.ManagementService;
 import dtupay.RestResponseHandler;
 import models.Callback;
 import models.Message;
+import models.Report;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -21,7 +22,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 /*
-@author Benjamin Eriksen & ..
+@author Benjamin Eriksen & Rubatharisan Thirumathyam
  */
 
 public class ManagementBroker implements IMessageBroker {
@@ -52,6 +53,7 @@ public class ManagementBroker implements IMessageBroker {
                         channel.queueDeclare(queue, false, false, false, null);
 
                         this.listenOnQueue(queue);
+                        System.out.println("Successfully connected to RabbitMQ queue " + queue + ".");
 
                         break;
                     }catch (Exception e){
@@ -132,6 +134,10 @@ public class ManagementBroker implements IMessageBroker {
             case "removeMerchantResponse":
                 removeMerchantResponse(message);
                 break;
+            case "receiveReport":
+                receiveReport(message, payload);
+                break;
+
             default:
                 System.out.println("Event not handled: " + message.getEvent());
         }
@@ -248,6 +254,25 @@ public class ManagementBroker implements IMessageBroker {
     public void removeMerchantResponse(Message message){
         AsyncResponse response = responseHandler.getRestResponseObject(message.getRequestId());
         response.resume(Response.status(message.getStatus()).entity(message.getStatusMessage()).build());
+    }
+
+    public void requestReport(ReportRequestDTO reportRequestDTO, AsyncResponse response) {
+
+        Message message = new Message();
+        message.setEvent("getCustomerReport");
+        message.setService("reporting_service");
+        message.setPayload(reportRequestDTO);
+        message.setCallback(new Callback("management_service", "receiveReport"));
+        message.setRequestId(responseHandler.saveRestResponseObject(response));
+        UUID requestId = responseHandler.saveRestResponseObject(response);
+        message.setRequestId(requestId);
+        this.sendMessage(message);
+    }
+
+    public void receiveReport(Message message, JsonObject payload){
+        AsyncResponse response = this.responseHandler.getRestResponseObject(message.getRequestId());
+        Report report = gson.fromJson(payload.toString(), Report.class);
+        response.resume(Response.status(message.getStatus()).entity(report).build());
     }
 
 }

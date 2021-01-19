@@ -1,33 +1,27 @@
-package servants;
+package models;
 
-public class Customer {
-    private String firstName;
-    private String lastName;
+public class Merchant {
+    private String name;
     private String cpr;
     private double balance;
     private String accountNumber;
 
-    public Customer(String firstName, String lastName, String cpr, double balance) {
-        this.firstName = firstName;
-        this.lastName = lastName;
+    public Merchant(String name, String cpr, double balance) {
+        this.name = name;
         this.cpr = cpr;
         this.balance = balance;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public Merchant(){
+
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public String getName() {
+        return name;
     }
 
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getCpr() {

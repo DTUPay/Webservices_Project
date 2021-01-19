@@ -1,6 +1,4 @@
-package dto;
-
-import models.Payload;
+package models;
 
 import java.util.UUID;
 

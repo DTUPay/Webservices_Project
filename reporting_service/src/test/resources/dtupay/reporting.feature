@@ -17,7 +17,7 @@ Feature: Generating reports based on previous transactions
     Then a merchant report is received with <t1> transactions
     Examples:
       | t0 | user      | t1 |
-      | 100  | "merchant" | 10    |
+      | 100  | "merchant" | 100    |
       | 5  | "merchant" | 5    |
       | 0  | "merchant" | 0    |
 
@@ -27,5 +27,5 @@ Feature: Generating reports based on previous transactions
     Then a customer report is received with <t1> transactions
     Examples:
       | t0 | user      | t1 |
-      | 100  | "customer" | 20    |
+      | 100  | "customer" | 100    |
       | 0  | "customer" | 0    |
