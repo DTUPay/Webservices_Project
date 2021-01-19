@@ -53,7 +53,6 @@ public class MerchantService {
         return merchant.getMerchantID();
     }
 
-    // @Status: Implemented
     public void removeMerchant(UUID merchantID) throws MerchantException {
         System.out.println(merchantID);
         if (merchantRepository.hasMerchant(merchantID)) {
