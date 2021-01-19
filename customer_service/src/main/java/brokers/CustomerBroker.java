@@ -109,7 +109,6 @@ public class CustomerBroker implements IMessageBroker {
         }
     }
 
-    //
     @Override
     public Message createReply(Message originalMessage) {
         Message reply = new Message(originalMessage.getCallback().getService(), originalMessage.getCallback().getEvent());
@@ -172,7 +171,6 @@ public class CustomerBroker implements IMessageBroker {
         Customer Specific Functions
      */
 
-    // @Status: implemented
     public void registerCustomer(Message message, JsonObject payload) {
         Message reply = this.createReply(message);
 
@@ -199,7 +197,6 @@ public class CustomerBroker implements IMessageBroker {
         this.sendMessage(reply);
     }
 
-    // @Status: implemented
     public void removeCustomer(Message message, JsonObject payload) {
         Message reply = this.createReply(message);
         CustomerDTO customer = gson.fromJson(payload.toString(), CustomerDTO.class);
@@ -242,8 +239,6 @@ public class CustomerBroker implements IMessageBroker {
         Handle REST Async calls
      */
 
-    // @TODO: Missing in UML
-    // @Status: Implemented
     public void requestRefund(RefundDTO refund, AsyncResponse response){
 
         Message message = new Message();
@@ -258,8 +253,7 @@ public class CustomerBroker implements IMessageBroker {
         this.sendMessage(message);
     }
 
-    // @TODO: Missing in UML
-    // @Status: implemented
+
     public void requestTokens(TokensDTO token, AsyncResponse response) {
         try {
             customerService.canRequestTokens(token.getCustomerID(), token.getAmount());
@@ -279,8 +273,6 @@ public class CustomerBroker implements IMessageBroker {
     }
 
 
-    // @TODO: Missing in UML
-    // @Status: implemented
     public void requestReport(ReportRequestDTO reportRequestDTO, AsyncResponse response) {
 
         Message message = new Message();
@@ -305,16 +297,13 @@ public class CustomerBroker implements IMessageBroker {
         Handle REST Async call responses
      */
 
-    // @TODO: Missing in UML
-    // @Status: Implemented
     public void requestRefundResponse(Message message, JsonObject payload){
         System.out.println("Response Status Message:" + message.getStatusMessage());
         AsyncResponse response = this.responseHandler.getRestResponseObject(message.getRequestId());
         response.resume(Response.status(message.getStatus()).entity(message.getStatusMessage()).build());
     }
 
-    // @TODO: Missing in UML
-    // @Status: Implemented
+
     public void requestTokensResponse(Message message, JsonObject payload){
         AsyncResponse response = responseHandler.getRestResponseObject(message.getRequestId());
 
