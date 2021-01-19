@@ -245,7 +245,7 @@ public class PaymentBroker implements IMessageBroker {
 
         if (message.getStatus() != 200 || tokenDTO == null) {
             reply = createReply(originalMessage);
-            reply.setStatus(404); //TODO set correct error code
+            reply.setStatus(400);
             reply.setStatusMessage("The token could not be validated");
             sendMessage(reply);
             return;
@@ -255,7 +255,7 @@ public class PaymentBroker implements IMessageBroker {
             paymentService.refundPayment(refundDTO, tokenDTO);
         } catch (PaymentException | BankException e) {
             reply = createReply(originalMessage);
-            reply.setStatus(404); //TODO set correct error code
+            reply.setStatus(400);
             reply.setStatusMessage("Error while refunding payment: " + e.getMessage());
             sendMessage(reply);
             return;

@@ -64,7 +64,7 @@ public class CustomerServant {
                 .add("tokenID", tokenID.toString())
                 .add("paymentID", paymentID.toString())
                 .build();
-            return communicator.put(refundDto, path);
+            return communicator.put(refundDto, path, 200);
     }
 
     public List<?> requestReport() throws Exception {

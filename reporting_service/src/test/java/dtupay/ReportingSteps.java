@@ -19,7 +19,7 @@ import java.util.UUID;
 import static org.junit.Assert.*;
 
 /**
- * @author Oliver O. Nielsen & Rubatharisan Thirumathyam & Mikkel Rosenfeldt Anderson & Laura
+ * @author Oliver O. Nielsen & Rubatharisan Thirumathyam & Mikkel Rosenfeldt Anderson & Laura Hansen
  */
 public class ReportingSteps {
     ReportingService reportingService = ReportingService.getInstance();;
