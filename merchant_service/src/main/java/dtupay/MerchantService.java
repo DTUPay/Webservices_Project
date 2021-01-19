@@ -9,10 +9,6 @@ import models.Merchant;
 
 import java.util.UUID;
 
-
-/**
- * @author Mikkel Rosenfeldt Anderson & Benjamin
- */
 @QuarkusMain
 public class MerchantService {
     MerchantBroker broker;
