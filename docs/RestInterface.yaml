@@ -1,7 +1,7 @@
 swagger: '2.0'
 info:
   description: |
-    Author: Oliver O. Nielsen & Björn Wilting
+    Authors: Oliver O. Nielsen & Björn Wilting
   version: 1.0.0
   title: DTUpay
 
@@ -37,11 +37,10 @@ paths:
         responses:
           200:
             description: Refund granted
-            #TODO Define response
-            #Was the refund authorized or rejected?
           400:
-            description: Refund denied
-            #TODO define further
+            description: Refund failed
+            schema:
+              type: string
           
   /customer_service/tokens:
     #Request a new set of tokens
@@ -62,7 +61,7 @@ paths:
           $ref: '#/definitions/tokendto'
         description: Amount of tokens to request
       responses:
-        200:
+        201:
           description: Returns list of requested tokens
           schema:
             type: array
