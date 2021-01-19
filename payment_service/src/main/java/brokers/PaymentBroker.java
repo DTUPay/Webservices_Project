@@ -187,8 +187,8 @@ public class PaymentBroker implements IMessageBroker {
         Message reply;
         Message originalMessage = messageRepository.getMessageObject(message.getRequestId());
         messageRepository.removeMessageObject(message.getRequestId());
-        TokenDTO tokenDTO = tokenRepository.getMessageObject(message.getRequestId());
-        tokenRepository.removeMessageObject(message.getRequestId());
+        TokenDTO tokenDTO = tokenRepository.getTokenObject(message.getRequestId());
+        tokenRepository.removeTokenObject(message.getRequestId());
         System.out.println("original message: " + originalMessage.payload);
 
         CustomerDTO customerDTO = null;
