@@ -56,6 +56,7 @@ public class PaymentBroker implements IMessageBroker {
                         channel = connection.createChannel();
                         channel.queueDeclare(queue, false, false, false, null);
                         this.listenOnQueue(queue);
+                        System.out.println("Successfully connected to RabbitMQ queue " + queue + ".");
 
                         break;
                     } catch (Exception e) {
@@ -245,7 +246,7 @@ public class PaymentBroker implements IMessageBroker {
         if (message.getStatus() != 200 || tokenDTO == null) {
             reply = createReply(originalMessage);
             reply.setStatus(404); //TODO set correct error code
-            reply.setStatusMessage("The token could not be validated: " + message.getStatusMessage());
+            reply.setStatusMessage("The token could not be validated!");
             sendMessage(reply);
             return;
         }
