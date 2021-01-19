@@ -89,7 +89,7 @@ public class ReportingBroker implements IMessageBroker {
     private void listenOnQueue(String queue){
         deliverCallback = (consumerTag, delivery) -> {
             String message = new String(delivery.getBody(), "UTF-8");
-            JsonObject jsonObject = Json.createReader(new StringReader(message)).readObject(); // @TODO: Validate Message, if it is JSON object
+            JsonObject jsonObject = Json.createReader(new StringReader(message)).readObject();
 
             this.processMessage(gson.fromJson(jsonObject.toString(), Message.class), jsonObject.getJsonObject("payload"));
         };
@@ -129,6 +129,7 @@ public class ReportingBroker implements IMessageBroker {
         Message reply = createReply(message);
         Report report = reportingService.getManagerReport();
         reply.setPayload(report);
+        reply.setStatus(201);
         sendMessage(reply);
     }
 
@@ -138,9 +139,10 @@ public class ReportingBroker implements IMessageBroker {
             ReportRequestDTO reportRequestDTO = gson.fromJson(payload.toString(), ReportRequestDTO.class);
             Report report = reportingService.getMerchantReport(reportRequestDTO);
             reply.setPayload(report);
+            reply.setStatus(201);
             sendMessage(reply);
         } catch (Exception e) {
-            reply.setStatus(400); //TODO set correct errorcode
+            reply.setStatus(400);
             reply.setStatusMessage("Could not cast DTO");
             sendMessage(reply);
             return;
@@ -153,9 +155,10 @@ public class ReportingBroker implements IMessageBroker {
             ReportRequestDTO reportRequestDTO = gson.fromJson(payload.toString(), ReportRequestDTO.class);
             Report report = reportingService.getCustomerReport(reportRequestDTO);
             reply.setPayload(report);
+            reply.setStatus(201);
             sendMessage(reply);
         } catch (Exception e) {
-            reply.setStatus(400); //TODO set correct errorcode
+            reply.setStatus(400);
             reply.setStatusMessage("Could not cast DTO");
             sendMessage(reply);
             return;

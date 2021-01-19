@@ -35,7 +35,6 @@ public class PaymentSteps {
 
         System.out.println("Hello world?");
 
-        //TODO: Create customer and merchant bank accounts
         //Customer: Jens Jensen, 121012-xxxx, 100 DKK
         customer = new Customer("Jens", "Jensen", "121012-xxxx", 100);
         dtu.ws.fastmoney.User bankCustomer = new dtu.ws.fastmoney.User();

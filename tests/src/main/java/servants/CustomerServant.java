@@ -1,17 +1,16 @@
 package servants;
 
 import models.Customer;
+import models.Payment;
+import models.ReportRequestDTO;
 import servants.RestCommunicator.Service;
 
 import javax.json.Json;
 import javax.json.JsonObject;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
- * @author Björn Wilting s184214
+ * @author Björn Wilting s184214 & Benjamin & Laura
  */
 public class CustomerServant {
     private Customer customer;
@@ -56,7 +55,6 @@ public class CustomerServant {
         System.out.println("Tokens added");
     }
 
-    //TODO: Change message signature to have customerID, merchantID and paymentID
     public boolean requestRefund(UUID tokenID, UUID paymentID) throws Exception {
         RestCommunicator communicator = new RestCommunicator(Service.CUSTOMER);
         String path = "/refund";
@@ -104,4 +102,23 @@ public class CustomerServant {
         customerTokens.remove(customerTokens.size()-1);
         return token;
     }
+
+
+
+    public List<Payment> requestReport(UUID customerID) throws Exception {
+        RestCommunicator dtuPay = new RestCommunicator(RestCommunicator.Service.CUSTOMER);
+        ReportRequestDTO reportRequestDTO = new ReportRequestDTO();
+        reportRequestDTO.setFromDate(new Date());
+        reportRequestDTO.setToDate(new Date());
+        reportRequestDTO.setCustomerID(customerID);
+
+        Object object = dtuPay.post(reportRequestDTO, "/report", 201);
+        List<Payment> report = getPayments((HashMap<String,?>) object);
+        return report;
+    }
+
+    private List<Payment> getPayments(HashMap<String,?> object) {
+        return (List<Payment>) object.get("payments");
+    }
+
 }
