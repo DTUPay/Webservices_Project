@@ -166,7 +166,6 @@ public class CustomerBroker implements IMessageBroker {
 
     }
 
-
     /*
         Customer Specific Functions
      */
@@ -181,7 +180,6 @@ public class CustomerBroker implements IMessageBroker {
             customer.setFirstName(dto.getFirstName());
             customer.setLastName(dto.getLastName());
             customer.setAccountID(dto.getAccountNumber());
-
             UUID customerID = customerService.registerCustomer(customer);
             dto.setCustomerID(customerID);
             reply.setPayload(dto);
@@ -220,9 +218,8 @@ public class CustomerBroker implements IMessageBroker {
         try {
             CustomerIDDTO dto = gson.fromJson(payload.toString(), CustomerIDDTO.class);
             Customer customer = customerService.getCustomer(dto.getCustomerID());
-            CustomerDTO customerDTO = new CustomerDTO(customer);
 
-            reply.payload = customerDTO;
+            reply.payload = new CustomerDTO(customer);
         } catch(CustomerException ce){
             reply.setStatus(400);
             reply.setStatusMessage(ce.getMessage());
@@ -239,6 +236,7 @@ public class CustomerBroker implements IMessageBroker {
         Handle REST Async calls
      */
 
+    // @Status: Implemented
     public void requestRefund(RefundDTO refund, AsyncResponse response){
 
         Message message = new Message();
@@ -253,7 +251,7 @@ public class CustomerBroker implements IMessageBroker {
         this.sendMessage(message);
     }
 
-
+    // @Status: implemented
     public void requestTokens(TokensDTO token, AsyncResponse response) {
         try {
             customerService.canRequestTokens(token.getCustomerID(), token.getAmount());
@@ -273,6 +271,7 @@ public class CustomerBroker implements IMessageBroker {
     }
 
 
+    // @Status: implemented
     public void requestReport(ReportRequestDTO reportRequestDTO, AsyncResponse response) {
 
         Message message = new Message();
@@ -297,21 +296,22 @@ public class CustomerBroker implements IMessageBroker {
         Handle REST Async call responses
      */
 
+    // @Status: Implemented
     public void requestRefundResponse(Message message, JsonObject payload){
         System.out.println("Response Status Message:" + message.getStatusMessage());
         AsyncResponse response = this.responseHandler.getRestResponseObject(message.getRequestId());
         response.resume(Response.status(message.getStatus()).entity(message.getStatusMessage()).build());
     }
 
-
+    // @Status: Implemented
     public void requestTokensResponse(Message message, JsonObject payload){
         AsyncResponse response = responseHandler.getRestResponseObject(message.getRequestId());
 
         UUID customerId = UUID.fromString(payload.get("customerID").toString().replace("\"", ""));
-        List<String> tokenIdsInString = gson.fromJson(payload.get("tokenIDs").toString(), List.class);
+        List<String> tokenIDsInString = gson.fromJson(payload.get("tokenIDs").toString(), List.class);
         List<UUID> tokenIds = new ArrayList<>();
 
-        tokenIdsInString.forEach((tokenId) -> {
+        tokenIDsInString.forEach((tokenId) -> {
             tokenIds.add(UUID.fromString(tokenId));
         });
 
