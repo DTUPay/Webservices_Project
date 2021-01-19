@@ -1,6 +1,9 @@
 package servants;
 
 
+import models.Customer;
+import models.Merchant;
+
 import java.util.HashMap;
 import java.util.UUID;
 

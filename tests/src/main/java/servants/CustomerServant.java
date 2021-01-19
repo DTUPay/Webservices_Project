@@ -1,5 +1,6 @@
 package servants;
 
+import models.Customer;
 import servants.RestCommunicator.Service;
 
 import javax.json.Json;
