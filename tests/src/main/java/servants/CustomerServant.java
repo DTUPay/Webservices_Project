@@ -1,19 +1,16 @@
 package servants;
 
 import models.Customer;
-import models.Report;
+import models.Payment;
 import models.ReportRequestDTO;
 import servants.RestCommunicator.Service;
 
 import javax.json.Json;
 import javax.json.JsonObject;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
- * @author Björn Wilting s184214
+ * @author Björn Wilting s184214 & Benjamin & Laura
  */
 public class CustomerServant {
     private Customer customer;
@@ -107,19 +104,22 @@ public class CustomerServant {
         return token;
     }
 
-    public Report requestReport(UUID customerID) {
+
+
+    public List<Payment> requestReport(UUID customerID) throws Exception {
         RestCommunicator dtuPay = new RestCommunicator(RestCommunicator.Service.CUSTOMER);
         ReportRequestDTO reportRequestDTO = new ReportRequestDTO();
+        reportRequestDTO.setFromDate(new Date());
+        reportRequestDTO.setToDate(new Date());
         reportRequestDTO.setCustomerID(customerID);
 
-        Object object = null;
-        try {
-            object = dtuPay.post(customer, "/customer/report", 201);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        Report report = (Report) object;
+        Object object = dtuPay.post(reportRequestDTO, "/report", 201);
+        List<Payment> report = getPayments((HashMap<String,?>) object);
         return report;
+    }
+
+    private List<Payment> getPayments(HashMap<String,?> object) {
+        return (List<Payment>) object.get("payments");
     }
 
 }

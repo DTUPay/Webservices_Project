@@ -273,7 +273,6 @@ public class CustomerBroker implements IMessageBroker {
 
     // @Status: implemented
     public void requestReport(ReportRequestDTO reportRequestDTO, AsyncResponse response) {
-
         Message message = new Message();
         message.setEvent("getCustomerReport");
         message.setService("reporting_service");
@@ -290,6 +289,7 @@ public class CustomerBroker implements IMessageBroker {
         AsyncResponse response = this.responseHandler.getRestResponseObject(message.getRequestId());
         Report report = gson.fromJson(payload.toString(), Report.class);
         response.resume(Response.status(message.getStatus()).entity(report).build());
+
     }
 
     /*

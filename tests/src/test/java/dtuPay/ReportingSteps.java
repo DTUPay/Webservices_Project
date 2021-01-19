@@ -3,17 +3,20 @@ package dtuPay;
 import dtu.ws.fastmoney.*;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
+import io.cucumber.java.PendingException;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import models.Customer;
 import models.Merchant;
+import models.Payment;
 import models.Report;
 import servants.CustomerServant;
 import servants.ManagementServant;
 import servants.MerchantServant;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
@@ -32,7 +35,7 @@ public class ReportingSteps {
     private Exception exception;
     private BankServiceService service;
     private BankService bank;
-    private Report report;
+    private List<Payment> report;
 
     @Before
     public void CreateUsersInBank() throws Exception {
@@ -100,31 +103,26 @@ public class ReportingSteps {
     }
 
     @When("the customer requests a report")
-    public void theCustomerRequestsAReport() {
+    public void theCustomerRequestsAReport() throws Exception {
         report = customerServant.requestReport(customerID);
-        //throw new PendingException();
-    }
-
-    @Then("the report contains {int} payments")
-    public void theReportContainsPayments(int numPayments) {
-        assertEquals(report.getPayments().size(),numPayments);
-    }
-
-    @Given("the merchant has received {int} payments")
-    public void theMerchantHasReceivedPayments(int numPayments) {
-
     }
 
     @When("the merchant requests a report")
     public void theMerchantRequestsAReport() {
+        throw new PendingException();
+        //report = merchantServant.requestReport(merchantID);
     }
 
-    @Given("that {int} payments have been made in the app")
-    public void thatPaymentsHaveBeenMadeInTheApp(int numPayments) {
-    }
 
     @When("the manager requests a manager report")
     public void theManagerRequestsAManagerReport() {
+        throw new PendingException();
+        //report = accountManagement.requestReport();
+    }
+
+    @Then("the report contains {int} payments")
+    public void theReportContainsPayments(int numPayments) {
+        assertEquals(report.size(),numPayments);
     }
 
     @After

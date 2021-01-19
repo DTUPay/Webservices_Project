@@ -129,6 +129,7 @@ public class ReportingBroker implements IMessageBroker {
         Message reply = createReply(message);
         Report report = reportingService.getManagerReport();
         reply.setPayload(report);
+        reply.setStatus(201);
         sendMessage(reply);
     }
 
@@ -138,6 +139,7 @@ public class ReportingBroker implements IMessageBroker {
             ReportRequestDTO reportRequestDTO = gson.fromJson(payload.toString(), ReportRequestDTO.class);
             Report report = reportingService.getMerchantReport(reportRequestDTO);
             reply.setPayload(report);
+            reply.setStatus(201);
             sendMessage(reply);
         } catch (Exception e) {
             reply.setStatus(400); //TODO set correct errorcode
@@ -153,6 +155,7 @@ public class ReportingBroker implements IMessageBroker {
             ReportRequestDTO reportRequestDTO = gson.fromJson(payload.toString(), ReportRequestDTO.class);
             Report report = reportingService.getCustomerReport(reportRequestDTO);
             reply.setPayload(report);
+            reply.setStatus(201);
             sendMessage(reply);
         } catch (Exception e) {
             reply.setStatus(400); //TODO set correct errorcode
