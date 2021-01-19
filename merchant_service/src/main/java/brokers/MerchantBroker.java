@@ -46,7 +46,6 @@ public class MerchantBroker implements IMessageBroker {
 
             factory.setHost("rabbitmq");
 
-            //TODO change env to != null
             if(System.getenv("ENVIRONMENT") != null && System.getenv("CONTINUOUS_INTEGRATION") == null){
                 int attempts = 0;
                 while (true){
@@ -78,7 +77,7 @@ public class MerchantBroker implements IMessageBroker {
     private void listenOnQueue(String queue){
         deliverCallback = (consumerTag, delivery) -> {
             String message = new String(delivery.getBody(), "UTF-8");
-            JsonObject jsonObject = Json.createReader(new StringReader(message)).readObject(); // @TODO: Validate Message, if it is JSON object
+            JsonObject jsonObject = Json.createReader(new StringReader(message)).readObject();
 
             this.processMessage(gson.fromJson(jsonObject.toString(), Message.class), jsonObject.getJsonObject("payload"));
         };

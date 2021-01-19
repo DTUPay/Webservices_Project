@@ -56,7 +56,6 @@ public class CustomerServant {
         System.out.println("Tokens added");
     }
 
-    //TODO: Change message signature to have customerID, merchantID and paymentID
     public boolean requestRefund(UUID tokenID, UUID paymentID) throws Exception {
         RestCommunicator communicator = new RestCommunicator(Service.CUSTOMER);
         String path = "/refund";
