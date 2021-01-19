@@ -1,6 +1,8 @@
 package servants;
 
 import models.Customer;
+import models.Report;
+import models.ReportRequestDTO;
 import servants.RestCommunicator.Service;
 
 import javax.json.Json;
@@ -104,4 +106,20 @@ public class CustomerServant {
         customerTokens.remove(customerTokens.size()-1);
         return token;
     }
+
+    public Report requestReport(UUID customerID) {
+        RestCommunicator dtuPay = new RestCommunicator(RestCommunicator.Service.CUSTOMER);
+        ReportRequestDTO reportRequestDTO = new ReportRequestDTO();
+        reportRequestDTO.setCustomerID(customerID);
+
+        Object object = null;
+        try {
+            object = dtuPay.post(customer, "/customer/report", 201);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Report report = (Report) object;
+        return report;
+    }
+
 }

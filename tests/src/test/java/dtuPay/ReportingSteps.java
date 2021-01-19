@@ -1,7 +1,6 @@
 package dtuPay;
 
 import dtu.ws.fastmoney.*;
-import dtupay.ReportingService;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
@@ -10,22 +9,21 @@ import io.cucumber.java.en.When;
 import models.Customer;
 import models.Merchant;
 import models.Report;
-import models.Token;
 import servants.CustomerServant;
 import servants.ManagementServant;
 import servants.MerchantServant;
-import testModels.TestPayment;
 
 import java.math.BigDecimal;
-import java.util.Calendar;
-import java.util.Random;
 import java.util.UUID;
 
+import static org.junit.Assert.assertEquals;
+
 public class ReportingSteps {
-    ReportingService reportingService = ReportingService.getInstance();;
     private ManagementServant accountManagement;
-    UUID merchantID = UUID.randomUUID();
-    UUID customerID = UUID.randomUUID();
+    private CustomerServant customerServant;
+    private MerchantServant merchantServant;
+    UUID merchantID;
+    UUID customerID;
     Report managerReport = null;
     Report merchantReport = null;
     Report customerReport = null;
@@ -34,9 +32,10 @@ public class ReportingSteps {
     private Exception exception;
     private BankServiceService service;
     private BankService bank;
+    private Report report;
 
     @Before
-    public void CreateUsersInBank() throws BankServiceException_Exception {
+    public void CreateUsersInBank() throws Exception {
         service = new dtu.ws.fastmoney.BankServiceService();
         bank = service.getBankServicePort();
 
@@ -82,47 +81,38 @@ public class ReportingSteps {
         //TODO: Store account numbers
         accountManagement = new ManagementServant();
 
+
+        customerID = accountManagement.registerCustomer(customer);
+        merchantID = accountManagement.registerMerchant(merchant);
+        customerServant = new CustomerServant(customerID);
+        merchantServant = new MerchantServant(customerID);
+
     }
 
 
     @Given("{int} transactions have been made")
-    public void transactionsHaveBeenMade(int arg0) {
+    public void transactionsHaveBeenMade(int arg0) throws Exception {
         //Generate merchant & customer transactions
+        customerServant.requestTokens(customerID,4);
         for(int i = 0; i < arg0; i++){
-            //Merchant transaction
-            TestPayment payment = new TestPayment(merchantID, new Random().nextInt(10000)+1);
-            Token token = new Token(UUID.randomUUID());
-            payment.setTokenID(token.getTokenID());
-            payment.setCustomerID(token.getCustomerID());
-            Calendar calendar = Calendar.getInstance();
-            calendar.add(Calendar.HOUR, -i);
-            payment.setDate(calendar.getTime());
-            //if(new Random().nextInt(10) == 9)
-            //    payment.setStatus(PaymentStatus.REFUNDED);
-            reportingService.paymentRepository.addPayment(payment);
-
-            //Customer transaction
-            payment = new TestPayment(UUID.randomUUID(), new Random().nextInt(10000)+1);
-            token = new Token(customerID);
-            payment.setTokenID(token.getTokenID());
-            payment.setCustomerID(customerID);
-            payment.setDate(calendar.getTime());
-            //if(new Random().nextInt(10) == 9)
-            //    payment.setStatus(PaymentStatus.REFUNDED);
-            reportingService.paymentRepository.addPayment(payment);
+            merchantServant.requestPayment(i+15,merchantID,customerServant.selectToken());
         }
     }
 
     @When("the customer requests a report")
     public void theCustomerRequestsAReport() {
+        report = customerServant.requestReport(customerID);
+        //throw new PendingException();
     }
 
     @Then("the report contains {int} payments")
     public void theReportContainsPayments(int numPayments) {
+        assertEquals(report.getPayments().size(),numPayments);
     }
 
     @Given("the merchant has received {int} payments")
     public void theMerchantHasReceivedPayments(int numPayments) {
+
     }
 
     @When("the merchant requests a report")
