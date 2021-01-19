@@ -69,8 +69,9 @@ paths:
               $ref: '#/definitions/uuiddto'
         400:
           description: Bad request
-          #TODO: define protocol
-          
+          schema:
+              type: string
+
   /customer_service/report:
     #Customer requests are report of his transactions
     post:
@@ -95,10 +96,11 @@ paths:
           schema:
             type: array
             items:
-              $ref: '#/definitions/customerreportdto'
+              $ref: '#/definitions/report'
         400:
           description: Bad request
-          #TODO: define protocol
+          schema:
+            type: string
 
   /customer_service/customer:
     #Add a customer to the system
@@ -140,11 +142,15 @@ paths:
         - application/json
       responses:
         200:
-          description: Returns transaction report
+          description: Returns list of transactions
           schema:
-            $ref: '#/definitions/managementreportdto'
-        500:
-          description: Unexpected internal error
+            type: array
+            items:
+              $ref: '#/definitions/report'
+        400:
+          description: Bad request
+          schema:
+            type: string
 
   
   /management_service/customer/{id}:
@@ -161,12 +167,12 @@ paths:
         required: true
         description: Id of customer to delete
       responses:
-        202:
+        200:
           description: resource was marked for deletion
-          #define
-        404:
-          description: Customer not found
-          #define
+        400:
+          description: Customer deletion failed
+          schema:
+            type: string
 
   /management_service/merchant/{id}:
     #Delete a merchant from the system (delete by id)
@@ -182,12 +188,12 @@ paths:
         required: true
         description: Id of merchant to delete
       responses:
-        202:
+        200:
           description: resource was marked for deletion
-          #define
-        404:
-          description: Merchant not found
-          #define
+        400:
+          description: Merchant deletion failed
+          schema:
+            type: string
 
   /merchant_service/payment:
     #Request a payment
@@ -210,11 +216,10 @@ paths:
           description: OK, payment created
           schema:
             $ref: '#/definitions/paymentiddto'
-          #TODO define response
-        #TODO Add 4xx code for invalid requests? Invalid tokens?
-        500:
-          description: Unexpected internal error
-          #TODO define response
+        400:
+          description: Bad Request, payment failed
+          schema:
+            type: string
 
   /merchant_service/report:
     #Generate a report for a merchant
@@ -236,13 +241,15 @@ paths:
         description: merchant Id
       responses:
         200:
-          #TODO: define
-          description: List of transactions of the merchant
+          description: Returns list of transactions
           schema:
-            $ref: '#/definitions/merchantreportdto'
-        500:
-          #TODO define
-          description: Unexpected internal error
+            type: array
+            items:
+              $ref: '#/definitions/report'
+        400:
+          description: Bad request
+          schema:
+            type: string
             
   /merchant_service/merchant:
     #Add a merchant to the system
@@ -342,11 +349,39 @@ definitions:
       enddate:
         type: string
         
-  customerreportdto:
-    type: array
-    items:
-      $ref: '#/definitions/customertransactiondto'
-    
+  report:
+    type: object
+    properties:
+      payments:
+        type: array
+        items:
+          $ref: '#/definitions/payment'
+
+  payment:
+    type: object
+    properties:
+      paymentid:
+        type: string
+      merchantid:
+        type: string
+      tokenid:
+        type: string
+      refundtokenid:
+        type: string
+      customerid:
+        type: string
+      customeraccountid:
+        type: string
+      merchantaccountid:
+        type: string
+      date:
+        type: string
+      amount:
+        type: number
+      paymentstatus:
+        type: string
+        enum: [COMPLETED, PENDING, REFUNDED]
+
   customertransactiondto:
     type: object
     properties:
@@ -397,7 +432,7 @@ definitions:
       name:
         type: string
       accountnumber:
-        type: string #TODO more appropriate type needed, possibly
+        type: string
       merchantid:
         type: string
   

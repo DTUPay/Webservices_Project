@@ -33,9 +33,13 @@ public class RestCommunicator {
     public <T> Object post(T item, String path, int expectedStatusCode) throws Exception {
         Response response = target.path(path).request().post(Entity.entity(item, MediaType.APPLICATION_JSON));
         if(response.getStatus() == expectedStatusCode) {
-            if(response.hasEntity())
+            if(response.hasEntity()) {
                 return response.readEntity(Object.class);
-            else return true;
+            }
+            else {
+                response.close();
+                return true;
+            }
         }
         else throw new Exception(response.getStatus() + " " + response.readEntity(String.class));
 
@@ -51,8 +55,10 @@ public class RestCommunicator {
      */
     public <T> boolean put(T item, String path, int expectedCode) throws Exception {
         Response response = target.path(path).request().put(Entity.entity(item, MediaType.APPLICATION_JSON));
-        if(response.getStatus() == expectedCode)
+        if(response.getStatus() == expectedCode){
+            response.close();
             return true;
+        }
         else throw new Exception(response.getStatus() + " " + response.readEntity(String.class));
     }
 
