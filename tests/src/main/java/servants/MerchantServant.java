@@ -1,10 +1,14 @@
 package servants;
 
 import models.Merchant;
+import models.Payment;
+import models.ReportRequestDTO;
 
 import javax.json.Json;
 import javax.json.JsonObject;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -55,10 +59,21 @@ public class MerchantServant {
             HashMap<String, String> paymentIdEntity = (HashMap<String, String>) responseEntity;
             return UUID.fromString(paymentIdEntity.get("paymentID"));
     }
-    
-    
 
-    public void generateReport() {
 
+    public List<Payment> requestReport(UUID merchantID) throws Exception {
+        RestCommunicator dtuPay = new RestCommunicator(RestCommunicator.Service.CUSTOMER);
+        ReportRequestDTO reportRequestDTO = new ReportRequestDTO();
+        reportRequestDTO.setFromDate(new Date());
+        reportRequestDTO.setToDate(new Date());
+        reportRequestDTO.setMerchantID(merchantID);
+
+        Object object = dtuPay.post(reportRequestDTO, "/report", 201);
+        List<Payment> report = getPayments((HashMap<String,?>) object);
+        return report;
+    }
+
+    private List<Payment> getPayments(HashMap<String,?> object) {
+        return (List<Payment>) object.get("payments");
     }
 }
