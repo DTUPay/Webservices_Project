@@ -22,6 +22,4 @@ public class ManagementService {
         ManagementService service = ManagementService.getInstance();
         Quarkus.run();
     }
-
-
 }
