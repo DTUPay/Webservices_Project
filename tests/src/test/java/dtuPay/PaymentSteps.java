@@ -18,7 +18,6 @@ import static org.junit.Assert.*;
 public class PaymentSteps {
     private CustomerServant customerAccount;
     private MerchantServant merchantAccount;
-    private ManagementServant accountManagement;
     private Customer customer;
     private Merchant merchant;
     private Exception exception;
@@ -75,9 +74,6 @@ public class PaymentSteps {
         merchant.setAccountNumber(merchantBankAccount);
         System.out.println("done");
 
-        //TODO: Store account numbers
-        accountManagement = new ManagementServant();
-
     }
 
     @Given("the customer has the paymentID of his last payment")
@@ -109,7 +105,8 @@ public class PaymentSteps {
     @Given("the customer is registered with DTU Pay")
     public void theCustomerIsRegisteredWithDTUPay() throws Exception {
         System.out.println("Registering customer on DTU Pay");
-        customerAccount = new CustomerServant(accountManagement.registerCustomer(customer));
+        customerAccount = new CustomerServant(null);
+        customerAccount.registerCustomer(customer);
         System.out.println("done");
     }
 
@@ -121,7 +118,8 @@ public class PaymentSteps {
     @Given("the merchant is registered with DTU Pay")
     public void theMerchantIsRegisteredWithDTUPay() throws Exception {
         System.out.println("Registering customer on DTU Pay");
-        merchantAccount = new MerchantServant(accountManagement.registerMerchant(merchant));
+        merchantAccount = new MerchantServant(null);
+        merchantAccount.registerMerchant(merchant);
         System.out.println("done");
     }
 

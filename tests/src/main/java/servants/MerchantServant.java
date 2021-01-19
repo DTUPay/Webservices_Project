@@ -35,6 +35,14 @@ public class MerchantServant {
         this.id = id;
     }
 
+    public UUID registerMerchant(Merchant merchant) throws Exception {
+        RestCommunicator dtuPay = new RestCommunicator(RestCommunicator.Service.MERCHANT);
+        Object object = dtuPay.post(merchant, "/merchant", 201);
+        HashMap<String, String> customerObject = (HashMap<String, String>) object;
+        this.id = UUID.fromString(customerObject.get("merchantID"));
+        return id;
+    }
+
     public UUID requestPayment(int amount, UUID merchantID, UUID tokenID) throws Exception {
         RestCommunicator communicator = new RestCommunicator(RestCommunicator.Service.MERCHANT);
         JsonObject payment = Json.createObjectBuilder()
