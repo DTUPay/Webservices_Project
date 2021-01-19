@@ -58,6 +58,5 @@ public class ManagementAPI {
     public void requestReport(@Suspended AsyncResponse response) {
         service.broker.requestReport(new ReportRequestDTO(), response);
     }
-
 }
 

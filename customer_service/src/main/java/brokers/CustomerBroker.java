@@ -289,7 +289,6 @@ public class CustomerBroker implements IMessageBroker {
         AsyncResponse response = this.responseHandler.getRestResponseObject(message.getRequestId());
         Report report = gson.fromJson(payload.toString(), Report.class);
         response.resume(Response.status(message.getStatus()).entity(report).build());
-
     }
 
     /*

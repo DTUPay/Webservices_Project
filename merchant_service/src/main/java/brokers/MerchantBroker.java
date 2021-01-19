@@ -5,10 +5,7 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.DeliverCallback;
-import dto.MerchantDTO;
-import dto.MerchantIDDTO;
-import dto.PaymentDTO;
-import dto.PaymentIDDTO;
+import dto.*;
 import dtupay.MerchantService;
 import dtupay.RestResponseHandler;
 import exceptions.MerchantException;
@@ -124,7 +121,7 @@ public class MerchantBroker implements IMessageBroker {
                 getMerchant(message, payload);
                 break;
             // generate report receivers
-            case "returnMerchantSummary":
+            case "returnMerchantReport":
                 returnMerchantReport(message, payload);
                 break;
             case "requestPaymentComplete":
@@ -261,16 +258,16 @@ public class MerchantBroker implements IMessageBroker {
     Generate report functions
      */
 
-    public void generateReport(PaymentDTO reportRequestDTO, AsyncResponse response){
+    public void generateReport(ReportRequestDTO reportRequestDTO, AsyncResponse response){
         UUID requestId = responsehandler.saveRestResponseObject(response);
 
         Message message = new Message();
-        message.setEvent("getMerchantSummary");
-        message.setService("payment_service");
+        message.setEvent("getMerchantReport");
+        message.setService("reporting_service");
         message.setRequestId(requestId);
 
         message.setPayload(reportRequestDTO);
-        message.setCallback(new Callback("merchant_service", "returnMerchantSummary"));
+        message.setCallback(new Callback("merchant_service", "returnMerchantReport"));
         sendMessage(message);
     }
 
