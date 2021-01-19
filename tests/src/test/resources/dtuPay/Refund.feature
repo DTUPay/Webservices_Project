@@ -21,10 +21,18 @@ Feature: Requesting refunds
     * the customer has 100 DKK in his account
     * the merchant has 1000 DKK in his account
     When the customer request to have the payment refunded
-    #Then the refunding fails
-    #Then the error message is ""
+    Then the refunding fails
+    * the error message is "404 Error while refunding payment: Payment already refunded"
     * the customer has 100 DKK in his account
     * the merchant has 1000 DKK in his account
 
 
   Scenario: Attempting to refund with an invalid token
+    Given the customer has the paymentID of his last payment
+    When the request to have the payment refunded using an invalid token
+    * the merchant request to see his account balance
+    * the customer request to see his account balance
+    Then the refunding fails
+    Then the error message is "404 The token could not be validated!"
+    * the customer has 50 DKK in his account
+    * the merchant has 1050 DKK in his account

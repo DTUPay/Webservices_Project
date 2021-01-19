@@ -183,6 +183,7 @@ public class PaymentSteps {
             paymentRefunded = customerAccount.requestRefund(customerAccount.selectToken(), paymentID);
         } catch (Exception e) {
             exception = e;
+            paymentRefunded = false;
         }
     }
 
@@ -201,6 +202,16 @@ public class PaymentSteps {
         } catch (Exception e) {
             //e.printStackTrace();
             //fail();
+        }
+    }
+
+    @When("the request to have the payment refunded using an invalid token")
+    public void theRequestToHaveThePaymentRefundedUsingAnInvalidToken() {
+        try {
+            paymentRefunded = customerAccount.requestRefund(UUID.randomUUID(), paymentID);
+        } catch (Exception e) {
+            exception = e;
+            paymentRefunded = false;
         }
     }
 
