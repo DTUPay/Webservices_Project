@@ -33,7 +33,7 @@ public class PaymentSteps {
         service = new dtu.ws.fastmoney.BankServiceService();
         bank = service.getBankServicePort();
 
-        System.out.println("Hello world?");
+        // System.out.println("Hello world?");
 
         //Customer: Jens Jensen, 121012-xxxx, 100 DKK
         customer = new Customer("Jens", "Jensen", "121012-xxxx", 100);
@@ -45,14 +45,14 @@ public class PaymentSteps {
             dtu.ws.fastmoney.Account customerAccount = bank.getAccountByCprNumber(bankCustomer.getCprNumber());
             bank.retireAccount(customerAccount.getId());
         } catch (Exception e) {
-            System.out.println(e.toString());
+            // System.out.println(e.toString());
         }
 
-        System.out.println("Creating customer bank account...");
+        // System.out.println("Creating customer bank account...");
         String customerBankAccount = bank.createAccountWithBalance(bankCustomer, new BigDecimal(100));
-        System.out.println("CustomerBankAccount: " + customerBankAccount);
+        // System.out.println("CustomerBankAccount: " + customerBankAccount);
         customer.setAccountNumber(customerBankAccount);
-        System.out.println("done");
+        // System.out.println("done");
         //Merchant: Mads Madsen, 140467-xxxx, 1000 DKK
         merchant = new Merchant("Mads Madsen", "140467", 1000);
         User bankMerchant = new User();
@@ -65,13 +65,13 @@ public class PaymentSteps {
             Account merchantAccount = bank.getAccountByCprNumber(bankMerchant.getCprNumber());
             bank.retireAccount(merchantAccount.getId());
         } catch (Exception e) {
-            System.out.println(e.toString());
+            // System.out.println(e.toString());
         }
-        System.out.println("Creating merchant bank account...");
+        // System.out.println("Creating merchant bank account...");
         String merchantBankAccount = bank.createAccountWithBalance(bankMerchant, new BigDecimal(1000));
-        System.out.println("MerchantBankAccount: " + merchantBankAccount);
+        // System.out.println("MerchantBankAccount: " + merchantBankAccount);
         merchant.setAccountNumber(merchantBankAccount);
-        System.out.println("done");
+        // System.out.println("done");
 
     }
 
@@ -84,12 +84,12 @@ public class PaymentSteps {
     public void theCustomerHasTokens(int arg0) {
         assertEquals(customerAccount.getCustomerTokens().size(), 0);
         try {
-            System.out.println("Requesting customer tokens");
+            // System.out.println("Requesting customer tokens");
             customerAccount.requestTokens(customerAccount.getID(), arg0);
             tokenCount = customerAccount.getCustomerTokens().size();
-            System.out.println(customerAccount.getCustomerTokens().size());
+            // System.out.println(customerAccount.getCustomerTokens().size());
             assertEquals(tokenCount, arg0);
-            System.out.println("done");
+            // System.out.println("done");
         } catch (Exception e) {
             e.printStackTrace();
             fail();
@@ -103,10 +103,10 @@ public class PaymentSteps {
 
     @Given("the customer is registered with DTU Pay")
     public void theCustomerIsRegisteredWithDTUPay() throws Exception {
-        System.out.println("Registering customer on DTU Pay");
+        // System.out.println("Registering customer on DTU Pay");
         customerAccount = new CustomerServant(null);
         customerAccount.registerCustomer(customer);
-        System.out.println("done");
+        // System.out.println("done");
     }
 
     @Given("a merchant has a bank account provided by the bank with a balance of {int} DKK")
@@ -116,10 +116,10 @@ public class PaymentSteps {
 
     @Given("the merchant is registered with DTU Pay")
     public void theMerchantIsRegisteredWithDTUPay() throws Exception {
-        System.out.println("Registering customer on DTU Pay");
+        // System.out.println("Registering customer on DTU Pay");
         merchantAccount = new MerchantServant(null);
         merchantAccount.registerMerchant(merchant);
-        System.out.println("done");
+        // System.out.println("done");
     }
 
     @Given("a successful payment of {int} DKK has been made to the merchant by the customer")
@@ -146,14 +146,14 @@ public class PaymentSteps {
     public void theCustomerRequestToSeeHisAccountBalance() throws BankServiceException_Exception {
         BigDecimal customerBalance = bank.getAccount(customer.getAccountNumber()).getBalance();
         customer.setBalance(customerBalance.doubleValue());
-        System.out.println("New balance of customer: " + customer.getBalance());
+        // System.out.println("New balance of customer: " + customer.getBalance());
     }
 
     @When("the merchant request to see his account balance")
     public void theMerchantRequestToSeeHisAccountBalance() throws BankServiceException_Exception {
         BigDecimal merchantBalance = bank.getAccount(merchant.getAccountNumber()).getBalance();
         merchant.setBalance(merchantBalance.doubleValue());
-        System.out.println("New balance of merchant: " + merchant.getBalance());
+        // System.out.println("New balance of merchant: " + merchant.getBalance());
     }
 
     @When("the customer selects a token")
@@ -193,9 +193,9 @@ public class PaymentSteps {
     public void the_customer_requests_new_tokens(Integer int1) {
         // Write code here that turns the phrase above into concrete actions
         try {
-            System.out.println("Requesting customer tokens");
+            // System.out.println("Requesting customer tokens");
             customerAccount.requestTokens(customerAccount.getID(), int1);
-            System.out.println("done");
+            // System.out.println("done");
         } catch (Exception e) {
             //e.printStackTrace();
             //fail();
