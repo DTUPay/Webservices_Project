@@ -15,6 +15,7 @@ import exceptions.MerchantException;
 import models.Callback;
 import models.Merchant;
 import models.Message;
+import models.Report;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -132,6 +133,9 @@ public class MerchantBroker implements IMessageBroker {
                 break;
             case "getMerchantById":
                 getMerchantById(message, payload);
+                break;
+            case "receiveReport":
+                receiveReport(message, payload);
                 break;
             default:
                 System.out.println("Event not handled: " + message.getEvent());
@@ -275,6 +279,12 @@ public class MerchantBroker implements IMessageBroker {
     public void requestPaymentResponse(Message message){
         AsyncResponse response = responsehandler.getRestResponseObject(message.getRequestId());
         response.resume(Response.status(message.getStatus()).entity(message.getStatusMessage()).build());
+    }
+
+    public void receiveReport(Message message, JsonObject payload){
+        AsyncResponse response = responsehandler.getRestResponseObject(message.getRequestId());
+        Report report = gson.fromJson(payload.toString(), Report.class);
+        response.resume(Response.status(message.getStatus()).entity(report).build());
     }
 
 
