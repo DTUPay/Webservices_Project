@@ -10,9 +10,12 @@ docker-compose --project-name continous-integration -f docker-compose.ci.yaml up
 
 echo "Waiting for the CI environment to be ready"
 until $(curl --output /dev/null --silent --fail "http://localhost:18080/management_service/debug"); do
-  echo "Service are not ready yet..."
+  echo "CI environment is not ready yet..."
   sleep 5
 done
+
+echo "CI environment is ready!"
+echo ".... starting CI!"
 
 echo "Get into system_tests directory"
 cd tests
