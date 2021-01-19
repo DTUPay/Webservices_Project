@@ -1,9 +1,11 @@
 package dto;
 
+import models.Payload;
+
 import java.util.Date;
 import java.util.UUID;
 
-public class ReportRequestDTO extends PaymentDTO{
+public class ReportRequestDTO extends Payload {
     private UUID merchantID;
     private Date startDate;
     private Date endDate;
