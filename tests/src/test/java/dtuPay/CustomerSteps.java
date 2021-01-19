@@ -1,19 +1,20 @@
 package dtuPay;
 
 /*
-@authors: Oliver O. Nielsen & Rubatharisan Thirumathyam
+@authors: Oliver O. Nielsen & Rubatharisan Thirumathyam & Benjamin
  */
 import io.cucumber.java.Before;
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import org.junit.Assert;
 import models.Customer;
+import org.junit.Assert;
 import servants.CustomerServant;
-import servants.RestCommunicator;
 
-import java.util.HashMap;
 import java.util.UUID;
+
+import static org.junit.Assert.assertEquals;
 
 public class CustomerSteps {
     private Customer customer = new Customer();
@@ -82,5 +83,10 @@ public class CustomerSteps {
         customer.setAccountNumber("my-bank-account-number");
         customer.setFirstName("my-firstname");
         customer.setLastName("my-lastname");
+    }
+
+    @And("the error {string} is thrown")
+    public void theErrorIsThrown(String arg0) {
+        assertEquals(arg0,exception.getMessage());
     }
 }

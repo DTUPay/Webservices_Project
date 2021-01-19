@@ -10,13 +10,16 @@ Feature: Customer creates himself
     Given the customer have no bank account
     When the customer requests a DTUPay account
     Then the customer will not be provided a DTUPay account
+    And the error "400 Missing fields for creating a customer" is thrown
 
   Scenario: A customer creates himself with no firstname
     Given the customer have no firstname
     When the customer requests a DTUPay account
     Then the customer will not be provided a DTUPay account
+    And the error "400 Missing fields for creating a customer" is thrown
 
   Scenario: A customer creates himself with no lastname
     Given the customer have no lastname
     When the customer requests a DTUPay account
     Then the customer will not be provided a DTUPay account
+    And the error "400 Missing fields for creating a customer" is thrown

@@ -8,7 +8,8 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import models.Customer;
 import models.Merchant;
-import servants.*;
+import servants.CustomerServant;
+import servants.MerchantServant;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -197,6 +198,7 @@ public class PaymentSteps {
             customerAccount.requestTokens(customerAccount.getID(), int1);
             // System.out.println("done");
         } catch (Exception e) {
+            exception = e;
             //e.printStackTrace();
             //fail();
         }
@@ -263,4 +265,5 @@ public class PaymentSteps {
         bank.retireAccount(customer.getAccountNumber());
         bank.retireAccount(merchant.getAccountNumber());
     }
+
 }

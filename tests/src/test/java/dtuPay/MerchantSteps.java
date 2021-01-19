@@ -15,6 +15,8 @@ import servants.*;
 import java.util.HashMap;
 import java.util.UUID;
 
+import static org.junit.Assert.assertEquals;
+
 public class MerchantSteps {
     private MerchantDTO merchant = new MerchantDTO();
     private UUID merchantID;
@@ -43,6 +45,11 @@ public class MerchantSteps {
             System.out.print(e.toString());
             exception = e;
         }
+    }
+
+    @Then("the exception message is {string}")
+    public void theExceptionMessageIs(String arg0) {
+        assertEquals(arg0, exception.getMessage());
     }
 
     @Then("the merchant posses a DTUPay account")

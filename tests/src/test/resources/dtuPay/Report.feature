@@ -1,3 +1,5 @@
+# @Authors: Benjamin & Laura
+
 Feature: Generating reports
   Background:
     Given 4 transactions have been made
