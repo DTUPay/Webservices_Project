@@ -24,7 +24,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
- * @author Mikkel Rosenfeldt Anderson & Laura & Benjamin
+ * @author Olier O. Nielsen & Mikkel Rosenfeldt Anderson & Laura & Benjamin
  */
 @QuarkusMain
 public class PaymentService {
@@ -79,9 +79,6 @@ public class PaymentService {
         catch (BankServiceException_Exception e ) {
             throw new BankException(e.getMessage());
         }
-    }
-    public List<Payment> getPayments(UUID merchantID) {
-        return paymentRepository.getPayments().stream().filter(payment -> payment.getMerchantID().equals(merchantID)).collect(Collectors.toList());
     }
 
     public void refundPayment(RefundDTO refundDTO, TokenDTO tokenDTO) throws BankException, PaymentException {
