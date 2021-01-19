@@ -102,7 +102,6 @@ public class ManagementBroker implements IMessageBroker {
         }
     }
 
-    //
     @Override
     public Message createReply(Message originalMessage) {
         Message reply = new Message(originalMessage.getCallback().getService(), originalMessage.getCallback().getEvent());
@@ -155,7 +154,6 @@ public class ManagementBroker implements IMessageBroker {
         }
     }
 
-    // @Status: Implemented
     public void registerCustomer(CustomerDTO customer, AsyncResponse response){
         Message message = new Message();
 
@@ -170,7 +168,6 @@ public class ManagementBroker implements IMessageBroker {
         sendMessage(message);
     }
 
-    // @Status: Implemented
     public void registerCustomerResponse(Message message, JsonObject payload){
         AsyncResponse response = responseHandler.getRestResponseObject(message.getRequestId());
         if(message.getStatus() == 201){
@@ -180,7 +177,6 @@ public class ManagementBroker implements IMessageBroker {
         }
     }
 
-    // @Status: Implemented
     public void removeCustomer(String customerID, AsyncResponse response){
         Message message = new Message();
 
@@ -199,14 +195,12 @@ public class ManagementBroker implements IMessageBroker {
         sendMessage(message);
     }
 
-    // @Status: Implemented
     public void removeCustomerResponse(Message message){
         AsyncResponse response = responseHandler.getRestResponseObject(message.getRequestId());
         response.resume(Response.status(message.getStatus()).entity(message.getStatusMessage()).build());
     }
 
 
-    // @Status: Implemented
     public void registerMerchant(MerchantDTO merchant, AsyncResponse response) {
         Message message = new Message();
 
@@ -221,7 +215,6 @@ public class ManagementBroker implements IMessageBroker {
         sendMessage(message);
     }
 
-    // @Status: Implemented
     public void registerMerchantResponse(Message message, JsonObject payload){
         AsyncResponse response = responseHandler.getRestResponseObject(message.getRequestId());
         if(message.getStatus() == 201){
@@ -231,7 +224,6 @@ public class ManagementBroker implements IMessageBroker {
         }
     }
 
-    // @Status: Implemented
     public void removeMerchant(String merchantID, AsyncResponse response){
         Message message = new Message();
 
@@ -250,7 +242,6 @@ public class ManagementBroker implements IMessageBroker {
         sendMessage(message);
     }
 
-    // @Status: Implemented
     public void removeMerchantResponse(Message message){
         AsyncResponse response = responseHandler.getRestResponseObject(message.getRequestId());
         response.resume(Response.status(message.getStatus()).entity(message.getStatusMessage()).build());

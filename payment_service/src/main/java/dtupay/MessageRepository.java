@@ -1,5 +1,5 @@
 package dtupay;
-
+// @author: Oliver O. Nielsen
 import models.Message;
 
 import javax.ws.rs.container.AsyncResponse;

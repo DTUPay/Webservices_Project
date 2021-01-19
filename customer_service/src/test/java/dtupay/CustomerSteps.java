@@ -127,4 +127,27 @@ public class CustomerSteps {
     public void hisRequestIsSuccessful() {
         assertTrue(canRequestTokens);
     }
+
+    @When("he gets {int} more tokens")
+    public void heGetsMoreTokens(int arg0) {
+        List<UUID> tokens = new ArrayList<>();
+        for (int i = 0; i < arg0; i++) {
+            tokens.add(UUID.randomUUID());
+        }
+        try {
+            service.addTokens(this.customer.getCustomerID(),tokens);
+        } catch (CustomerException e) {
+            exception = e;
+        }
+    }
+
+    @Then("he has a total of {int} tokens")
+    public void heHasATotalOfTokens(int arg0) {
+        try {
+            assertEquals(arg0,service.getCustomer(this.customer.getCustomerID()).getTokenIDs().size());
+        } catch (CustomerException e) {
+            fail();
+            e.printStackTrace();
+        }
+    }
 }

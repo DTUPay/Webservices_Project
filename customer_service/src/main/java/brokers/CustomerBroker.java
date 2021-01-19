@@ -109,7 +109,6 @@ public class CustomerBroker implements IMessageBroker {
         }
     }
 
-    //
     @Override
     public Message createReply(Message originalMessage) {
         Message reply = new Message(originalMessage.getCallback().getService(), originalMessage.getCallback().getEvent());
@@ -171,7 +170,6 @@ public class CustomerBroker implements IMessageBroker {
         Customer Specific Functions
      */
 
-    // @Status: implemented
     public void registerCustomer(Message message, JsonObject payload) {
         Message reply = this.createReply(message);
 
@@ -197,7 +195,6 @@ public class CustomerBroker implements IMessageBroker {
         this.sendMessage(reply);
     }
 
-    // @Status: implemented
     public void removeCustomer(Message message, JsonObject payload) {
         Message reply = this.createReply(message);
         CustomerDTO customer = gson.fromJson(payload.toString(), CustomerDTO.class);
@@ -301,8 +298,9 @@ public class CustomerBroker implements IMessageBroker {
 
     // @Status: Implemented
     public void requestRefundResponse(Message message, JsonObject payload){
+        System.out.println("Response Status Message:" + message.getStatusMessage());
         AsyncResponse response = this.responseHandler.getRestResponseObject(message.getRequestId());
-        response.resume(Response.status(message.getStatus()).entity(message.getStatusMessage()));
+        response.resume(Response.status(message.getStatus()).entity(message.getStatusMessage()).build());
     }
 
     // @Status: Implemented

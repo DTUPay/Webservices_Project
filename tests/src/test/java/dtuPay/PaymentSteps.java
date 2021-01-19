@@ -136,6 +136,15 @@ public class PaymentSteps {
         assertTrue(customerAccount.getCustomerTokens().size() == 0);
     }
 
+    @Given("the customer already has refunded a given payment")
+    public void theCustomerAlreadyHasRefundedAGivenPayment() {
+        try {
+            paymentRefunded = customerAccount.requestRefund(customerAccount.selectToken(), paymentID);
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
     @When("the customer request to see his account balance")
     public void theCustomerRequestToSeeHisAccountBalance() throws BankServiceException_Exception {
         BigDecimal customerBalance = bank.getAccount(customer.getAccountNumber()).getBalance();
@@ -174,6 +183,7 @@ public class PaymentSteps {
             paymentRefunded = customerAccount.requestRefund(customerAccount.selectToken(), paymentID);
         } catch (Exception e) {
             exception = e;
+            paymentRefunded = false;
         }
     }
 
@@ -192,6 +202,16 @@ public class PaymentSteps {
         } catch (Exception e) {
             //e.printStackTrace();
             //fail();
+        }
+    }
+
+    @When("the request to have the payment refunded using an invalid token")
+    public void theRequestToHaveThePaymentRefundedUsingAnInvalidToken() {
+        try {
+            paymentRefunded = customerAccount.requestRefund(UUID.randomUUID(), paymentID);
+        } catch (Exception e) {
+            exception = e;
+            paymentRefunded = false;
         }
     }
 
@@ -230,9 +250,14 @@ public class PaymentSteps {
         assertEquals(arg0, exception.getMessage());
     }
 
+    @Then("the refunding fails")
+    public void theRefundingFails() {
+        assertFalse(paymentRefunded);
+    }
+
     @Then("the customer possesses {int} tokens")
-    public void the_customer_possesses_tokens(Integer int1) {
-        Integer tokens = customerAccount.getCustomerTokens().size();
+    public void the_customer_possesses_tokens(int int1) {
+        int tokens = customerAccount.getCustomerTokens().size();
         assertEquals(tokens, int1);
     }
 

@@ -36,3 +36,7 @@ clean:
 # Test integration local environment
 test:
 	cd tests && mvn test
+
+# Run test on every microservice
+test_micro:
+	bash scripts/only_test.sh
