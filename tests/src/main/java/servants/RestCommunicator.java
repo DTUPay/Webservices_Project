@@ -49,9 +49,9 @@ public class RestCommunicator {
      * @return a boolean indication success
      * @throws Exception with the error code returned by the put-call in case of failure
      */
-    public <T> boolean put(T item, String path) throws Exception {
+    public <T> boolean put(T item, String path, int expectedCode) throws Exception {
         Response response = target.path(path).request().put(Entity.entity(item, MediaType.APPLICATION_JSON));
-        if(response.getStatus() == 200)
+        if(response.getStatus() == expectedCode)
             return true;
         else throw new Exception(response.getStatus() + " " + response.readEntity(String.class));
     }

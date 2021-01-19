@@ -27,7 +27,8 @@ public class CustomerServant {
         RestCommunicator dtuPay = new RestCommunicator(RestCommunicator.Service.CUSTOMER);
         Object object = dtuPay.post(customer, "/customer", 201);
         HashMap<String, String> customerObject = (HashMap<String, String>) object;
-        return UUID.fromString(customerObject.get("customerID"));
+        this.id = UUID.fromString(customerObject.get("customerID"));
+        return id;
     }
 
     public UUID getID() {
@@ -63,7 +64,7 @@ public class CustomerServant {
                 .add("tokenID", tokenID.toString())
                 .add("paymentID", paymentID.toString())
                 .build();
-            return communicator.put(refundDto, path);
+            return communicator.put(refundDto, path, 200);
     }
 
     public List<?> requestReport() throws Exception {

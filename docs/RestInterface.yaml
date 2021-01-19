@@ -1,7 +1,7 @@
 swagger: '2.0'
 info:
   description: |
-    Author: Oliver O. Nielsen & Björn Wilting
+    Authors: Oliver O. Nielsen & Björn Wilting
   version: 1.0.0
   title: DTUpay
 
@@ -37,11 +37,10 @@ paths:
         responses:
           200:
             description: Refund granted
-            #TODO Define response
-            #Was the refund authorized or rejected?
           400:
-            description: Refund denied
-            #TODO define further
+            description: Refund failed
+            schema:
+              type: string
           
   /customer_service/tokens:
     #Request a new set of tokens
@@ -62,7 +61,7 @@ paths:
           $ref: '#/definitions/tokendto'
         description: Amount of tokens to request
       responses:
-        200:
+        201:
           description: Returns list of requested tokens
           schema:
             type: array
@@ -100,7 +99,35 @@ paths:
         400:
           description: Bad request
           #TODO: define protocol
-          
+
+  /customer_service/customer:
+    #Add a customer to the system
+    post:
+      tags:
+        - Customer Service
+      summary: Add a customer to the system
+      operationId: registerCustomer
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: customerdto
+          description: The customer to be added
+          required: true
+          schema:
+            $ref: '#/definitions/customerdto'
+      responses:
+        201:
+          description: OK, object created
+          schema:
+            $ref: '¤/definitions/customerdto'
+        400:
+          description: Invalid CustomerID
+          schema:
+            type: string
+
   /management_service/report:
     #Generate a report of all transactions
     #and summary of all the money being transfered (total sum?)
@@ -118,30 +145,7 @@ paths:
             $ref: '#/definitions/managementreportdto'
         500:
           description: Unexpected internal error
-          
-  /management_service/customer:
-    #Add a customer to the system
-    post:
-      tags:
-      - Management Service
-      summary: Add a customer to the system
-      operationId: registerCustomer
-      consumes:
-      - application/json
-      parameters:
-      - in: body
-        name: customerdto
-        description: The customer to be added
-        required: true
-        schema:
-          $ref: '#/definitions/customerdto'
-      responses:
-        201:
-          description: OK, object created
-          #define
-        400:
-          description: Invalid CustomerID
-          #define
+
   
   /management_service/customer/{id}:
     #Remove a customer from the system (delete by id)
@@ -162,30 +166,6 @@ paths:
           #define
         404:
           description: Customer not found
-          #define
-          
-  /management_service/merchant:
-    #Add a merchant to the system
-    post:
-      tags:
-      - Management Service
-      summary: Add a merchant to the system
-      operationId: addMerchant
-      consumes:
-      - application/json
-      parameters:
-      - in: body
-        name: merchant
-        description: The merchant to be added
-        required: true
-        schema:
-          $ref: '#/definitions/merchant'
-      responses:
-        201:
-          description: OK, object created
-          #define
-        400:
-          description: Invalid MerchantID
           #define
 
   /management_service/merchant/{id}:
@@ -264,7 +244,33 @@ paths:
           #TODO define
           description: Unexpected internal error
             
-            
+  /merchant_service/merchant:
+    #Add a merchant to the system
+    post:
+      tags:
+        - Management Service
+      summary: Add a merchant to the system
+      operationId: addMerchant
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: merchant
+          description: The merchant to be added
+          required: true
+          schema:
+            $ref: '#/definitions/merchant'
+      responses:
+        201:
+          description: OK, object created
+          schema:
+            $ref: '#/definitions/merchantdto'
+        400:
+          description: Invalid MerchantID
+          schema:
+            type: string
             
             
 definitions:
@@ -375,18 +381,25 @@ definitions:
   customerdto:
     type: object
     properties:
-      name:
+      firstname:
         type: string
-      bankaccount:
-        type: string #TODO more appropriate type needed, possibly
+      lastname:
+        type: string
+      accountnumber:
+        type: string
+      customerid:
+        type: string
+
         
   merchantdto:
     type: object
     properties:
       name:
         type: string
-      bankaccount:
+      accountnumber:
         type: string #TODO more appropriate type needed, possibly
+      merchantid:
+        type: string
   
   paymentiddto:
     type: object
