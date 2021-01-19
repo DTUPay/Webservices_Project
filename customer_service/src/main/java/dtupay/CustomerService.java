@@ -38,7 +38,7 @@ public class CustomerService {
     }
 
     public UUID registerCustomer(Customer customer) throws CustomerException {
-        if(customer.getFirstName() == null || customer.getLastName() == null || customer.getAccountID() == null){
+        if(customer.getFirstName() == null || customer.getFirstName().isEmpty() || customer.getLastName() == null || customer.getLastName().isEmpty() || customer.getAccountID() == null || customer.getAccountID().isEmpty()){
             throw new CustomerException("Missing fields for creating a merchant");
         }
 
@@ -76,6 +76,7 @@ public class CustomerService {
 
     // Adds tokens to Customer
     public void addTokens(UUID customerID, List<UUID> tokens) throws CustomerException {
+        // Todo why is the logic not creating tokens?
         if(customerRepository.hasCustomer(customerID)){
             Customer customer = customerRepository.getCustomer(customerID);
             customer.addTokens(tokens);
@@ -107,7 +108,7 @@ public class CustomerService {
         List<UUID> tokens = customerRepository.getCustomer(customerID).getTokenIDs();
         System.out.println(tokens);
         int numTokens = tokens.size();
-        if (numTokens > 1) throw new CustomerException("Customer with ID: " + customerID + " still has " + numTokens + " left."); // Should have spent all tokens
+        if (numTokens > 1) throw new CustomerException("Customer with given customerID still has " + numTokens + " left."); // Should have spent all tokens
         if (tokens.size() + amount > 6) throw new CustomerException("Customer token request would exceed more than 6 tokens");
         return true;
     }
