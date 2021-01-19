@@ -72,7 +72,6 @@ paths:
           schema:
               type: string
 
-  #TODO
   /customer_service/report:
     #Customer requests are report of his transactions
     post:
@@ -97,10 +96,11 @@ paths:
           schema:
             type: array
             items:
-              $ref: '#/definitions/customerreportdto'
+              $ref: '#/definitions/report'
         400:
           description: Bad request
-          #TODO: define protocol
+          schema:
+            type: string
 
   /customer_service/customer:
     #Add a customer to the system
@@ -130,7 +130,6 @@ paths:
           schema:
             type: string
 
-  #TODO
   /management_service/report:
     #Generate a report of all transactions
     #and summary of all the money being transfered (total sum?)
@@ -143,11 +142,15 @@ paths:
         - application/json
       responses:
         200:
-          description: Returns transaction report
+          description: Returns list of transactions
           schema:
-            $ref: '#/definitions/managementreportdto'
-        500:
-          description: Unexpected internal error
+            type: array
+            items:
+              $ref: '#/definitions/report'
+        400:
+          description: Bad request
+          schema:
+            type: string
 
   
   /management_service/customer/{id}:
@@ -218,7 +221,6 @@ paths:
           schema:
             type: string
 
-  #TODO
   /merchant_service/report:
     #Generate a report for a merchant
     post:
@@ -239,13 +241,15 @@ paths:
         description: merchant Id
       responses:
         200:
-          #TODO: define
-          description: List of transactions of the merchant
+          description: Returns list of transactions
           schema:
-            $ref: '#/definitions/merchantreportdto'
-        500:
-          #TODO define
-          description: Unexpected internal error
+            type: array
+            items:
+              $ref: '#/definitions/report'
+        400:
+          description: Bad request
+          schema:
+            type: string
             
   /merchant_service/merchant:
     #Add a merchant to the system
@@ -345,11 +349,39 @@ definitions:
       enddate:
         type: string
         
-  customerreportdto:
-    type: array
-    items:
-      $ref: '#/definitions/customertransactiondto'
-    
+  report:
+    type: object
+    properties:
+      payments:
+        type: array
+        items:
+          $ref: '#/definitions/payment'
+
+  payment:
+    type: object
+    properties:
+      paymentid:
+        type: string
+      merchantid:
+        type: string
+      tokenid:
+        type: string
+      refundtokenid:
+        type: string
+      customerid:
+        type: string
+      customeraccountid:
+        type: string
+      merchantaccountid:
+        type: string
+      date:
+        type: string
+      amount:
+        type: number
+      paymentstatus:
+        type: string
+        enum: [COMPLETED, PENDING, REFUNDED]
+
   customertransactiondto:
     type: object
     properties:
