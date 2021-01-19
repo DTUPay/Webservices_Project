@@ -22,7 +22,7 @@ public class CustomerAPI {
     @POST
     @Path("/customer")
     @Consumes(MediaType.APPLICATION_JSON)
-    //@Produces(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public void registerCustomer(@Suspended AsyncResponse response, CustomerDTO customerDTO) {
         Customer customer = new Customer();
         customer.setAccountID(customerDTO.getAccountNumber());
