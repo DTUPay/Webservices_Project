@@ -42,7 +42,6 @@ public class ReportingSteps {
         service = new dtu.ws.fastmoney.BankServiceService();
         bank = service.getBankServicePort();
 
-        //TODO: Create customer and merchant bank accounts
         //Customer: Jensine Jensen, 121015-xxxx, 100 DKK
         customer = new Customer("Jensine", "Jensen", "121015-xxxx", 100);
         dtu.ws.fastmoney.User bankCustomer = new dtu.ws.fastmoney.User();

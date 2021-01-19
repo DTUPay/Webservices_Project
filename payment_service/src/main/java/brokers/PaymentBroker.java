@@ -105,7 +105,7 @@ public class PaymentBroker implements IMessageBroker {
     private void listenOnQueue(String queue) {
         deliverCallback = (consumerTag, delivery) -> {
             String message = new String(delivery.getBody(), "UTF-8");
-            JsonObject jsonObject = Json.createReader(new StringReader(message)).readObject(); // @TODO: Validate Message, if it is JSON object
+            JsonObject jsonObject = Json.createReader(new StringReader(message)).readObject();
 
             this.processMessage(gson.fromJson(jsonObject.toString(), Message.class), jsonObject.getJsonObject("payload"));
         };
@@ -165,7 +165,7 @@ public class PaymentBroker implements IMessageBroker {
         if (message.getStatus() != 200 || tokenDTO == null) {
             messageRepository.removeMessageObject(message.getRequestId());
             reply = createReply(originalMessage);
-            reply.setStatus(404); //TODO set correct error code
+            reply.setStatus(404);
             reply.setStatusMessage("The token could not be validated");
             sendMessage(reply);
             return;
@@ -200,7 +200,7 @@ public class PaymentBroker implements IMessageBroker {
         }
         if (message.getStatus() != 200 || tokenDTO == null) {
             reply = createReply(originalMessage);
-            reply.setStatus(404); //TODO set correct error code
+            reply.setStatus(404);
             reply.setStatusMessage("Could not fetch customer account id");
             sendMessage(reply);
             return;
@@ -210,7 +210,7 @@ public class PaymentBroker implements IMessageBroker {
             paymentID = paymentService.createPayment((PaymentDTO) originalMessage.payload, customerDTO, tokenDTO);
         } catch (BankException e) {
             reply = createReply(originalMessage);
-            reply.setStatus(400); //TODO set correct error code
+            reply.setStatus(400);
             reply.setStatusMessage("Error while making payment: " + e.getMessage());
             sendMessage(reply);
             return;

@@ -30,7 +30,7 @@ RUN --mount=type=cache,target=/root/.m2 mvn verify
 RUN mkdir artifacts \
     && mv target/$SERVICE_NAME-1.0-SNAPSHOT-runner.jar target/lib/ artifacts/
 
-# Test stage - @TODO: Could start Runner, and run Cucumber on the artifacts, before creating the runner image?
+# Test stage -
 
 # Lets create our final image with the java artifacts
 FROM adoptopenjdk:11-jre
