@@ -56,6 +56,7 @@ public class PaymentBroker implements IMessageBroker {
                         channel = connection.createChannel();
                         channel.queueDeclare(queue, false, false, false, null);
                         this.listenOnQueue(queue);
+                        System.out.println("Successfully connected to RabbitMQ queue " + queue + ".");
 
                         break;
                     } catch (Exception e) {
@@ -186,8 +187,8 @@ public class PaymentBroker implements IMessageBroker {
         Message reply;
         Message originalMessage = messageRepository.getMessageObject(message.getRequestId());
         messageRepository.removeMessageObject(message.getRequestId());
-        TokenDTO tokenDTO = tokenRepository.getMessageObject(message.getRequestId());
-        tokenRepository.removeMessageObject(message.getRequestId());
+        TokenDTO tokenDTO = tokenRepository.getTokenObject(message.getRequestId());
+        tokenRepository.removeTokenObject(message.getRequestId());
         System.out.println("original message: " + originalMessage.payload);
 
         CustomerDTO customerDTO = null;
@@ -244,8 +245,8 @@ public class PaymentBroker implements IMessageBroker {
 
         if (message.getStatus() != 200 || tokenDTO == null) {
             reply = createReply(originalMessage);
-            reply.setStatus(404); //TODO set correct error code
-            reply.setStatusMessage("The token could not be validated: " + message.getStatusMessage());
+            reply.setStatus(400);
+            reply.setStatusMessage("The token could not be validated");
             sendMessage(reply);
             return;
         }
@@ -254,7 +255,7 @@ public class PaymentBroker implements IMessageBroker {
             paymentService.refundPayment(refundDTO, tokenDTO);
         } catch (PaymentException | BankException e) {
             reply = createReply(originalMessage);
-            reply.setStatus(404); //TODO set correct error code
+            reply.setStatus(400);
             reply.setStatusMessage("Error while refunding payment: " + e.getMessage());
             sendMessage(reply);
             return;

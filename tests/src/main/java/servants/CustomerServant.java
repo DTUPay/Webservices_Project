@@ -1,5 +1,6 @@
 package servants;
 
+import models.Customer;
 import servants.RestCommunicator.Service;
 
 import javax.json.Json;
@@ -26,7 +27,8 @@ public class CustomerServant {
         RestCommunicator dtuPay = new RestCommunicator(RestCommunicator.Service.CUSTOMER);
         Object object = dtuPay.post(customer, "/customer", 201);
         HashMap<String, String> customerObject = (HashMap<String, String>) object;
-        return UUID.fromString(customerObject.get("customerID"));
+        this.id = UUID.fromString(customerObject.get("customerID"));
+        return id;
     }
 
     public UUID getID() {
@@ -55,19 +57,14 @@ public class CustomerServant {
     }
 
     //TODO: Change message signature to have customerID, merchantID and paymentID
-    public boolean requestRefund(UUID tokenID, UUID paymentID) {
+    public boolean requestRefund(UUID tokenID, UUID paymentID) throws Exception {
         RestCommunicator communicator = new RestCommunicator(Service.CUSTOMER);
         String path = "/refund";
         JsonObject refundDto = Json.createObjectBuilder()
                 .add("tokenID", tokenID.toString())
                 .add("paymentID", paymentID.toString())
                 .build();
-        try {
-            return communicator.put(refundDto, path);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
+            return communicator.put(refundDto, path, 200);
     }
 
     public List<?> requestReport() throws Exception {

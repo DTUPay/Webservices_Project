@@ -1,11 +1,14 @@
 package dtuPay;
 
+/*
+@authors: Oliver O. Nielsen & Rubatharisan Thirumathyam
+ */
 import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.junit.Assert;
-import servants.Customer;
+import models.Customer;
 import servants.CustomerServant;
 import servants.RestCommunicator;
 
@@ -15,9 +18,8 @@ import java.util.UUID;
 public class CustomerSteps {
     private Customer customer = new Customer();
     private UUID customerID;
-    private CustomerServant customerAccount;
     private Exception exception;
-    private int expectedErrorCode;
+    private CustomerServant customerAccount;
 
 
     @Before
@@ -33,12 +35,8 @@ public class CustomerSteps {
     @When("the customer requests a DTUPay account")
     public void theCustomerRequestsADTUPayAccount() {
         try {
-            RestCommunicator dtuPay = new RestCommunicator(RestCommunicator.Service.CUSTOMER);
-            Object object = dtuPay.post(customer, "/customer", this.expectedErrorCode);
-            if(this.expectedErrorCode == 201){
-                HashMap<String, String> customerObject = (HashMap<String, String>) object;
-                this.customerID = UUID.fromString(customerObject.get("customerID"));
-            }
+            customerAccount = new CustomerServant(null);
+            this.customerID = customerAccount.registerCustomer(customer);
         } catch (Exception e) {
             System.out.print(e.toString());
             exception = e;
@@ -54,7 +52,6 @@ public class CustomerSteps {
 
     @Given("the customer have no bank account")
     public void theCustomerHaveNoBankAccount() {
-        expectedErrorCode = 400;
         customer.setAccountNumber(null);
         customer.setFirstName("my-firstname");
         customer.setLastName("my-lastname");
@@ -63,12 +60,11 @@ public class CustomerSteps {
     @Then("the customer will not be provided a DTUPay account")
     public void theCustomerWillNotBeProvidedADTUPayAccount() {
         Assert.assertNull(this.customerID);
-        Assert.assertNull(exception);
+        Assert.assertNotNull(exception);
     }
 
     @Given("the customer have no lastname")
     public void theCustomerHaveNoLastname() {
-        expectedErrorCode = 400;
         customer.setAccountNumber("my-bank-account-number");
         customer.setFirstName("my-firstname");
         customer.setLastName(null);
@@ -76,7 +72,6 @@ public class CustomerSteps {
 
     @Given("the customer have no firstname")
     public void theCustomerHaveNoFirstname() {
-        expectedErrorCode = 400;
         customer.setAccountNumber("my-bank-account-number");
         customer.setLastName("my-lastname");
         customer.setFirstName(null);
@@ -84,7 +79,6 @@ public class CustomerSteps {
 
     @Given("a customer with bank account, firstname and lastname")
     public void aCustomerWithBankAccountFirstnameAndLastname() {
-        expectedErrorCode = 200;
         customer.setAccountNumber("my-bank-account-number");
         customer.setFirstName("my-firstname");
         customer.setLastName("my-lastname");

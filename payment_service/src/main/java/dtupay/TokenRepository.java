@@ -1,5 +1,5 @@
 package dtupay;
-
+// @author: Oliver O. Nielsen
 import dto.TokenDTO;
 import models.Message;
 import models.Token;
@@ -8,7 +8,7 @@ import javax.ws.rs.container.AsyncResponse;
 import java.util.HashMap;
 import java.util.UUID;
 
-public class TokenRepository {
+public class TokenRepository implements ITokenRepository{
     public HashMap<UUID, TokenDTO> tokens = new HashMap<>();
     private static TokenRepository instance = new TokenRepository();
 
@@ -24,14 +24,17 @@ public class TokenRepository {
         return this.tokens.containsKey(tokenId);
     }
 
-    public TokenDTO getMessageObject(UUID tokenId){
+    @Override
+    public TokenDTO getTokenObject(UUID tokenId){
         return this.tokens.get(tokenId);
     }
 
-    public void removeMessageObject(UUID tokenId){
+    @Override
+    public void removeTokenObject(UUID tokenId){
         tokens.remove(tokenId);
     }
 
+    @Override
     public UUID saveTokenObject(UUID requestID, TokenDTO token){
         UUID uuid = requestID;
         tokens.put(uuid, token);

@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 public class ReportingService {
     private static ReportingService instance = new ReportingService();
     ReportingBroker broker;
-    PaymentRepository paymentRepository;
+    public PaymentRepository paymentRepository;
 
     public ReportingService() {
         this.paymentRepository = PaymentRepository.getInstance();

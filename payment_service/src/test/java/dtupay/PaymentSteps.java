@@ -20,6 +20,7 @@ import models.Token;
 import org.junit.Assert;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.UUID;
 
@@ -35,7 +36,9 @@ public class PaymentSteps {
     Merchant merchant;
     TokenDTO tokenDTO;
     String customerAccountNumber;
+    String someOtherAccountNumber;
     final String customerCpr = "110996xxxx";
+    final String someOtherCpr = "110997xxxx";
     String merchantAccountNumber;
     final String merchantCpr = "12345678";
     UUID customerId = UUID.randomUUID();
@@ -56,6 +59,9 @@ public class PaymentSteps {
         try{
             service.bankService.retireAccount(service.bankService.getAccountByCprNumber(merchantCpr).getId());
         } catch (BankServiceException_Exception e) {}
+        try{
+            service.bankService.retireAccount(service.bankService.getAccountByCprNumber(someOtherCpr).getId());
+        } catch (BankServiceException_Exception e) {}
 
         //Create merchant in bank
         User merchantUser = new User();
@@ -70,6 +76,13 @@ public class PaymentSteps {
         customerUser.setFirstName("Some");
         customerUser.setLastName("User");
         customerAccountNumber = service.bankService.createAccountWithBalance(customerUser, BigDecimal.valueOf(amount));
+
+        //Create user in bank
+        User someOtherUser = new User();
+        someOtherUser.setCprNumber(someOtherCpr);
+        someOtherUser.setFirstName("Some other");
+        someOtherUser.setLastName("User");
+        someOtherAccountNumber = service.bankService.createAccountWithBalance(someOtherUser, BigDecimal.valueOf(amount));
 
         //Get initial balance
         customerInitialBalance = service.bankService.getAccount(customerAccountNumber).getBalance();
@@ -220,6 +233,63 @@ public class PaymentSteps {
     @Then("the fetch operation fails")
     public void the_fetch_operation_fails() {
         Assert.assertNotNull(exception);
+    }
+
+    @Given("a payment which the customer cannot afford")
+    public void a_payment_which_the_customer_cannot_afford() {
+        payment = new PaymentDTO();
+        payment.setMerchantAccountID(merchantAccountNumber);
+        payment.setTokenID(tokenDTO.getTokenID());
+        payment.setAmount(amount+1000);
+        payment.setMerchantID(merchant.getMerchantID());
+    }
+
+    @Then("the bank transaction is not successful")
+    public void the_bank_transaction_is_not_successful() throws BankServiceException_Exception {
+        BigDecimal customerCurrentBalance = service.bankService.getAccount(customerAccountNumber).getBalance();
+        BigDecimal merchantCurrentBalance = service.bankService.getAccount(merchantAccountNumber).getBalance();
+
+        Assert.assertNotNull(exception);
+
+        Assert.assertEquals(customerCurrentBalance, customerInitialBalance);
+        Assert.assertEquals(merchantCurrentBalance, merchantInitialBalance);
+    }
+
+    @Then("a payment is not registered in the repository")
+    public void a_payment_is_not_registered_in_the_repository() {
+        Payment p = null;
+        try {
+             p = service.getPayment(paymentId);
+        } catch (PaymentException e) {
+
+        }
+        Assert.assertNull(p);
+    }
+
+    @Given("the merchant spends his money")
+    public void the_merchant_spends_his_money() throws BankServiceException_Exception {
+        BigDecimal merchantCurrentBalance = service.bankService.getAccount(merchantAccountNumber).getBalance();
+        service.bankService.transferMoneyFromTo(
+                merchant.getAccountNumber(), // Money from
+                someOtherAccountNumber, // Money to
+                BigDecimal.valueOf(payment.getAmount()),
+                "Some payment out of merchants account");
+         merchantCurrentBalance = service.bankService.getAccount(merchantAccountNumber).getBalance();
+    }
+
+    @Then("a refund is not registered in the repository")
+    public void a_refund_is_not_registered_in_the_repository() throws PaymentException {
+        Payment refund = service.getPayment(paymentId);
+        Assert.assertNotEquals(refund.getStatus(), PaymentStatus.REFUNDED);
+    }
+
+    @Then("the refund transaction is not made")
+    public void the_refund_transaction_is_not_made() throws BankServiceException_Exception {
+        BigDecimal customerCurrentBalance = service.bankService.getAccount(customerAccountNumber).getBalance();
+        BigDecimal merchantCurrentBalance = service.bankService.getAccount(merchantAccountNumber).getBalance();
+
+        BigDecimal expectedBalance= customerInitialBalance.subtract(BigDecimal.valueOf(payment.getAmount()));
+        Assert.assertEquals(customerCurrentBalance, expectedBalance);
     }
 
     @After

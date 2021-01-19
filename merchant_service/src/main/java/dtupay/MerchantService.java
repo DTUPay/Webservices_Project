@@ -1,5 +1,5 @@
 package dtupay;
-
+// @author: Rubatharisan Thirumathyam @ Oliver O. Nielsen
 import brokers.MerchantBroker;
 import com.google.gson.Gson;
 import exceptions.MerchantException;
@@ -9,10 +9,6 @@ import models.Merchant;
 
 import java.util.UUID;
 
-
-/**
- * @author Mikkel Rosenfeldt Anderson & Benjamin
- */
 @QuarkusMain
 public class MerchantService {
     MerchantBroker broker;
@@ -53,7 +49,6 @@ public class MerchantService {
         return merchant.getMerchantID();
     }
 
-    // @Status: Implemented
     public void removeMerchant(UUID merchantID) throws MerchantException {
         System.out.println(merchantID);
         if (merchantRepository.hasMerchant(merchantID)) {

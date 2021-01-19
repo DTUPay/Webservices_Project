@@ -6,6 +6,8 @@ import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import models.Customer;
+import models.Merchant;
 import servants.*;
 
 import java.math.BigDecimal;
@@ -16,7 +18,6 @@ import static org.junit.Assert.*;
 public class PaymentSteps {
     private CustomerServant customerAccount;
     private MerchantServant merchantAccount;
-    private ManagementServant accountManagement;
     private Customer customer;
     private Merchant merchant;
     private Exception exception;
@@ -73,9 +74,6 @@ public class PaymentSteps {
         merchant.setAccountNumber(merchantBankAccount);
         System.out.println("done");
 
-        //TODO: Store account numbers
-        accountManagement = new ManagementServant();
-
     }
 
     @Given("the customer has the paymentID of his last payment")
@@ -107,7 +105,8 @@ public class PaymentSteps {
     @Given("the customer is registered with DTU Pay")
     public void theCustomerIsRegisteredWithDTUPay() throws Exception {
         System.out.println("Registering customer on DTU Pay");
-        customerAccount = new CustomerServant(accountManagement.registerCustomer(customer));
+        customerAccount = new CustomerServant(null);
+        customerAccount.registerCustomer(customer);
         System.out.println("done");
     }
 
@@ -119,7 +118,8 @@ public class PaymentSteps {
     @Given("the merchant is registered with DTU Pay")
     public void theMerchantIsRegisteredWithDTUPay() throws Exception {
         System.out.println("Registering customer on DTU Pay");
-        merchantAccount = new MerchantServant(accountManagement.registerMerchant(merchant));
+        merchantAccount = new MerchantServant(null);
+        merchantAccount.registerMerchant(merchant);
         System.out.println("done");
     }
 
@@ -132,6 +132,15 @@ public class PaymentSteps {
     @Given("the customer has no tokens")
     public void theCustomerHasNoTokens() {
         assertTrue(customerAccount.getCustomerTokens().size() == 0);
+    }
+
+    @Given("the customer already has refunded a given payment")
+    public void theCustomerAlreadyHasRefundedAGivenPayment() {
+        try {
+            paymentRefunded = customerAccount.requestRefund(customerAccount.selectToken(), paymentID);
+        } catch (Exception e) {
+            fail();
+        }
     }
 
     @When("the customer request to see his account balance")
@@ -172,6 +181,7 @@ public class PaymentSteps {
             paymentRefunded = customerAccount.requestRefund(customerAccount.selectToken(), paymentID);
         } catch (Exception e) {
             exception = e;
+            paymentRefunded = false;
         }
     }
 
@@ -190,6 +200,16 @@ public class PaymentSteps {
         } catch (Exception e) {
             //e.printStackTrace();
             //fail();
+        }
+    }
+
+    @When("the request to have the payment refunded using an invalid token")
+    public void theRequestToHaveThePaymentRefundedUsingAnInvalidToken() {
+        try {
+            paymentRefunded = customerAccount.requestRefund(UUID.randomUUID(), paymentID);
+        } catch (Exception e) {
+            exception = e;
+            paymentRefunded = false;
         }
     }
 
@@ -228,9 +248,14 @@ public class PaymentSteps {
         assertEquals(arg0, exception.getMessage());
     }
 
+    @Then("the refunding fails")
+    public void theRefundingFails() {
+        assertFalse(paymentRefunded);
+    }
+
     @Then("the customer possesses {int} tokens")
-    public void the_customer_possesses_tokens(Integer int1) {
-        Integer tokens = customerAccount.getCustomerTokens().size();
+    public void the_customer_possesses_tokens(int int1) {
+        int tokens = customerAccount.getCustomerTokens().size();
         assertEquals(tokens, int1);
     }
 

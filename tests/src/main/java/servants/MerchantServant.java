@@ -1,5 +1,7 @@
 package servants;
 
+import models.Merchant;
+
 import javax.json.Json;
 import javax.json.JsonObject;
 import java.util.HashMap;
@@ -31,6 +33,14 @@ public class MerchantServant {
 
     public void setId(UUID id) {
         this.id = id;
+    }
+
+    public UUID registerMerchant(Merchant merchant) throws Exception {
+        RestCommunicator dtuPay = new RestCommunicator(RestCommunicator.Service.MERCHANT);
+        Object object = dtuPay.post(merchant, "/merchant", 201);
+        HashMap<String, String> customerObject = (HashMap<String, String>) object;
+        this.id = UUID.fromString(customerObject.get("merchantID"));
+        return id;
     }
 
     public UUID requestPayment(int amount, UUID merchantID, UUID tokenID) throws Exception {
