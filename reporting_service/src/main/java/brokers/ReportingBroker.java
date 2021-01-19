@@ -6,7 +6,6 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.DeliverCallback;
 import dto.ReportRequestDTO;
-import dtupay.PaymentRepository;
 import dtupay.ReportingService;
 import models.Message;
 import models.Payment;
@@ -16,8 +15,6 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.UUID;
 
 /**
  * @author Oliver O. Nielsen
@@ -94,7 +91,6 @@ public class ReportingBroker implements IMessageBroker {
 
             this.processMessage(gson.fromJson(jsonObject.toString(), Message.class), jsonObject.getJsonObject("payload"));
         };
-
         onQueue(queue, deliverCallback);
     }
 
