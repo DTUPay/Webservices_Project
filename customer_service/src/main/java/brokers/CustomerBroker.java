@@ -257,6 +257,7 @@ public class CustomerBroker implements IMessageBroker {
             customerService.canRequestTokens(token.getCustomerID(), token.getAmount());
         } catch (CustomerException ce) {
             response.resume(Response.status(400).entity(ce.getMessage()).build());
+            response.close();
             return;
         }
 
@@ -289,7 +290,7 @@ public class CustomerBroker implements IMessageBroker {
         AsyncResponse response = this.responseHandler.getRestResponseObject(message.getRequestId());
         Report report = gson.fromJson(payload.toString(), Report.class);
         response.resume(Response.status(message.getStatus()).entity(report).build());
-
+        response.close();
     }
 
     /*
@@ -301,6 +302,7 @@ public class CustomerBroker implements IMessageBroker {
         System.out.println("Response Status Message:" + message.getStatusMessage());
         AsyncResponse response = this.responseHandler.getRestResponseObject(message.getRequestId());
         response.resume(Response.status(message.getStatus()).entity(message.getStatusMessage()).build());
+        response.close();
     }
 
     // @Status: Implemented
@@ -318,8 +320,10 @@ public class CustomerBroker implements IMessageBroker {
         try {
             customerService.addTokens(customerId, tokenIds);
             response.resume(Response.status(message.getStatus()).entity(payload.get("tokenIDs")).build());
+            response.close();
         } catch (CustomerException e){
             response.resume(Response.status(400).entity(e.getMessage()).build());
+            response.close();
             e.printStackTrace();
         }
     }
