@@ -9,6 +9,7 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.junit.Assert;
 import models.Customer;
+import servants.CustomerServant;
 import servants.RestCommunicator;
 
 import java.util.HashMap;
@@ -18,6 +19,7 @@ public class CustomerSteps {
     private Customer customer = new Customer();
     private UUID customerID;
     private Exception exception;
+    private CustomerServant customerAccount;
 
 
     @Before
@@ -33,10 +35,8 @@ public class CustomerSteps {
     @When("the customer requests a DTUPay account")
     public void theCustomerRequestsADTUPayAccount() {
         try {
-            RestCommunicator dtuPay = new RestCommunicator(RestCommunicator.Service.CUSTOMER);
-            Object object = dtuPay.post(customer, "/customer", 201);
-            HashMap<String, String> customerObject = (HashMap<String, String>) object;
-            this.customerID = UUID.fromString(customerObject.get("customerID"));
+            customerAccount = new CustomerServant(null);
+            this.customerID = customerAccount.registerCustomer(customer);
         } catch (Exception e) {
             System.out.print(e.toString());
             exception = e;
