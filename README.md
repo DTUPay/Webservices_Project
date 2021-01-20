@@ -84,4 +84,4 @@ https://gist.github.com/Rubatharisan/64c3737145e8ff2805deeed104808a00 (draft)
 
 
 ## UML
-![UML Diagram](docs/UML.png)
+![UML Diagram](docs/system_interaction.png)
